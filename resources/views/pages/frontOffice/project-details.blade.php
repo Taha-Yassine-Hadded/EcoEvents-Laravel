@@ -13,7 +13,7 @@
                             <h4>Project Details</h4>
                         </div>
                         <ul>
-                            <li><a href="{{ url('/') }}"><img src="{{ asset('assets/images/inner-images/breadcumb-text-shape.png') }}" alt="">Echofy</a></li>
+                            <li><a href="{{ url('/') }}"><img src="{{ Vite::asset('resources/assets/images/inner-images/breadcumb-text-shape.png') }}" alt="">Echofy</a></li>
                             <li>Project Details</li>
                         </ul>
                     </div>
@@ -28,7 +28,7 @@
             <div class="row">
                 <div class="col-lg-12">
                     <div class="project-details-thumb">
-                        <img src="{{ asset('assets/images/inner-images/project-details-thumb.jpg') }}" alt="">
+                        <img src="{{ Vite::asset('resources/assets/images/inner-images/project-details-thumb.jpg') }}" alt="">
                     </div>
                 </div>
             </div>
@@ -45,7 +45,7 @@
                                 <div class="row align-items-center">
                                     <div class="col-lg-6">
                                         <div class="project-details-item-images">
-                                            <img src="{{ asset('assets/images/inner-images/project-details-item-images.jpg') }}" alt="">
+                                            <img src="{{ Vite::asset('resources/assets/images/inner-images/project-details-item-images.jpg') }}" alt="">
                                         </div>
                                     </div>
                                     <div class="col-lg-6">
@@ -94,7 +94,7 @@
                             </div>
                             <div class="widget-sidber-contact-box">
                                 <div class="widget-sidber-contact">
-                                    <img src="{{ asset('assets/images/inner-images/sidber-cont-icon.png') }}" alt="">
+                                    <img src="{{ Vite::asset('resources/assets/images/inner-images/sidber-cont-icon.png') }}" alt="">
                                 </div>
                                 <p class="widget-sidber-contact-text">Call Us Anytime</p>
                                 <h3 class="widget-sidber-contact-number">+123 (4567) 890</h3>
@@ -116,7 +116,7 @@
             <div class="row">
                 <div class="col-lg-12 text-center">
                     <div class="section-title center">
-                        <h4><img src="{{ asset('assets/images/home1/section-shape.png') }}" alt="">Latest Works</h4>
+                        <h4><img src="{{ Vite::asset('resources/assets/images/home1/section-shape.png') }}" alt="">Latest Works</h4>
                         <h1>Similar Completed Projects</h1>
                     </div>
                 </div>
@@ -125,14 +125,14 @@
                 <div class="col-lg-4 col-md-6">
                     <div class="single-project-box">
                         <div class="project-thumb">
-                            <img src="{{ asset('assets/images/home1/project-1.jpg') }}" alt="">
+                            <img src="{{ Vite::asset('resources/assets/images/home1/project-1.jpg') }}" alt="">
                         </div>
                         <div class="project-content">
                             <h4>Climate</h4>
                             <a href="{{ url('/project-details') }}">Cleaning Forest</a>
                             <a class="project-button" href="{{ url('/project-details') }}">View Details<i class="bi bi-arrow-right-short"></i></a>
                             <div class="project-shape">
-                                <img src="{{ asset('assets/images/home1/project-shape.png') }}" alt="">
+                                <img src="{{ Vite::asset('resources/assets/images/home1/project-shape.png') }}" alt="">
                             </div>
                         </div>
                     </div>
@@ -140,14 +140,14 @@
                 <div class="col-lg-4 col-md-6">
                     <div class="single-project-box">
                         <div class="project-thumb">
-                            <img src="{{ asset('assets/images/home1/project-2.jpg') }}" alt="">
+                            <img src="{{ Vite::asset('resources/assets/images/home1/project-2.jpg') }}" alt="">
                         </div>
                         <div class="project-content">
                             <h4>Environment</h4>
                             <a href="{{ url('/project-details') }}">Climate Solutions</a>
                             <a class="project-button" href="{{ url('/project-details') }}">View Details<i class="bi bi-arrow-right-short"></i></a>
                             <div class="project-shape">
-                                <img src="{{ asset('assets/images/home1/project-shape.png') }}" alt="">
+                                <img src="{{ Vite::asset('resources/assets/images/home1/project-shape.png') }}" alt="">
                             </div>
                         </div>
                     </div>
@@ -155,14 +155,14 @@
                 <div class="col-lg-4 col-md-6">
                     <div class="single-project-box">
                         <div class="project-thumb">
-                            <img src="{{ asset('assets/images/home1/project-3.jpg') }}" alt="">
+                            <img src="{{ Vite::asset('resources/assets/images/home1/project-3.jpg') }}" alt="">
                         </div>
                         <div class="project-content">
                             <h4>Recycling</h4>
                             <a href="{{ url('/project-details') }}">Plastic Recycling</a>
                             <a class="project-button" href="{{ url('/project-details') }}">View Details<i class="bi bi-arrow-right-short"></i></a>
                             <div class="project-shape">
-                                <img src="{{ asset('assets/images/home1/project-shape.png') }}" alt="">
+                                <img src="{{ Vite::asset('resources/assets/images/home1/project-shape.png') }}" alt="">
                             </div>
                         </div>
                     </div>

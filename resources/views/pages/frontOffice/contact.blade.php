@@ -13,7 +13,7 @@
                             <h4>Contact Us</h4>
                         </div>
                         <ul>
-                            <li><a href="/"><img src="{{ asset('assets/images/inner-images/breadcumb-text-shape.png') }}" alt="">Echofy</a></li>
+                            <li><a href="/"><img src="{{ Vite::asset('resources/assets/images/inner-images/breadcumb-text-shape.png') }}" alt="">Echofy</a></li>
                             <li>Contact Us</li>
                         </ul>
                     </div>
@@ -29,7 +29,7 @@
                 <div class="col-lg-4 col-md-6">
                     <div class="contact-info-box">
                         <div class="contact-info-icon">
-                            <img src="{{ asset('assets/images/inner-images/contact-info-icon-1.png') }}" alt="">
+                            <img src="{{ Vite::asset('resources/assets/images/inner-images/contact-info-icon-1.png') }}" alt="">
                         </div>
                         <div class="contact-info-content">
                             <h4>Office Address</h4>
@@ -40,7 +40,7 @@
                 <div class="col-lg-4 col-md-6">
                     <div class="contact-info-box">
                         <div class="contact-info-icon">
-                            <img src="{{ asset('assets/images/inner-images/contact-info-icon-2.png') }}" alt="">
+                            <img src="{{ Vite::asset('resources/assets/images/inner-images/contact-info-icon-2.png') }}" alt="">
                         </div>
                         <div class="contact-info-content">
                             <h4>Make A Call</h4>
@@ -52,7 +52,7 @@
                 <div class="col-lg-4 col-md-6">
                     <div class="contact-info-box two">
                         <div class="contact-info-icon">
-                            <img src="{{ asset('assets/images/inner-images/contact-info-icon-3.png') }}" alt="">
+                            <img src="{{ Vite::asset('resources/assets/images/inner-images/contact-info-icon-3.png') }}" alt="">
                         </div>
                         <div class="contact-info-content">
                             <h4>24/7 Supports</h4>
@@ -70,7 +70,7 @@
                 </div>
                 <div class="col-lg-6">
                     <div class="section-title left">
-                        <h4><img src="{{ asset('assets/images/home1/section-shape.png') }}" alt="">Get In Touch</h4>
+                        <h4><img src="{{ Vite::asset('resources/assets/images/home1/section-shape.png') }}" alt="">Get In Touch</h4>
                         <h1>Write us Something</h1>
                     </div>
                     <form>

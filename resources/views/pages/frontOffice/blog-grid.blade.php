@@ -17,7 +17,7 @@
                     <ul>
                         <li>
                             <a href="{{ url('/') }}">
-                                <img src="{{ asset('assets/images/inner-images/breadcumb-text-shape.png') }}" alt="">Echofy
+                                <img src="{{ Vite::asset('resources/assets/images/inner-images/breadcumb-text-shape.png') }}" alt="">Echofy
                             </a>
                         </li>
                         <li>Blog Grid</li>
@@ -52,7 +52,7 @@
                 <div class="col-lg-4 col-md-6">
                     <div class="single-blog-box">
                         <div class="single-blog-thumb">
-                            <img src="{{ asset('assets/images/home1/'.$blog['img']) }}" alt="{{ $blog['title'] }}">
+                            <img src="{{ Vite::asset('resources/assets/images/home1/'.$blog['img']) }}" alt="{{ $blog['title'] }}">
                         </div>
                         <div class="blog-content">
                             <a href="#">{{ $blog['title'] }}</a>

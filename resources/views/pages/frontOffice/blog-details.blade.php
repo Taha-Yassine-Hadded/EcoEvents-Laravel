@@ -17,7 +17,7 @@
                     <ul>
                         <li>
                             <a href="{{ url('/') }}">
-                                <img src="{{ asset('assets/images/inner-images/breadcumb-text-shape.png') }}" alt="">Echofy
+                                <img src="{{ Vite::asset('resources/assets/images/inner-images/breadcumb-text-shape.png') }}" alt="">Echofy
                             </a>
                         </li>
                         <li>Blog Details</li>
@@ -41,7 +41,7 @@
             <!-- Blog Content -->
             <div class="col-lg-8">
                 <div class="blog-details-thumb">
-                    <img src="{{ asset('assets/images/inner-images/blog-details-thumb.jpg') }}" alt="">
+                    <img src="{{ Vite::asset('resources/assets/images/inner-images/blog-details-thumb.jpg') }}" alt="">
                 </div>
 
                 <div class="blog-details-content">
@@ -49,7 +49,7 @@
                         <span class="mate-text">By Author</span>
                         <span><i class="fas fa-calendar-alt"></i>05 January, 2024</span>
                         <span>
-                            <img src="{{ asset('assets/images/inner-images/category-icon.png') }}" alt="">Environment
+                            <img src="{{ Vite::asset('resources/assets/images/inner-images/category-icon.png') }}" alt="">Environment
                         </span>
                     </div>
 
@@ -65,7 +65,7 @@
 
                     <div class="blog-details-author-talk">
                         <div class="blog-details-quote">
-                            <img src="{{ asset('assets/images/inner-images/blog-details-quote.png') }}" alt="">
+                            <img src="{{ Vite::asset('resources/assets/images/inner-images/blog-details-quote.png') }}" alt="">
                         </div>
                         <div class="blog-details-author-title">
                             <p>Competently architect intermandated deliverables client with niches continually underwhelm build cross-media growth strategies without robust.</p>
@@ -90,12 +90,12 @@
                     <div class="row">
                         <div class="col-lg-6 col-md-6">
                             <div class="blog-details-thumb two">
-                                <img src="{{ asset('assets/images/inner-images/services-details-benifis-thumb-1.png') }}" alt="">
+                                <img src="{{ Vite::asset('resources/assets/images/inner-images/services-details-benifis-thumb-1.png') }}" alt="">
                             </div>
                         </div>
                         <div class="col-lg-6 col-md-6">
                             <div class="blog-details-thumb">
-                                <img src="{{ asset('assets/images/inner-images/services-details-benifis-thumb-2.png') }}" alt="">
+                                <img src="{{ Vite::asset('resources/assets/images/inner-images/services-details-benifis-thumb-2.png') }}" alt="">
                             </div>
                         </div>
                     </div>
@@ -141,11 +141,11 @@
                                                 <p>August 10, 2024</p>
                                             </div>
                                             <div class="blog-post-thumb">
-                                                <img src="{{ asset('assets/images/inner-images/blog-post-2.png') }}" alt="">
+                                                <img src="{{ Vite::asset('resources/assets/images/inner-images/blog-post-2.png') }}" alt="">
                                             </div>
                                         @else
                                             <div class="blog-post-thumb">
-                                                <img src="{{ asset('assets/images/inner-images/blog-post-1.png') }}" alt="">
+                                                <img src="{{ Vite::asset('resources/assets/images/inner-images/blog-post-1.png') }}" alt="">
                                             </div>
                                             <div class="blog-post-content">
                                                 <a href="#">Sample Post {{ $i }}</a>
@@ -180,7 +180,7 @@
                                         <a href="#">Reply</a>
                                     </div>
                                     <div class="blog-details-comment-thumb">
-                                        <img src="{{ asset("assets/images/inner-images/blog-details-author-{$loop->iteration}.png") }}" alt="">
+                                        <img src="{{ Vite::asset("resources/assets/images/inner-images/blog-details-author-{$loop->iteration}.png") }}" alt="">
                                     </div>
                                     <div class="blog-details-comment-content">
                                         <h2>{{ $comment['name'] }}</h2>
@@ -238,38 +238,38 @@
             </div>
 
             <div class="col-lg-4">
-                    <div class="row">
-                        <div class="col-lg-12">
-                            <!-- Search Widget -->
-                            <div class="widget-sidber">
-                                <div class="widget_search">
-                                    <form action="#" method="get">
-                                        <input type="text" name="s" value="" placeholder="Search Here" title="Search for:">
-                                        <button type="submit" class="icons">
-                                            <i class="fa fa-search"></i>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <!-- Search Widget -->
+                        <div class="widget-sidber">
+                            <div class="widget_search">
+                                <form action="#" method="get">
+                                    <input type="text" name="s" value="" placeholder="Search Here" title="Search for:">
+                                    <button type="submit" class="icons">
+                                        <i class="fa fa-search"></i>
                                         </button>
-                                    </form>
-                                </div>
+                                </form>
                             </div>
-                            <!-- Categories Widget -->
-                            <div class="widget-sidber">
-                                <div class="widget-sidber-content">
-                                    <h4>Categories</h4>
-                                </div>
-                                <div class="widget-category">
-                                    <ul>
-                                        @foreach(['Ocean Cleaning','Dust Recycling','Plant Seedlings','Renewable Energy','Environmental'] as $category)
-                                            <li>
-                                                <a href="#">
-                                                    <img src="{{ asset('assets/images/inner-images/category-icon.png') }}" alt="">{{ $category }}
-                                                    <i class="bi bi-arrow-right"></i>
-                                                </a>
-                                            </li>
-                                        @endforeach
-                                    </ul>
-                                </div>
+                        </div>
+                        <!-- Categories Widget -->
+                        <div class="widget-sidber">
+                            <div class="widget-sidber-content">
+                                <h4>Categories</h4>
                             </div>
-                         <!-- Popular Post Widget -->
+                            <div class="widget-category">
+                                <ul>
+                                    @foreach(['Ocean Cleaning','Dust Recycling','Plant Seedlings','Renewable Energy','Environmental'] as $category)
+                                        <li>
+                                            <a href="#">
+                                                <img src="{{ Vite::asset('resources/assets/images/inner-images/category-icon.png') }}" alt="">{{ $category }}
+                                                <i class="bi bi-arrow-right"></i>
+                                            </a>
+                                        </li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        </div>
+                        <!-- Popular Post Widget -->
                         <div class="widget-sidber">
                             <div class="widget-sidber-content">
                                 <h4>Popular Post</h4>
@@ -277,7 +277,7 @@
                             @for ($i = 1; $i <= 3; $i++)
                                 <div class="sidber-widget-recent-post">
                                     <div class="recent-widget-thumb">
-                                        <img src="{{ asset("assets/images/inner-images/recent-post-$i.png") }}" alt="">
+                                        <img src="{{ Vite::asset("resources/assets/images/inner-images/recent-post-$i.png") }}" alt="">
                                     </div>
                                     <div class="recent-widget-content">
                                         <a href="{{ url('blog-details') }}">Popular Post {{ $i }}</a>
@@ -289,12 +289,12 @@
                         <!-- Tags Widget -->
                         <div class="widget-sidber">
                             <div class="widget-sidber-content">
-                                    <h4>Tags</h4>
+                                <h4>Tags</h4>
                             </div>
                             <div class="widget-catefories-tags">
-                                    @foreach(['Environmental','Ecology','Seedlings','Tree Plantation','Recycling','Cleaning'] as $tag)
-                                        <a href="#">{{ $tag }}</a>
-                                    @endforeach
+                                @foreach(['Environmental','Ecology','Seedlings','Tree Plantation','Recycling','Cleaning'] as $tag)
+                                    <a href="#">{{ $tag }}</a>
+                                @endforeach
                             </div>
                         </div>
                     </div>

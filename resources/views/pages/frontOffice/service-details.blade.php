@@ -13,7 +13,7 @@
                             <h4>Service Details</h4>
                         </div>
                         <ul>
-                            <li><a href="{{ url('/') }}"><img src="{{ asset('assets/images/inner-images/breadcumb-text-shape.png') }}" alt="">Echofy</a></li>
+                            <li><a href="{{ url('/') }}"><img src="{{ Vite::asset('resources/assets/images/inner-images/breadcumb-text-shape.png') }}" alt="">Echofy</a></li>
                             <li>Service Details</li>
                         </ul>
                     </div>
@@ -30,7 +30,7 @@
                     <div class="row">
                         <div class="col-lg-12">
                             <div class="services-details-thumb">
-                                <img src="{{ asset('assets/images/inner-images/services-details.png') }}" alt="">
+                                <img src="{{ Vite::asset('resources/assets/images/inner-images/services-details.png') }}" alt="">
                             </div>
                             <div class="services-details-content">
                                 <h4 class="services-details-title">Appropriately engage leading-edge</h4>
@@ -41,7 +41,7 @@
                                 <div class="col-lg-6 col-md-6">
                                     <div class="service-details-icon-box">
                                         <div class="service-details-icon-thumb">
-                                            <img src="{{ asset('assets/images/inner-images/services-details-icon-1.png') }}" alt="">
+                                            <img src="{{ Vite::asset('resources/assets/images/inner-images/services-details-icon-1.png') }}" alt="">
                                         </div>
                                         <div class="service-details-box-content">
                                             <h4>Cleaning Ocean</h4>
@@ -52,7 +52,7 @@
                                 <div class="col-lg-6 col-md-6">
                                     <div class="service-details-icon-box">
                                         <div class="service-details-icon-thumb">
-                                            <img src="{{ asset('assets/images/inner-images/services-details-icon-2.png') }}" alt="">
+                                            <img src="{{ Vite::asset('resources/assets/images/inner-images/services-details-icon-2.png') }}" alt="">
                                         </div>
                                         <div class="service-details-box-content">
                                             <h4>Plant Seedlings</h4>
@@ -63,7 +63,7 @@
                             </div>
                             <div class="services-details-text">
                                 <div class="service-details-text-icon">
-                                    <img src="{{ asset('assets/images/inner-images/services-details-text-icon.png') }}" alt="">
+                                    <img src="{{ Vite::asset('resources/assets/images/inner-images/services-details-text-icon.png') }}" alt="">
                                 </div>
                                 <div class="service-details-text-content">
                                     <p>Competently architect intermandated deliverables client niches continually underwhelm</p>
@@ -75,7 +75,7 @@
                                 <div class="col-lg-6 col-md-6">
                                     <div class="single-benefits-box">
                                         <div class="benefits-thumb">
-                                            <img src="{{ asset('assets/images/inner-images/services-details-benefits-thumb-1.png') }}" alt="">
+                                            <img src="{{ Vite::asset('resources/assets/images/inner-images/services-details-benefits-thumb-1.png') }}" alt="">
                                         </div>
                                         <div class="benefits-content">
                                             <h4>Renewable Energy</h4>
@@ -89,7 +89,7 @@
                                 <div class="col-lg-6 col-md-6">
                                     <div class="single-benefits-box">
                                         <div class="benefits-thumb">
-                                            <img src="{{ asset('assets/images/inner-images/services-details-benefits-thumb-2.png') }}" alt="">
+                                            <img src="{{ Vite::asset('resources/assets/images/inner-images/services-details-benefits-thumb-2.png') }}" alt="">
                                         </div>
                                         <div class="benefits-content">
                                             <h4>Green Cleaning Service</h4>
@@ -113,11 +113,11 @@
                                 </div>
                                 <div class="widget-category">
                                     <ul>
-                                        <li><a href="{{ url('/service') }}"><img src="{{ asset('assets/images/inner-images/category-icon.png') }}" alt="">Ocean Cleaning<i class="bi bi-arrow-right"></i></a></li>
-                                        <li><a href="{{ url('/service') }}"><img src="{{ asset('assets/images/inner-images/category-icon.png') }}" alt="">Dust Recycling<i class="bi bi-arrow-right"></i></a></li>
-                                        <li><a href="{{ url('/service') }}"><img src="{{ asset('assets/images/inner-images/category-icon.png') }}" alt="">Plant Seedlings<i class="bi bi-arrow-right"></i></a></li>
-                                        <li><a href="{{ url('/service') }}"><img src="{{ asset('assets/images/inner-images/category-icon.png') }}" alt="">Renewable Energy<i class="bi bi-arrow-right"></i></a></li>
-                                        <li><a href="{{ url('/service') }}"><img src="{{ asset('assets/images/inner-images/category-icon.png') }}" alt="">Environmental<i class="bi bi-arrow-right"></i></a></li>
+                                        <li><a href="{{ url('/service') }}"><img src="{{ Vite::asset('resources/assets/images/inner-images/category-icon.png') }}" alt="">Ocean Cleaning<i class="bi bi-arrow-right"></i></a></li>
+                                        <li><a href="{{ url('/service') }}"><img src="{{ Vite::asset('resources/assets/images/inner-images/category-icon.png') }}" alt="">Dust Recycling<i class="bi bi-arrow-right"></i></a></li>
+                                        <li><a href="{{ url('/service') }}"><img src="{{ Vite::asset('resources/assets/images/inner-images/category-icon.png') }}" alt="">Plant Seedlings<i class="bi bi-arrow-right"></i></a></li>
+                                        <li><a href="{{ url('/service') }}"><img src="{{ Vite::asset('resources/assets/images/inner-images/category-icon.png') }}" alt="">Renewable Energy<i class="bi bi-arrow-right"></i></a></li>
+                                        <li><a href="{{ url('/service') }}"><img src="{{ Vite::asset('resources/assets/images/inner-images/category-icon.png') }}" alt="">Environmental<i class="bi bi-arrow-right"></i></a></li>
                                     </ul>
                                 </div>
                             </div>
@@ -132,7 +132,7 @@
                             </div>
                             <div class="widget-sidber-contact-box">
                                 <div class="widget-sidber-contact">
-                                    <img src="{{ asset('assets/images/inner-images/sidber-cont-icon.png') }}" alt="">
+                                    <img src="{{ Vite::asset('resources/assets/images/inner-images/sidber-cont-icon.png') }}" alt="">
                                 </div>
                                 <p class="widget-sidber-contact-text">Call Us Anytime</p>
                                 <h3 class="widget-sidber-contact-number">+123 (4567) 890</h3>

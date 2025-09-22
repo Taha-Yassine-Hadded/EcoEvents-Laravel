@@ -17,7 +17,7 @@
                         <ul>
                             <li>
                                 <a href="{{ url('/') }}">
-                                    <img src="{{ asset('assets/images/inner-images/breadcumb-text-shape.png') }}" alt="">Echofy
+                                    <img src="{{ Vite::asset('resources/assets/images/inner-images/breadcumb-text-shape.png') }}" alt="">Echofy
                                 </a>
                             </li>
                             <li>Blog Grid with Sidebar</li>
@@ -43,7 +43,7 @@
                         <div class="col-lg-6 col-md-6">
                             <div class="single-blog-box">
                                 <div class="single-blog-thumb">
-                                    <img src="{{ asset('assets/images/home1/blog-1.jpg') }}" alt="">
+                                    <img src="{{ Vite::asset('resources/assets/images/home1/blog-1.jpg') }}" alt="">
                                 </div>
                                 <div class="blog-content">
                                     <a href="{{ url('blog-details') }}">Blog Title {{ $i }}</a>
@@ -86,7 +86,7 @@
                                         @foreach(['Ocean Cleaning','Dust Recycling','Plant Seedlings','Renewable Energy','Environmental'] as $category)
                                             <li>
                                                 <a href="#">
-                                                    <img src="{{ asset('assets/images/inner-images/category-icon.png') }}" alt="">{{ $category }}
+                                                    <img src="{{ Vite::asset('resources/assets/images/inner-images/category-icon.png') }}" alt="">{{ $category }}
                                                     <i class="bi bi-arrow-right"></i>
                                                 </a>
                                             </li>
@@ -102,7 +102,7 @@
                                 @for ($i = 1; $i <= 3; $i++)
                                     <div class="sidber-widget-recent-post">
                                         <div class="recent-widget-thumb">
-                                            <img src="{{ asset("assets/images/inner-images/recent-post-$i.png") }}" alt="">
+                                            <img src="{{ Vite::asset('resources/assets/images/inner-images/recent-post-'.$i.'.png') }}" alt="">
                                         </div>
                                         <div class="recent-widget-content">
                                             <a href="{{ url('blog-details') }}">Popular Post {{ $i }}</a>

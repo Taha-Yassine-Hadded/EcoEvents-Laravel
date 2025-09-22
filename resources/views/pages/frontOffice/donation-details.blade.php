@@ -13,7 +13,7 @@
                             <h4>Donation Details</h4>
                         </div>
                         <ul>
-                            <li><a href="{{ url('/') }}"><img src="{{ asset('assets/images/inner-images/breadcumb-text-shape.png') }}" alt="">Echofy</a></li>
+                            <li><a href="{{ url('/') }}"><img src="{{ Vite::asset('resources/assets/images/inner-images/breadcumb-text-shape.png') }}" alt="">Echofy</a></li>
                             <li><a href="{{ url('/donation') }}">Donations</a></li>
                             <li class="khela-hbe">Fund Raising for Tree Plantation 2024</li>
                         </ul>
@@ -32,7 +32,7 @@
                         <div class="col-lg-12">
                             <div class="single-donation-box">
                                 <div class="donation-thumb">
-                                    <img src="{{ asset('assets/images/inner-images/donation-details-thumb.png') }}" alt="">
+                                    <img src="{{ Vite::asset('resources/assets/images/inner-images/donation-details-thumb.png') }}" alt="">
                                 </div>
                                 <div class="donation-content">
                                     <div class="skills-content">
@@ -186,7 +186,7 @@
                                     </div>
                                     <div class="sidber-widget-recent-post">
                                         <div class="recent-widget-thumb">
-                                            <img src="{{ asset('assets/images/inner-images/donation-details-1.png') }}" alt="">
+                                            <img src="{{ Vite::asset('resources/assets/images/inner-images/donation-details-1.png') }}" alt="">
                                         </div>
                                         <div class="recent-widget-content">
                                             <a href="{{ url('/donation-details') }}">Fund Raising for Forest Recycling & Repair</a>
@@ -195,7 +195,7 @@
                                     </div>
                                     <div class="sidber-widget-recent-post">
                                         <div class="recent-widget-thumb">
-                                            <img src="{{ asset('assets/images/inner-images/donation-details-2.png') }}" alt="">
+                                            <img src="{{ Vite::asset('resources/assets/images/inner-images/donation-details-2.png') }}" alt="">
                                         </div>
                                         <div class="recent-widget-content">
                                             <a href="{{ url('/donation-details') }}">Environmental Dust Clean And Recycling</a>
@@ -204,7 +204,7 @@
                                     </div>
                                     <div class="sidber-widget-recent-post">
                                         <div class="recent-widget-thumb">
-                                            <img src="{{ asset('assets/images/inner-images/donation-details-3.png') }}" alt="">
+                                            <img src="{{ Vite::asset('resources/assets/images/inner-images/donation-details-3.png') }}" alt="">
                                         </div>
                                         <div class="recent-widget-content">
                                             <a href="{{ url('/donation-details') }}">Donations for Plant Seedlings Orphan Peoples</a>
@@ -214,7 +214,7 @@
                                 </div>
                                 <div class="widget-sidber-contact-box">
                                     <div class="widget-sidber-contact">
-                                        <img src="{{ asset('assets/images/inner-images/sidber-cont-icon.png') }}" alt="">
+                                        <img src="{{ Vite::asset('resources/assets/images/inner-images/sidber-cont-icon.png') }}" alt="">
                                     </div>
                                     <p class="widget-sidber-contact-text">Call Us Anytime</p>
                                     <h3 class="widget-sidber-contact-number">+123 (4567) 890</h3>

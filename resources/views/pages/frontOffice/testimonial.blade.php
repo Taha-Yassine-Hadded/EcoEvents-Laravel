@@ -13,7 +13,7 @@
                             <h4>Testimonials</h4>
                         </div>
                         <ul>
-                            <li><a href="{{ url('/') }}"><img src="{{ asset('assets/images/inner-images/breadcumb-text-shape.png') }}" alt="">Echofy</a></li>
+                            <li><a href="{{ url('/') }}"><img src="{{ Vite::asset('resources/assets/images/inner-images/breadcumb-text-shape.png') }}" alt="">Echofy</a></li>
                             <li>Testimonials</li>
                         </ul>
                     </div>
@@ -28,7 +28,7 @@
             <div class="row">
                 <div class="col-lg-12 text-center">
                     <div class="section-title center">
-                        <h4><img src="{{ asset('assets/images/home1/section-shape.png') }}" alt="">Testimonials</h4>
+                        <h4><img src="{{ Vite::asset('resources/assets/images/home1/section-shape.png') }}" alt="">Testimonials</h4>
                         <h1>Clients' Best Feedback About</h1>
                         <h1>Echofy Provision</h1>
                     </div>
@@ -38,11 +38,11 @@
                 <div class="col-lg-6">
                     <div class="single-testimonial-box">
                         <div class="testi-qutoe">
-                            <img src="{{ asset('assets/images/home1/testi-quote.png') }}" alt="">
+                            <img src="{{ Vite::asset('resources/assets/images/home1/testi-quote.png') }}" alt="">
                         </div>
                         <div class="testi-author">
                             <div class="testi-author-thumb">
-                                <img src="{{ asset('assets/images/home1/testi-author-1.png') }}" alt="">
+                                <img src="{{ Vite::asset('resources/assets/images/home1/testi-author-1.png') }}" alt="">
                             </div>
                             <div class="testi-author-content">
                                 <div class="testi-author-rating">
@@ -71,11 +71,11 @@
                 <div class="col-lg-6">
                     <div class="single-testimonial-box">
                         <div class="testi-qutoe">
-                            <img src="{{ asset('assets/images/home1/testi-quote.png') }}" alt="">
+                            <img src="{{ Vite::asset('resources/assets/images/home1/testi-quote.png') }}" alt="">
                         </div>
                         <div class="testi-author">
                             <div class="testi-author-thumb">
-                                <img src="{{ asset('assets/images/home1/testi-author-2.png') }}" alt="">
+                                <img src="{{ Vite::asset('resources/assets/images/home1/testi-author-2.png') }}" alt="">
                             </div>
                             <div class="testi-author-content">
                                 <div class="testi-author-rating">
@@ -104,11 +104,11 @@
                 <div class="col-lg-6">
                     <div class="single-testimonial-box">
                         <div class="testi-qutoe">
-                            <img src="{{ asset('assets/images/home1/testi-quote.png') }}" alt="">
+                            <img src="{{ Vite::asset('resources/assets/images/home1/testi-quote.png') }}" alt="">
                         </div>
                         <div class="testi-author">
                             <div class="testi-author-thumb">
-                                <img src="{{ asset('assets/images/home1/testi-author-3.png') }}" alt="">
+                                <img src="{{ Vite::asset('resources/assets/images/home1/testi-author-3.png') }}" alt="">
                             </div>
                             <div class="testi-author-content">
                                 <div class="testi-author-rating">
@@ -137,11 +137,11 @@
                 <div class="col-lg-6">
                     <div class="single-testimonial-box">
                         <div class="testi-qutoe">
-                            <img src="{{ asset('assets/images/home1/testi-quote.png') }}" alt="">
+                            <img src="{{ Vite::asset('resources/assets/images/home1/testi-quote.png') }}" alt="">
                         </div>
                         <div class="testi-author">
                             <div class="testi-author-thumb">
-                                <img src="{{ asset('assets/images/home1/testi-author-4.png') }}" alt="">
+                                <img src="{{ Vite::asset('resources/assets/images/home1/testi-author-4.png') }}" alt="">
                             </div>
                             <div class="testi-author-content">
                                 <div class="testi-author-rating">
@@ -170,11 +170,11 @@
                 <div class="col-lg-6">
                     <div class="single-testimonial-box">
                         <div class="testi-qutoe">
-                            <img src="{{ asset('assets/images/home1/testi-quote.png') }}" alt="">
+                            <img src="{{ Vite::asset('resources/assets/images/home1/testi-quote.png') }}" alt="">
                         </div>
                         <div class="testi-author">
                             <div class="testi-author-thumb">
-                                <img src="{{ asset('assets/images/home1/testi-author-5.png') }}" alt="">
+                                <img src="{{ Vite::asset('resources/assets/images/home1/testi-author-5.png') }}" alt="">
                             </div>
                             <div class="testi-author-content">
                                 <div class="testi-author-rating">
@@ -203,11 +203,11 @@
                 <div class="col-lg-6">
                     <div class="single-testimonial-box">
                         <div class="testi-qutoe">
-                            <img src="{{ asset('assets/images/home1/testi-quote.png') }}" alt="">
+                            <img src="{{ Vite::asset('resources/assets/images/home1/testi-quote.png') }}" alt="">
                         </div>
                         <div class="testi-author">
                             <div class="testi-author-thumb">
-                                <img src="{{ asset('assets/images/home1/testi-author-6.png') }}" alt="">
+                                <img src="{{ Vite::asset('resources/assets/images/home1/testi-author-6.png') }}" alt="">
                             </div>
                             <div class="testi-author-content">
                                 <div class="testi-author-rating">
@@ -236,7 +236,7 @@
             </div>
         </div>
         <div class="testi-shape">
-            <img src="{{ asset('assets/images/home1/testi-shape.png') }}" alt="">
+            <img src="{{ Vite::asset('resources/assets/images/home1/testi-shape.png') }}" alt="">
         </div>
     </div>
 @endsection

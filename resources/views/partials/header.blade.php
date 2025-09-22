@@ -7,7 +7,7 @@
             <div class="col-lg-3">
                 <div class="header-logo">
                     <a href="{{ url('/') }}">
-                        <img src="{{ asset('assets/images/home6/logo.png') }}" alt="logo">
+                        <img src="{{ Vite::asset('resources/assets/images/home6/logo.png') }}" alt="logo">
                     </a>
                 </div>
             </div>

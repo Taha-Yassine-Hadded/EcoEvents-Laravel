@@ -13,7 +13,7 @@
                             <h4>Donations</h4>
                         </div>
                         <ul>
-                            <li><a href="{{ url('/') }}"><img src="{{ asset('assets/images/inner-images/breadcumb-text-shape.png') }}" alt="">Echofy</a></li>
+                            <li><a href="{{ url('/') }}"><img src="{{ Vite::asset('resources/assets/images/inner-images/breadcumb-text-shape.png') }}" alt="">Echofy</a></li>
                             <li>Donations</li>
                         </ul>
                     </div>
@@ -28,7 +28,7 @@
             <div class="row">
                 <div class="col-lg-12 text-center">
                     <div class="section-title center">
-                        <h4><img src="{{ asset('assets/images/home1/section-shape.png') }}" alt="">Donation</h4>
+                        <h4><img src="{{ Vite::asset('resources/assets/images/home1/section-shape.png') }}" alt="">Donation</h4>
                         <h1>Building a Greener Future</h1>
                         <h1>Donation Money</h1>
                     </div>
@@ -38,7 +38,7 @@
                 <div class="col-lg-4 col-md-6">
                     <div class="single-donation-box">
                         <div class="donation-thumb">
-                            <img src="{{ asset('assets/images/home2/donation-1.png') }}" alt="">
+                            <img src="{{ Vite::asset('resources/assets/images/home2/donation-1.png') }}" alt="">
                             <div class="donate-button">
                                 <a href="{{ url('/donation-details') }}">Donate Now</a>
                             </div>
@@ -60,7 +60,7 @@
                 <div class="col-lg-4 col-md-6">
                     <div class="single-donation-box">
                         <div class="donation-thumb">
-                            <img src="{{ asset('assets/images/home2/donation-2.png') }}" alt="">
+                            <img src="{{ Vite::asset('resources/assets/images/home2/donation-2.png') }}" alt="">
                             <div class="donate-button">
                                 <a href="{{ url('/donation-details') }}">Donate Now</a>
                             </div>
@@ -82,7 +82,7 @@
                 <div class="col-lg-4 col-md-6">
                     <div class="single-donation-box">
                         <div class="donation-thumb">
-                            <img src="{{ asset('assets/images/home2/donation-3.png') }}" alt="">
+                            <img src="{{ Vite::asset('resources/assets/images/home2/donation-3.png') }}" alt="">
                             <div class="donate-button">
                                 <a href="{{ url('/donation-details') }}">Donate Now</a>
                             </div>
@@ -104,7 +104,7 @@
                 <div class="col-lg-4 col-md-6">
                     <div class="single-donation-box">
                         <div class="donation-thumb">
-                            <img src="{{ asset('assets/images/home2/donation-4.png') }}" alt="">
+                            <img src="{{ Vite::asset('resources/assets/images/home2/donation-4.png') }}" alt="">
                             <div class="donate-button">
                                 <a href="{{ url('/donation-details') }}">Donate Now</a>
                             </div>
@@ -126,7 +126,7 @@
                 <div class="col-lg-4 col-md-6">
                     <div class="single-donation-box">
                         <div class="donation-thumb">
-                            <img src="{{ asset('assets/images/home2/donation-5.png') }}" alt="">
+                            <img src="{{ Vite::asset('resources/assets/images/home2/donation-5.png') }}" alt="">
                             <div class="donate-button">
                                 <a href="{{ url('/donation-details') }}">Donate Now</a>
                             </div>
@@ -148,7 +148,7 @@
                 <div class="col-lg-4 col-md-6">
                     <div class="single-donation-box">
                         <div class="donation-thumb">
-                            <img src="{{ asset('assets/images/home2/donation-6.png') }}" alt="">
+                            <img src="{{ Vite::asset('resources/assets/images/home2/donation-6.png') }}" alt="">
                             <div class="donate-button">
                                 <a href="{{ url('/donation-details') }}">Donate Now</a>
                             </div>
