@@ -1,10 +1,11 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthController;
 
 Route::get('/', function () {
     return view('pages.frontOffice.home');
-});
+})->name('home');
 
 // About page
 Route::get('/about', function () {
@@ -85,3 +86,20 @@ Route::get('/testimonial', function () {
 Route::get('/dashboard', function () {
     return view('pages.backOffice.dashboard');
 });
+
+// Test route
+Route::get('/test', function () {
+    return 'Test route works!';
+});
+
+// Simple register test
+Route::get('/register-test', function () {
+    return 'Register route works!';
+});
+
+// Test controller
+Route::get('/register-controller-test', [AuthController::class, 'showRegisterForm']);
+
+// Registration Routes
+Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('register');
+Route::post('/register', [AuthController::class, 'register']);

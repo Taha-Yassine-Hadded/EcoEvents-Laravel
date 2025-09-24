@@ -21,6 +21,13 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'phone',
+        'address',
+        'city',
+        'interests',
+        'role',
+        'bio',
+        'profile_image',
     ];
 
     /**
@@ -43,6 +50,41 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'interests' => 'array',
         ];
+    }
+
+    /**
+     * Check if user is admin
+     */
+    public function isAdmin(): bool
+    {
+        return $this->role === 'admin';
+    }
+
+    /**
+     * Check if user is organizer
+     */
+    public function isOrganizer(): bool
+    {
+        return $this->role === 'organizer';
+    }
+
+    /**
+     * Get user's full address
+     */
+    public function getFullAddressAttribute(): string
+    {
+        return $this->address . ', ' . $this->city;
+    }
+
+    /**
+     * Get profile image URL
+     */
+    public function getProfileImageUrlAttribute(): string
+    {
+        return $this->profile_image 
+            ? asset('storage/' . $this->profile_image)
+            : asset('assets/images/default-avatar.png');
     }
 }
