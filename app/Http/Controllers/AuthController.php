@@ -64,8 +64,8 @@ class AuthController extends Controller
             // Login user
             Auth::login($user);
 
-            return redirect()->route('home')->with('success', 'Votre compte a été créé avec succès.');
-
+           // return redirect()->route('home')->with('success', 'Votre compte a été créé avec succès.');
+            return redirect()->route('login');
         } catch (\Exception $e) {
             return back()->withErrors(['error' => 'Erreur lors de l\'inscription: ' . $e->getMessage()])->withInput();
         }

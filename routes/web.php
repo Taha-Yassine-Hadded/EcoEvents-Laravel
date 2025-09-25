@@ -1,7 +1,9 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\LoginController;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\AuthController;
+use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('pages.frontOffice.home');
@@ -82,10 +84,10 @@ Route::get('/testimonial', function () {
     return view('pages.frontOffice.testimonial');
 });
 
-// Admin Dashboard
+// Admin Dashboard - utilise directement la classe middleware
 Route::get('/dashboard', function () {
     return view('pages.backOffice.dashboard');
-});
+})->middleware(\App\Http\Middleware\VerifyJWT::class)->name('dashboard');
 
 // Test route
 Route::get('/test', function () {
@@ -103,3 +105,12 @@ Route::get('/register-controller-test', [AuthController::class, 'showRegisterFor
 // Registration Routes
 Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('register');
 Route::post('/register', [AuthController::class, 'register']);
+
+// Login Routes
+Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
+Route::post('/login', [LoginController::class, 'login']);
+Route::post('/logout', [LoginController::class, 'logout'])->middleware(\App\Http\Middleware\VerifyJWT::class)->name('logout');
+// User Routes - utilise directement la classe middleware pour retourné les infos de user connecté
+Route::get('/user', [UserController::class, 'getUser'])
+    ->middleware(\App\Http\Middleware\VerifyJWT::class)
+    ->name('user.get');

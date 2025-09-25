@@ -2,14 +2,13 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Tymon\JWTAuth\Contracts\JWTSubject;
 
-class User extends Authenticatable
+class User extends Authenticatable implements JWTSubject
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
 
     /**
@@ -79,12 +78,61 @@ class User extends Authenticatable
     }
 
     /**
-     * Get profile image URL
+     * Get profile image URL - retourne null si pas d'image
      */
-    public function getProfileImageUrlAttribute(): string
+    public function getProfileImageUrlAttribute(): ?string
     {
-        return $this->profile_image 
+        return $this->profile_image
             ? asset('storage/' . $this->profile_image)
-            : asset('assets/images/default-avatar.png');
+            : null;
+    }
+
+    /**
+     * Get user initials from name
+     */
+    public function getInitialsAttribute(): string
+    {
+        $words = explode(' ', trim($this->name));
+        $initials = '';
+
+        foreach ($words as $word) {
+            if (!empty($word)) {
+                $initials .= strtoupper(substr($word, 0, 1));
+                if (strlen($initials) >= 2) {
+                    break;
+                }
+            }
+        }
+
+        return $initials ?: 'NN'; // Par défaut si aucun nom
+    }
+
+    /**
+     * Check if user has profile image
+     */
+    public function hasProfileImage(): bool
+    {
+        return !empty($this->profile_image) &&
+            file_exists(storage_path('app/public/' . $this->profile_image));
+    }
+
+    /**
+     * Get the identifier that will be stored in the JWT subject claim.
+     *
+     * @return mixed
+     */
+    public function getJWTIdentifier()
+    {
+        return $this->getKey();
+    }
+
+    /**
+     * Return a key-value array, containing any custom claims to be added to the JWT.
+     *
+     * @return array
+     */
+    public function getJWTCustomClaims()
+    {
+        return [];
     }
 }
