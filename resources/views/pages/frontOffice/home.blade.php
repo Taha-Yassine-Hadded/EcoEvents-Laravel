@@ -40,42 +40,42 @@
                     <div class="col-lg-4 col-md-6">
                         <div class="single-feature-box">
                             <div class="feature-icon">
-                                <img src="{{Vite::asset('resources/assets/images/home6/feature-icon-1.png')}}" alt="">
+                                <img src="{{asset('assets/images/home6/feature-icon-1.png')}}" alt="">
                             </div>
                             <div class="feature-content">
                                 <h4>Certified Engineers</h4>
                                 <p>Eagle ray ray snoek rough person brown trout ropefish lake</p>
                             </div>
                             <div class="single-feature-shape">
-                                <img src="{{Vite::asset('resources/assets/images/home6/feature-shape.png')}}" alt="">
+                                <img src="{{asset('assets/images/home6/feature-shape.png')}}" alt="">
                             </div>
                         </div>
                     </div>			
                     <div class="col-lg-4 col-md-6">
                         <div class="single-feature-box">
                             <div class="feature-icon">
-                                <img src="{{Vite::asset('resources/assets/images/home6/feature-icon-2.png')}}" alt="">
+                                <img src="{{asset('assets/images/home6/feature-icon-2.png')}}" alt="">
                             </div>
                             <div class="feature-content">
                                 <h4>Solar System Design</h4>
                                 <p>Eagle ray ray snoek rough person brown trout ropefish lake</p>
                             </div>
                             <div class="single-feature-shape">
-                                <img src="{{Vite::asset('resources/assets/images/home6/feature-shape.png')}}" alt="">
+                                <img src="{{asset('assets/images/home6/feature-shape.png')}}" alt="">
                             </div>
                         </div>
                     </div>			
                     <div class="col-lg-4 col-md-6">
                         <div class="single-feature-box">
                             <div class="feature-icon">
-                                <img src="{{Vite::asset('resources/assets/images/home6/feature-icon-3.png')}}" alt="">
+                                <img src="{{asset('assets/images/home6/feature-icon-3.png')}}" alt="">
                             </div>
                             <div class="feature-content">
                                 <h4>Solar eco-power </h4>
                                 <p>Eagle ray ray snoek rough person brown trout ropefish lake</p>
                             </div>
                             <div class="single-feature-shape">
-                                <img src="{{Vite::asset('resources/assets/images/home6/feature-shape.png')}}" alt="">
+                                <img src="{{asset('assets/images/home6/feature-shape.png')}}" alt="">
                             </div>
                         </div>
                     </div>
@@ -96,12 +96,12 @@
                 <div class="row align-items-center">
                     <div class="col-lg-6">
                         <div class="about-thumb">
-                            <img src="{{Vite::asset('resources/assets/images/home6/about-thumb.png')}}" alt="">
+                            <img src="{{asset('assets/images/home6/about-thumb.png')}}" alt="">
                         </div>
                     </div>
                     <div class="col-lg-6">
                         <div class="section-title left">
-                            <h4><img src="{{Vite::asset('resources/assets/images/home6/section-title-shape.png')}}" alt="">Get To know Us</h4>
+                            <h4><img src="{{asset('assets/images/home6/section-title-shape.png')}}" alt="">Get To know Us</h4>
                             <h1 data-splitting>Innovative Renewable</h1>
                             <h1 data-splitting>Energy Solutions.</h1>
                             <p class="section-desc">
@@ -112,7 +112,7 @@
                         </div>
                         <div class="about-item-box">
                             <div class="about-item-thumb">
-                                <img src="{{Vite::asset('resources/assets/images/home6/about-item.png')}}" alt="">
+                                <img src="{{asset('assets/images/home6/about-item.png')}}" alt="">
                             </div>
                             <div class="about-list-item">
                                 <ul>
@@ -143,7 +143,7 @@
                 <div class="row align-items-center">
                     <div class="col-lg-6">
                         <div class="section-title left">
-                            <h4><img src="{{Vite::asset('resources/assets/images/home6/section-title-shape.png')}}" alt="">Echofy Services</h4>
+                            <h4><img src="{{asset('assets/images/home6/section-title-shape.png')}}" alt="">Echofy Services</h4>
                             <h1 class="text-animation-2">Pioneering Sustainable</h1>
                             <h1 class="text-animation-2">Energy Services.</h1>
                         </div>
@@ -174,9 +174,9 @@
                         <div class="col-lg-12">
                             <div class="single-service-box">
                                 <div class="service-thumb">
-                                    <img src="{{Vite::asset('resources/assets/images/home6/services-1.jpg')}}" alt="">
+                                    <img src="{{asset('assets/images/home6/services-1.jpg')}}" alt="">
                                     <div class="service-icon">
-                                        <img src="{{Vite::asset('resources/assets/images/home6/services-icon-1.jpg')}}" alt="">
+                                        <img src="{{asset('assets/images/home6/services-icon-1.jpg')}}" alt="">
                                     </div>
                                 </div>
                                 <div class="services-content">
@@ -192,9 +192,9 @@
                         <div class="col-lg-12">
                             <div class="single-service-box">
                                 <div class="service-thumb">
-                                    <img src="{{Vite::asset('resources/assets/images/home6/services-2.jpg')}}" alt="">
+                                    <img src="{{asset('assets/images/home6/services-2.jpg')}}" alt="">
                                     <div class="service-icon">
-                                        <img src="{{Vite::asset('resources/assets/images/home6/services-icon-2.jpg')}}" alt="">
+                                        <img src="{{asset('assets/images/home6/services-icon-2.jpg')}}" alt="">
                                     </div>
                                 </div>
                                 <div class="services-content">
@@ -210,9 +210,9 @@
                         <div class="col-lg-12">
                             <div class="single-service-box">
                                 <div class="service-thumb">
-                                    <img src="{{Vite::asset('resources/assets/images/home6/services-3.jpg')}}" alt="">
+                                    <img src="{{asset('assets/images/home6/services-3.jpg')}}" alt="">
                                     <div class="service-icon">
-                                        <img src="{{Vite::asset('resources/assets/images/home6/services-icon-3.jpg')}}" alt="">
+                                        <img src="{{asset('assets/images/home6/services-icon-3.jpg')}}" alt="">
                                     </div>
                                 </div>
                                 <div class="services-content">
@@ -228,9 +228,9 @@
                         <div class="col-lg-12">
                             <div class="single-service-box">
                                 <div class="service-thumb">
-                                    <img src="{{Vite::asset('resources/assets/images/home6/services-4.jpg')}}" alt="">
+                                    <img src="{{asset('assets/images/home6/services-4.jpg')}}" alt="">
                                     <div class="service-icon">
-                                        <img src="{{Vite::asset('resources/assets/images/home6/services-icon-4.jpg')}}" alt="">
+                                        <img src="{{asset('assets/images/home6/services-icon-4.jpg')}}" alt="">
                                     </div>
                                 </div>
                                 <div class="services-content">
@@ -261,12 +261,12 @@
                 <div class="row align-items-center">
                     <div class="col-lg-6">
                         <div class="why-choose-thumb">
-                        <img src="{{Vite::asset('resources/assets/images/home6/why-choose-thumb.jpg')}}" alt="">
+                        <img src="{{asset('assets/images/home6/why-choose-thumb.jpg')}}" alt="">
                         </div>
                     </div>
                     <div class="col-lg-6">
                         <div class="section-title left">
-                            <h4><img src="{{Vite::asset('resources/assets/images/home6/section-title-shape.png')}}" alt="">Why Choose Us</h4>
+                            <h4><img src="{{asset('assets/images/home6/section-title-shape.png')}}" alt="">Why Choose Us</h4>
                             <h1>Building a Foundation</h1>
                             <h1>Energy Solutions.</h1>
                             <p class="section-desc">
@@ -277,7 +277,7 @@
                         </div>
                         <div class="why-choose-us-item">
                             <div class="choose-us-icon">
-                                <img src="{{Vite::asset('resources/assets/images/home6/choose-us-icon-1.png')}}" alt="">
+                                <img src="{{asset('assets/images/home6/choose-us-icon-1.png')}}" alt="">
                             </div>
                             <div class="choose-us-content">
                                 <h4>Solar Panel Solutions</h4>
@@ -287,7 +287,7 @@
                         </div>				
                         <div class="why-choose-us-item">
                             <div class="choose-us-icon">
-                                <img src="{{Vite::asset('resources/assets/images/home6/choose-us-icon-1.png')}}" alt="">
+                                <img src="{{asset('assets/images/home6/choose-us-icon-1.png')}}" alt="">
                             </div>
                             <div class="choose-us-content">
                                 <h4>Renewable Energy Consulting</h4>
@@ -313,7 +313,7 @@
                 <div class="row">
                     <div class="col-lg-12 text-center">
                         <div class="section-title center">
-                            <h4><img src="{{Vite::asset('resources/assets/images/home6/section-title-shape.png')}}" alt="">Pricing Plan<img class="images-2" src="{{Vite::asset('resources/assets/images/home6/section-title-shape.png')}}" alt=""></h4>
+                            <h4><img src="{{asset('assets/images/home6/section-title-shape.png')}}" alt="">Pricing Plan<img class="images-2" src="{{asset('assets/images/home6/section-title-shape.png')}}" alt=""></h4>
                             <h1>A Customizable Approach</h1>
                             <h1>for Your Business</h1>
                         </div>
@@ -342,10 +342,10 @@
                             <a href="#">Purchase Now<i class="bi bi-arrow-right-short"></i></a>
                             </div>
                             <div class="pricing-shape-1">
-                                <img src="{{Vite::asset('resources/assets/images/home6/pricing-shape-1.png')}}" alt="">
+                                <img src="{{asset('assets/images/home6/pricing-shape-1.png')}}" alt="">
                             </div>				    
                             <div class="pricing-shape-2">
-                                <img src="{{Vite::asset('resources/assets/images/home6/pricing-shape-2.png')}}" alt="">
+                                <img src="{{asset('assets/images/home6/pricing-shape-2.png')}}" alt="">
                             </div>
                         </div>
                     </div>			
@@ -371,10 +371,10 @@
                             <a href="#">Purchase Now<i class="bi bi-arrow-right-short"></i></a>
                             </div>
                             <div class="pricing-shape-1">
-                                <img src="{{Vite::asset('resources/assets/images/home6/pricing-shape-1.png')}}" alt="">
+                                <img src="{{asset('assets/images/home6/pricing-shape-1.png')}}" alt="">
                             </div>				    
                             <div class="pricing-shape-2">
-                                <img src="{{Vite::asset('resources/assets/images/home6/pricing-shape-2.png')}}" alt="">
+                                <img src="{{asset('assets/images/home6/pricing-shape-2.png')}}" alt="">
                             </div>
                         </div>
                     </div>			
@@ -400,10 +400,10 @@
                             <a href="#">Purchase Now<i class="bi bi-arrow-right-short"></i></a>
                             </div>
                             <div class="pricing-shape-1">
-                                <img src="{{Vite::asset('resources/assets/images/home6/pricing-shape-1.png')}}" alt="">
+                                <img src="{{asset('assets/images/home6/pricing-shape-1.png')}}" alt="">
                             </div>				    
                             <div class="pricing-shape-2">
-                                <img src="{{Vite::asset('resources/assets/images/home6/pricing-shape-2.png')}}" alt="">
+                                <img src="{{asset('assets/images/home6/pricing-shape-2.png')}}" alt="">
                             </div>
                         </div>
                     </div>
@@ -424,7 +424,7 @@
                 <div class="row">
                     <div class="col-lg-12 text-center">
                         <div class="section-title center">
-                            <h4><img src="{{Vite::asset('resources/assets/images/home6/section-title-shape.png')}}" alt="">Professionals Team<img class="images-2" src="{{Vite::asset('resources/assets/images/home6/section-title-shape.png')}}" alt=""></h4>
+                            <h4><img src="{{asset('assets/images/home6/section-title-shape.png')}}" alt="">Professionals Team<img class="images-2" src="{{asset('assets/images/home6/section-title-shape.png')}}" alt=""></h4>
                             <h1>Our Creative Members</h1>
                         </div>
                     </div>
@@ -433,7 +433,7 @@
                     <div class="col-lg-3 col-md-6">
                         <div class="single-team-box">
                             <div class="team-thumb">
-                                <img src="{{Vite::asset('resources/assets/images/home6/team-1.png')}}" alt="">
+                                <img src="{{asset('assets/images/home6/team-1.png')}}" alt="">
                                 <div class="team-social-icon">
                                     <ul>
                                         <li><a href="#"><i class="fab fa-facebook-f"></i></a></li>
@@ -451,7 +451,7 @@
                     <div class="col-lg-3 col-md-6">
                         <div class="single-team-box">
                             <div class="team-thumb">
-                                <img src="{{Vite::asset('resources/assets/images/home6/team-2.png')}}" alt="">
+                                <img src="{{asset('assets/images/home6/team-2.png')}}" alt="">
                                 <div class="team-social-icon">
                                     <ul>
                                         <li><a href="#"><i class="fab fa-facebook-f"></i></a></li>
@@ -469,7 +469,7 @@
                     <div class="col-lg-3 col-md-6">
                         <div class="single-team-box">
                             <div class="team-thumb">
-                                <img src="{{Vite::asset('resources/assets/images/home6/team-3.png')}}" alt="">
+                                <img src="{{asset('assets/images/home6/team-3.png')}}" alt="">
                                 <div class="team-social-icon">
                                     <ul>
                                         <li><a href="#"><i class="fab fa-facebook-f"></i></a></li>
@@ -487,7 +487,7 @@
                     <div class="col-lg-3 col-md-6">
                         <div class="single-team-box">
                             <div class="team-thumb">
-                                <img src="{{Vite::asset('resources/assets/images/home6/team-4.png')}}" alt="">
+                                <img src="{{asset('assets/images/home6/team-4.png')}}" alt="">
                                 <div class="team-social-icon">
                                     <ul>
                                         <li><a href="#"><i class="fab fa-facebook-f"></i></a></li>
@@ -519,7 +519,7 @@
                 <div class="row">
                     <div class="col-lg-6">
                         <div class="section-title left">
-                            <h4><img src="{{Vite::asset('resources/assets/images/home6/section-title-shape.png')}}" alt="">Company Benefits</h4>
+                            <h4><img src="{{asset('assets/images/home6/section-title-shape.png')}}" alt="">Company Benefits</h4>
                             <h1>Solar Energy is a Free</h1>
                             <h1>Raw Material.</h1>
                             <p class="section-desc">
@@ -564,7 +564,7 @@
                 <div class="row">
                     <div class="col-md-12 text-center">
                         <div class="section-title center">
-                            <h4><img src="{{Vite::asset('resources/assets/images/home6/section-title-shape.png')}}" alt="">Our Testimonials<img class="images-2" src="{{Vite::asset('resources/assets/images/home6/section-title-shape.png')}}" alt=""></h4>
+                            <h4><img src="{{asset('assets/images/home6/section-title-shape.png')}}" alt="">Our Testimonials<img class="images-2" src="{{asset('assets/images/home6/section-title-shape.png')}}" alt=""></h4>
                             <h1>What Our Clinets Says</h1>
                         </div>
                     </div>
@@ -581,7 +581,7 @@
                             </div>
                             <div class="testi-author">
                                     <div class="testi-author-thumb">
-                                        <img src="{{Vite::asset('resources/assets/images/home6/testi-author-1.png')}}" alt="">
+                                        <img src="{{asset('assets/images/home6/testi-author-1.png')}}" alt="">
                                     </div>
                                     <div class="testi-author-content">
                                         <h4>Gleen Maxwell</h4>
@@ -598,7 +598,7 @@
                                     </ul>
                                 </div>
                                 <div class="testi-quote">
-                                <img src="{{Vite::asset('resources/assets/images/home6/testi-quote.png')}}" alt="">
+                                <img src="{{asset('assets/images/home6/testi-quote.png')}}" alt="">
                                 </div>   
                             </div>
                         </div>			   
@@ -612,7 +612,7 @@
                             </div>
                             <div class="testi-author">
                                     <div class="testi-author-thumb">
-                                        <img src="{{Vite::asset('resources/assets/images/home6/testi-author-2.png')}}" alt="">
+                                        <img src="{{asset('assets/images/home6/testi-author-2.png')}}" alt="">
                                     </div>
                                     <div class="testi-author-content">
                                         <h4>Gleen Evaliyan</h4>
@@ -629,7 +629,7 @@
                                     </ul>
                                 </div>
                                 <div class="testi-quote">
-                                <img src="{{Vite::asset('resources/assets/images/home6/testi-quote.png')}}" alt="">
+                                <img src="{{asset('assets/images/home6/testi-quote.png')}}" alt="">
                                 </div>   
                             </div>
                         </div>			    
@@ -643,7 +643,7 @@
                             </div>
                             <div class="testi-author">
                                     <div class="testi-author-thumb">
-                                        <img src="{{Vite::asset('resources/assets/images/home6/testi-author-3.png')}}" alt="">
+                                        <img src="{{asset('assets/images/home6/testi-author-3.png')}}" alt="">
                                     </div>
                                     <div class="testi-author-content">
                                         <h4>Gleen Muktar</h4>
@@ -660,7 +660,7 @@
                                     </ul>
                                 </div>
                                 <div class="testi-quote">
-                                <img src="{{Vite::asset('resources/assets/images/home6/testi-quote.png')}}" alt="">
+                                <img src="{{asset('assets/images/home6/testi-quote.png')}}" alt="">
                                 </div>   
                             </div>
                         </div>
@@ -682,7 +682,7 @@
                 <div class="row">
                     <div class="col-md-12 text-center">
                         <div class="section-title center">
-                            <h4><img src="{{Vite::asset('resources/assets/images/home6/section-title-shape.png')}}" alt="">Our Latest Blog<img class="images-2" src="{{Vite::asset('resources/assets/images/home6/section-title-shape.png')}}" alt=""></h4>
+                            <h4><img src="{{asset('assets/images/home6/section-title-shape.png')}}" alt="">Our Latest Blog<img class="images-2" src="{{asset('assets/images/home6/section-title-shape.png')}}" alt=""></h4>
                             <h1>Read the Latest News</h1>
                         </div>
                     </div>
@@ -691,7 +691,7 @@
                     <div class="col-lg-4 col-md-6">
                         <div class="single-blog-box">
                             <div class="blog-thumb">
-                                <img src="{{Vite::asset('resources/assets/images/home6/blog-1.png')}}" alt="">
+                                <img src="{{asset('assets/images/home6/blog-1.png')}}" alt="">
                             </div>
                             <div class="blog-content">
                                 <div class="blog-text">
@@ -712,7 +712,7 @@
                     <div class="col-lg-4 col-md-6">
                         <div class="single-blog-box">
                             <div class="blog-thumb">
-                                <img src="{{Vite::asset('resources/assets/images/home6/blog-2.png')}}" alt="">
+                                <img src="{{asset('assets/images/home6/blog-2.png')}}" alt="">
                             </div>
                             <div class="blog-content">
                                 <div class="blog-text">
@@ -733,7 +733,7 @@
                     <div class="col-lg-4 col-md-6">
                         <div class="single-blog-box">
                             <div class="blog-thumb">
-                                <img src="{{Vite::asset('resources/assets/images/home6/blog-3.png')}}" alt="">
+                                <img src="{{asset('assets/images/home6/blog-3.png')}}" alt="">
                             </div>
                             <div class="blog-content">
                                 <div class="blog-text">

@@ -8,43 +8,107 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <!-- Favicon -->
-    <link rel="icon" type="image/png" sizes="56x56" href="{{ Vite::asset('resources/assets/images/fav-icon/icon.png') }}">
+    <link rel="icon" type="image/png" sizes="56x56" href="{{ asset('assets/images/fav-icon/icon.png') }}">
 
     <!-- bootstrap CSS -->
-    @vite('resources/assets/css/bootstrap.min.css')
+    <link rel="stylesheet" href="{{ asset('assets/css/bootstrap.min.css') }}">
     <!-- carousel CSS -->
-    @vite('resources/assets/css/owl.carousel.min.css')
+    <link rel="stylesheet" href="{{ asset('assets/css/owl.carousel.min.css') }}">
     <!-- animate CSS -->
-    @vite('resources/assets/css/animate.css')
+    <link rel="stylesheet" href="{{ asset('assets/css/animate.css') }}">
     <!-- animated-text CSS -->
-    @vite('resources/assets/css/animated-text.css')
-    <!-- font-awesome CSS -->
-    @vite('resources/assets/css/all.min.css')
+    <link rel="stylesheet" href="{{ asset('assets/css/animated-text.css') }}">
+    <!-- font-awesome CSS via CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- font-flaticon CSS -->
-    @vite('resources/assets/css/flaticon.css')
+    <link rel="stylesheet" href="{{ asset('assets/css/flaticon.css') }}">
     <!-- theme-default CSS -->
-    @vite('resources/assets/css/theme-default.css')
+    <link rel="stylesheet" href="{{ asset('assets/css/theme-default.css') }}">
     <!-- meanmenu CSS -->
-    @vite('resources/assets/css/meanmenu.min.css')
+    <link rel="stylesheet" href="{{ asset('assets/css/meanmenu.min.css') }}">
     <!-- transitions CSS -->
-    @vite('resources/assets/css/owl.transitions.css')
+    <link rel="stylesheet" href="{{ asset('assets/css/owl.transitions.css') }}">
     <!-- venobox CSS -->
-    @vite('resources/assets/venobox/venobox.css')
+    <link rel="stylesheet" href="{{ asset('assets/venobox/venobox.css') }}">
     <!-- bootstrap icons -->
-    @vite('resources/assets/css/bootstrap-icons.css')
+    <link rel="stylesheet" href="{{ asset('assets/css/bootstrap-icons.css') }}">
     <!-- Main Style CSS -->
-    @vite('resources/assets/css/style.css')
+    <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
     <!-- responsive CSS -->
-    @vite('resources/assets/css/responsive.css')
+    <link rel="stylesheet" href="{{ asset('assets/css/responsive.css') }}">
 
     <!-- modernizr js -->
-    @vite('resources/assets/js/vendor/modernizr-3.5.0.min.js')
+    <script src="{{ asset('assets/js/vendor/modernizr-3.5.0.min.js') }}"></script>
 
     <!-- extra plugins -->
     <link rel="stylesheet" href="https://unpkg.com/splitting/dist/splitting.css" />
     <link rel="stylesheet" href="https://unpkg.com/splitting/dist/splitting-cells.css" />
 
     @stack('styles')
+
+    <!-- Custom EcoEvents Styles -->
+    <style>
+        .header-button .btn-register {
+            background: transparent;
+            color: #28a745;
+            border: 2px solid #28a745;
+            padding: 10px 20px;
+            border-radius: 25px;
+            margin-right: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .header-button .btn-register:hover {
+            background: #28a745;
+            color: white;
+        }
+
+        .header-button .btn-login {
+            background: #28a745;
+            color: white;
+            border: 2px solid #28a745;
+            padding: 10px 20px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .header-button .btn-login:hover {
+            background: #218838;
+            border-color: #218838;
+        }
+
+        /* Success/Error Messages */
+        .alert {
+            padding: 15px;
+            margin-bottom: 20px;
+            border: 1px solid transparent;
+            border-radius: 4px;
+        }
+
+        .alert-success {
+            color: #155724;
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+        }
+
+        .alert-danger {
+            color: #721c24;
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+        }
+
+        /* Toast position */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1060;
+        }
+    </style>
 </head>
 <body>
     <!-- Loader -->
@@ -59,6 +123,39 @@
 
     <!-- Page Content -->
     <main>
+        <!-- Toast Notifications -->
+        @if(session('success') || session('error'))
+            <div class="toast-container">
+                <div id="statusToast" class="toast align-items-center text-white {{ session('success') ? 'bg-success' : 'bg-danger' }} border-0" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="5000">
+                    <div class="d-flex">
+                        <div class="toast-body">
+                            {{ session('success') ?? session('error') }}
+                        </div>
+                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
+                </div>
+            </div>
+        @endif
+
+        <!-- Flash Messages -->
+        @if(session('success'))
+            <div class="container">
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    {{ session('success') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            </div>
+        @endif
+
+        @if(session('error'))
+            <div class="container">
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    {{ session('error') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            </div>
+        @endif
+
         @yield('content')
     </main>
 
@@ -100,28 +197,38 @@
     <!--==================================================-->
 
     <!-- Scripts -->
-    @vite('resources/assets/js/vendor/jquery-3.6.2.min.js')
-    @vite('resources/assets/js/popper.min.js')
-    @vite('resources/assets/js/bootstrap.min.js')
-    @vite('resources/assets/js/owl.carousel.min.js')
-    @vite('resources/assets/js/jquery.counterup.min.js')
-    @vite('resources/assets/js/waypoints.min.js')
-    @vite('resources/assets/js/wow.js')
-    @vite('resources/assets/js/imagesloaded.pkgd.min.js')
-    @vite('resources/assets/venobox/venobox.js')
-    @vite('resources/assets/js/animated-text.js')
-    @vite('resources/assets/venobox/venobox.min.js')
-    @vite('resources/assets/js/isotope.pkgd.min.js')
-    @vite('resources/assets/js/jquery.meanmenu.js')
-    @vite('resources/assets/js/jquery.scrollUp.js')
-    @vite('resources/assets/js/theme.js')
-    @vite('resources/assets/js/coustom.js')
-    @vite('resources/assets/js/jquery.barfiller.js')
-    @vite('resources/assets/js/vanilla-tilt.min.js')
-    @vite('resources/assets/js/silik-slider.js')
+    <script src="{{ asset('assets/js/vendor/jquery-3.6.2.min.js') }}"></script>
+    <script src="{{ asset('assets/js/popper.min.js') }}"></script>
+    <script src="{{ asset('assets/js/bootstrap.min.js') }}"></script>
+    <script src="{{ asset('assets/js/owl.carousel.min.js') }}"></script>
+    <script src="{{ asset('assets/js/jquery.counterup.min.js') }}"></script>
+    <script src="{{ asset('assets/js/waypoints.min.js') }}"></script>
+    <script src="{{ asset('assets/js/wow.js') }}"></script>
+    <script src="{{ asset('assets/js/imagesloaded.pkgd.min.js') }}"></script>
+    <script src="{{ asset('assets/venobox/venobox.js') }}"></script>
+    <script src="{{ asset('assets/js/animated-text.js') }}"></script>
+    <script src="{{ asset('assets/venobox/venobox.min.js') }}"></script>
+    <script src="{{ asset('assets/js/isotope.pkgd.min.js') }}"></script>
+    <script src="{{ asset('assets/js/jquery.meanmenu.js') }}"></script>
+    <script src="{{ asset('assets/js/jquery.scrollUp.js') }}"></script>
+    <script src="{{ asset('assets/js/theme.js') }}"></script>
+    <script src="{{ asset('assets/js/coustom.js') }}"></script>
+    <script src="{{ asset('assets/js/jquery.barfiller.js') }}"></script>
+    <script src="{{ asset('assets/js/vanilla-tilt.min.js') }}"></script>
+    <script src="{{ asset('assets/js/silik-slider.js') }}"></script>
 
     <script src="https://unpkg.com/splitting/dist/splitting.min.js"></script>
     <script>Splitting();</script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var toastEl = document.getElementById('statusToast');
+            if (toastEl && window.bootstrap && bootstrap.Toast) {
+                var toast = new bootstrap.Toast(toastEl);
+                toast.show();
+            }
+        });
+    </script>
 
     @stack('scripts')
 </body>

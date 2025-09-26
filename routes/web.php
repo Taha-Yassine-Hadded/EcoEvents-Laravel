@@ -1,10 +1,16 @@
 <?php
 
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\LoginController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('pages.frontOffice.home');
-});
+})->name('home');
+
+
 
 // About page
 Route::get('/about', function () {
@@ -82,6 +88,39 @@ Route::get('/testimonial', function () {
 });
 
 // Admin Dashboard
-Route::get('/dashboard', function () {
-    return view('pages.backOffice.dashboard');
-})->name('admin.dashboard');
+Route::get('/dashboard', [DashboardController::class, 'index'])
+    ->middleware([\App\Http\Middleware\VerifyJWT::class, \App\Http\Middleware\RoleGuard::class . ':admin'])
+    ->name('admin.dashboard');
+
+/*Route::get('/dashboard', [DashboardController::class, 'index'])
+    ->middleware('\App\Http\Middleware\VerifyJWT::class')
+    ->name('admin.dashboard');*/
+
+// Test route
+// Test route avec un seul middleware
+Route::get('/test', function () {
+    return 'Test route works!';
+})->middleware(\App\Http\Middleware\RoleGuard::class);
+
+
+// Simple register test
+Route::get('/register-test', function () {
+    return 'Register route works!';
+});
+
+// Test controller
+Route::get('/register-controller-test', [AuthController::class, 'showRegisterForm']);
+
+// Registration Routes
+Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('register');
+Route::post('/register', [AuthController::class, 'register']);
+
+// Login Routes
+Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
+Route::post('/login', [LoginController::class, 'login']);
+Route::post('/logout', [LoginController::class, 'logout'])->middleware(\App\Http\Middleware\VerifyJWT::class)->name('logout');
+
+// User Routes
+Route::get('/user', [UserController::class, 'getUser'])
+    ->middleware(\App\Http\Middleware\VerifyJWT::class)
+    ->name('user.get');
