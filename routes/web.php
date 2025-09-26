@@ -84,4 +84,4 @@ Route::get('/testimonial', function () {
 // Admin Dashboard
 Route::get('/dashboard', function () {
     return view('pages.backOffice.dashboard');
-});
+})->name('admin.dashboard');
