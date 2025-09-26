@@ -146,24 +146,41 @@
                     headers: {
                         'Content-Type': 'application/json',
                         'X-CSRF-TOKEN': csrfToken,
+                        'Accept': 'application/json',
                     },
                     body: JSON.stringify({ email, password }),
                 });
 
-                const data = await response.json();
+                let data;
+                try {
+                    data = await response.json();
+                } catch (e) {
+                    console.error('Erreur de parsing JSON:', e);
+                    alert('Erreur serveur: Réponse non-JSON reçue');
+                    return;
+                }
 
-                if (response.ok) {
+                if (response.ok && data.success) {
                     // Stocker le token dans localStorage
                     localStorage.setItem('jwt_token', data.token);
-                    // Rediriger vers la page d'accueil
-                    window.location.href = '{{ route("home") }}';
+                    console.log('Token JWT:', data.token);
+
+                    // Stocker le token dans un cookie
+                    document.cookie = `jwt_token=${data.token}; path=/; max-age=86400; SameSite=Lax`;
+
+                    // Rediriger sans token dans l'URL
+                    if (data.user.role === 'admin') {
+                        window.location.href = '{{ route("admin.dashboard") }}';
+                    } else {
+                        window.location.href = '{{ route("home") }}';
+                    }
                 } else {
-                    // Afficher l'erreur
+                    console.error('Erreur de connexion:', data.error || 'Erreur inconnue');
                     alert(data.error || 'Erreur lors de la connexion');
                 }
             } catch (error) {
-                console.error('Erreur:', error);
-                alert('Une erreur est survenue. Veuillez réessayer.');
+                console.error('Erreur réseau:', error);
+                alert('Erreur réseau ou serveur: ' + error.message);
             }
         });
     </script>

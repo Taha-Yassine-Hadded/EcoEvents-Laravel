@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AuthController;
@@ -8,6 +9,8 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('pages.frontOffice.home');
 })->name('home');
+
+
 
 // About page
 Route::get('/about', function () {
@@ -84,15 +87,21 @@ Route::get('/testimonial', function () {
     return view('pages.frontOffice.testimonial');
 });
 
-// Admin Dashboard - utilise directement la classe middleware
-Route::get('/dashboard', function () {
-    return view('pages.backOffice.dashboard');
-})->middleware(\App\Http\Middleware\VerifyJWT::class)->name('dashboard');
+// Admin Dashboard
+Route::get('/dashboard', [DashboardController::class, 'index'])
+    ->middleware([\App\Http\Middleware\VerifyJWT::class, \App\Http\Middleware\RoleGuard::class . ':admin'])
+    ->name('admin.dashboard');
+
+/*Route::get('/dashboard', [DashboardController::class, 'index'])
+    ->middleware('\App\Http\Middleware\VerifyJWT::class')
+    ->name('admin.dashboard');*/
 
 // Test route
+// Test route avec un seul middleware
 Route::get('/test', function () {
     return 'Test route works!';
-});
+})->middleware(\App\Http\Middleware\RoleGuard::class);
+
 
 // Simple register test
 Route::get('/register-test', function () {
@@ -110,7 +119,8 @@ Route::post('/register', [AuthController::class, 'register']);
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login']);
 Route::post('/logout', [LoginController::class, 'logout'])->middleware(\App\Http\Middleware\VerifyJWT::class)->name('logout');
-// User Routes - utilise directement la classe middleware pour retourné les infos de user connecté
+
+// User Routes
 Route::get('/user', [UserController::class, 'getUser'])
     ->middleware(\App\Http\Middleware\VerifyJWT::class)
     ->name('user.get');

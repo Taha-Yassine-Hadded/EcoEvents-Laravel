@@ -101,8 +101,8 @@ return [
     |
     */
 
-    'ttl' => env('JWT_TTL', 60),
-
+    'ttl' => (int) env('JWT_TTL', 60), // Conversion explicite en entier
+    'refresh_ttl' => (int) env('JWT_REFRESH_TTL', 20160),
     /*
     |--------------------------------------------------------------------------
     | Refresh time to live
@@ -250,7 +250,7 @@ return [
     |
     */
 
-    'decrypt_cookies' => false,
+    'decrypt_cookies' => true,
 
     /*
     |--------------------------------------------------------------------------

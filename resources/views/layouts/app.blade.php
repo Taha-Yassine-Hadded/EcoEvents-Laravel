@@ -119,7 +119,7 @@
     </div>
 
     <!-- Header -->
-    @include('partials.header')
+    @include('partials.frontOffice.header')
 
     <!-- Page Content -->
     <main>
@@ -160,7 +160,7 @@
     </main>
 
     <!-- Footer -->
-    @include('partials.footer')
+    @include('partials.frontOffice.footer')
 
     <!--==================================================-->
     <!-- Search Popup -->
