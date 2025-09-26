@@ -2,13 +2,13 @@
 <!-- Start Echofy Footer Area Home-Six -->
 <!--==================================================-->
 <div class="footer-area home-six" 
-    style="background: url('{{ Vite::asset('resources/assets/images/home6/footer-bg.jpg') }}') no-repeat center center; background-size: cover;">
+    style="background: url('{{ asset('assets/images/home6/footer-bg.jpg') }}') no-repeat center center; background-size: cover;">
     <div class="container">
         <div class="row"> 
             <div class="col-lg-4 col-md-6">
                 <div class="footer-logo">
                     <a href="{{ url('/') }}">
-                        <img src="{{ Vite::asset('resources/assets/images/home6/logo-2.png') }}" alt="logo">
+                        <img src="{{ asset('assets/images/home6/logo-2.png') }}" alt="logo">
                     </a>
                 </div>
                 <p class="footer-desc">
@@ -69,7 +69,7 @@
                     </div>
                     <div class="footer-widget-blog">
                         <div class="footer-widget-blog-thumb">
-                            <img src="{{ Vite::asset('resources/assets/images/home6/footer-widget-1.png') }}" alt="">
+                            <img src="{{ asset('assets/images/home6/footer-widget-1.png') }}" alt="">
                         </div>
                         <div class="footer-widget-blog-content">
                             <a href="#">How to add backup...</a>
@@ -78,7 +78,7 @@
                     </div>
                     <div class="footer-widget-blog">
                         <div class="footer-widget-blog-thumb">
-                            <img src="{{ Vite::asset('resources/assets/images/home6/footer-widget-1.png') }}" alt="">
+                            <img src="{{ asset('assets/images/home6/footer-widget-1.png') }}" alt="">
                         </div>
                         <div class="footer-widget-blog-content">
                             <a href="#">How to add backup...</a>
@@ -91,7 +91,7 @@
     </div>
 
     <div class="footer-shpae">
-        <img src="{{ Vite::asset('resources/assets/images/home6/footer-shape.png') }}" alt="">
+        <img src="{{ asset('assets/images/home6/footer-shape.png') }}" alt="">
     </div>
 </div>
 <!--==================================================-->
