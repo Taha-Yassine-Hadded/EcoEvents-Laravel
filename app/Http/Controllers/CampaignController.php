@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Campaign;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
@@ -54,6 +55,67 @@ class CampaignController extends Controller
     }
 
     /**
+     * Afficher le formulaire de création d'une campagne
+     */
+    public function create()
+    {
+        try {
+            return view('pages.backOffice.campaigns.create');
+        } catch (\Exception $e) {
+            Log::error('Erreur lors du chargement du formulaire de création: ' . $e->getMessage());
+            return response()->json(['error' => 'Erreur serveur'], 500);
+        }
+    }
+
+    /**
+     * Enregistrer une nouvelle campagne
+     */
+    public function store(Request $request)
+    {
+        try {
+            $validated = $request->validate([
+                'title' => 'required|string|min:10|max:255',
+               // 'description' => 'required|string|min:50|max:300',
+                'content' => 'required|string|min:100|max:2000',
+                'category' => 'required|in:recyclage,climat,biodiversite,eau,energie,transport,alimentation,pollution,sensibilisation',
+                'start_date' => 'required|date',
+                'end_date' => 'required|date|after:start_date',
+                'media.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
+            ]);
+
+            $campaign = new Campaign();
+            $campaign->title = $validated['title'];
+            $campaign->content = $validated['content'];
+            $campaign->category = $validated['category'];
+            $campaign->start_date = Carbon::parse($validated['start_date']);
+            $campaign->end_date = Carbon::parse($validated['end_date']);
+            $campaign->status = $this->calculateStatus($campaign->start_date, $campaign->end_date);
+            $campaign->created_by = Auth::id();
+
+            // Gérer l'upload d'image
+            if ($request->hasFile('media')) {
+                $mediaUrls = ['images' => []];
+                foreach ($request->file('media') as $file) {
+                    $path = $file->store('campaigns', 'public');
+                    $mediaUrls['images'][] = $path;
+                }
+                $campaign->media_urls = $mediaUrls;
+            }
+
+            $campaign->save();
+
+            return response()->json([
+                'success' => true,
+                'campaign_id' => $campaign->id,
+                'message' => 'Campagne créée avec succès'
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Erreur lors de la création de la campagne: ' . $e->getMessage());
+            return response()->json(['error' => 'Erreur lors de la création'], 500);
+        }
+    }
+
+    /**
      * Afficher les détails d'une campagne
      */
     public function show($id)
@@ -79,7 +141,7 @@ class CampaignController extends Controller
 
             $validated = $request->validate([
                 'title' => 'required|string|min:10|max:255',
-                'description' => 'required|string|min:50|max:300',
+               // 'description' => 'required|string|min:50|max:300',
                 'content' => 'required|string|min:100|max:2000',
                 'category' => 'required|in:recyclage,climat,biodiversite,eau,energie,transport,alimentation,pollution,sensibilisation',
                 'start_date' => 'required|date',
