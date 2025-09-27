@@ -18,7 +18,6 @@ class Campaign extends Model
      */
     protected $fillable = [
         'title',
-        'description',
         'content',
         'media_urls',
         'category',
@@ -27,6 +26,7 @@ class Campaign extends Model
         'created_by',
         'views_count',
         'shares_count',
+        'status',
     ];
 
     /**
@@ -42,6 +42,7 @@ class Campaign extends Model
             'end_date' => 'datetime',
             'views_count' => 'integer',
             'shares_count' => 'integer',
+            'status' => 'string',
         ];
     }
 
@@ -70,12 +71,18 @@ class Campaign extends Model
     }
 
     /**
-     * Check if the campaign is active.
+     * Get the status of the campaign (upcoming, active, ended).
      */
-    public function isActive(): bool
+    public function getStatusAttribute(): string
     {
         $now = now();
-        return $this->start_date <= $now && $this->end_date >= $now;
+        if ($this->start_date > $now) {
+            return 'upcoming';
+        } elseif ($this->start_date <= $now && $this->end_date >= $now) {
+            return 'active';
+        } else {
+            return 'ended';
+        }
     }
 
     /**
@@ -85,6 +92,22 @@ class Campaign extends Model
     {
         $media = $this->media_urls ?? [];
         return !empty($media['images']) ? asset('storage/' . $media['images'][0]) : null;
+    }
+
+    /**
+     * Get the count of comments.
+     */
+    public function getCommentsCountAttribute(): int
+    {
+        return $this->comments()->count();
+    }
+
+    /**
+     * Get the count of likes.
+     */
+    public function getLikesCountAttribute(): int
+    {
+        return $this->likes()->count();
     }
 
     /**
@@ -101,5 +124,19 @@ class Campaign extends Model
     public function incrementShares(): void
     {
         $this->increment('shares_count');
+    }
+
+    /**
+     * Boot the model to automatically set the created_by field.
+     */
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($campaign) {
+            if (auth()->check()) {
+                $campaign->created_by = auth()->id();
+            }
+        });
     }
 }
