@@ -5,6 +5,10 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ProfileController;
+use App\Http\Middleware\VerifyJWT; // <-- importe ton middleware
+
+
 
 Route::get('/', function () {
     return view('pages.frontOffice.home');
@@ -124,3 +128,20 @@ Route::post('/logout', [LoginController::class, 'logout'])->middleware(\App\Http
 Route::get('/user', [UserController::class, 'getUser'])
     ->middleware(\App\Http\Middleware\VerifyJWT::class)
     ->name('user.get');
+
+
+
+
+
+
+// Page Blade publique (le JS enverra Authorization: Bearer <token>)
+Route::view('/profile', 'pages.frontOffice.profile-edit')->name('profile.edit');
+
+// Actions protégées par JWT (appels fetch depuis la page)
+Route::middleware([VerifyJWT::class])->group(function () {
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::post('/profile/avatar', [ProfileController::class, 'updateAvatar'])->name('profile.avatar.update');
+    Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password.update');
+});
+
+

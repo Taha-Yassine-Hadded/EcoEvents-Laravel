@@ -37,10 +37,10 @@
                             </div>
                             <div class="dropdown-menu" id="user-dropdown">
                                 <div class="dropdown-arrow"></div>
-                                <a href="#" class="profile-link">
-                                    <i class="bi bi-person"></i>
-                                    Profile
+                                <a href="{{ route('profile.edit') }}" class="profile-link">
+                                    <i class="bi bi-person"></i> Modifier le profil
                                 </a>
+
                                 <a href="#" id="theme-toggle" class="theme-toggle">
                                     <i class="bi bi-moon"></i>
                                     <span class="theme-text">Mode sombre</span>
