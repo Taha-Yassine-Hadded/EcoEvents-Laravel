@@ -8,6 +8,9 @@
     <!--==================================================-->
     <section class="campaign-detail-area home-six">
         <div class="container">
+            <!-- Notification Container -->
+            <div id="notification-container" style="position: fixed; top: 20px; right: 20px; z-index: 1000;"></div>
+
             <div class="campaign-hero">
                 <div class="campaign-image">
                     <img src="{{ !empty($campaign->media_urls['images']) && is_array($campaign->media_urls['images']) && \Illuminate\Support\Facades\Storage::disk('public')->exists($campaign->media_urls['images'][0]) ? \Illuminate\Support\Facades\Storage::url($campaign->media_urls['images'][0]) : asset('assets/images/home6/placeholder.jpg') }}" alt="{{ $campaign->title }}">
@@ -166,7 +169,7 @@
 
                 @if ($user)
                     <div class="comment-form">
-                        <form action="{{ route('front.campaigns.comments.store', $campaign->id) }}" method="POST">
+                        <form id="comment-form" method="POST">
                             @csrf
                             <textarea name="content" class="comment-input" placeholder="Partagez votre expérience ou posez une question..." required></textarea>
                             <button type="submit" class="comment-submit">
@@ -190,21 +193,25 @@
                             <div class="comment-content" id="comment-content-{{ $comment->id }}">
                                 {{ $comment->content }}
                             </div>
-                            @if ($user && $comment->user_id === $user->id)
-                                <div class="comment-actions">
+                            <div class="comment-actions">
+                                @if ($user)
+                                    <button class="comment-action-btn like-btn {{ $user->commentLikes()->where('comment_id', $comment->id)->exists() ? 'liked' : '' }}" onclick="toggleCommentLike(this, {{ $comment->id }})" title="{{ $user->commentLikes()->where('comment_id', $comment->id)->exists() ? 'Ne plus aimer' : 'J\'aime' }}">
+                                        <i class="bi bi-heart" style="{{ $user->commentLikes()->where('comment_id', $comment->id)->exists() ? 'color: #dc3545' : '' }}"></i>
+                                        <span class="comment-likes-count">{{ $comment->likes_count ?? 0 }}</span>
+                                    </button>
+                                @endif
+                                @if ($user && $comment->user_id === $user->id)
                                     <button class="comment-action-btn edit-btn" onclick="showEditForm({{ $comment->id }})" title="Modifier">
                                         <i class="bi bi-pencil"></i>
                                     </button>
-                                    <form action="{{ route('front.campaigns.comments.delete', [$campaign->id, $comment->id]) }}" method="POST" style="display: inline;">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="comment-action-btn delete-btn" onclick="return confirm('Voulez-vous vraiment supprimer ce commentaire ?')" title="Supprimer">
-                                            <i class="bi bi-trash"></i>
-                                        </button>
-                                    </form>
-                                </div>
+                                    <button class="comment-action-btn delete-btn" onclick="deleteComment({{ $comment->id }})" title="Supprimer">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                @endif
+                            </div>
+                            @if ($user && $comment->user_id === $user->id)
                                 <div class="comment-edit-form" id="edit-form-{{ $comment->id }}" style="display: none;">
-                                    <form action="{{ route('front.campaigns.comments.update', [$campaign->id, $comment->id]) }}" method="POST">
+                                    <form class="edit-comment-form" data-comment-id="{{ $comment->id }}" method="POST" action="{{ route('front.campaigns.comments.update', [$campaign->id, $comment->id]) }}" onsubmit="return false;">
                                         @csrf
                                         @method('PUT')
                                         <textarea name="content" class="comment-input" required>{{ $comment->content }}</textarea>
@@ -623,6 +630,7 @@
             display: flex;
             gap: 0.5rem;
             margin-top: 0.5rem;
+            align-items: center;
         }
 
         .comment-action-btn {
@@ -631,6 +639,9 @@
             cursor: pointer;
             font-size: 1rem;
             transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
         }
 
         .edit-btn i {
@@ -647,6 +658,23 @@
 
         .delete-btn:hover i {
             color: #c82333;
+        }
+
+        .like-btn i {
+            color: #666;
+        }
+
+        .like-btn.liked i {
+            color: #dc3545;
+        }
+
+        .like-btn:hover i {
+            color: #dc3545;
+        }
+
+        .comment-likes-count {
+            font-size: 0.9rem;
+            color: #666;
         }
 
         .comment-edit-form {
@@ -745,6 +773,12 @@
             padding: 1rem;
             margin-bottom: 1rem;
             border-radius: 8px;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .alert.show {
+            opacity: 1;
         }
 
         .alert-success {
@@ -802,11 +836,25 @@
 
 @push('scripts')
     <script>
-        // Toggle like
+        // Afficher une notification temporaire
+        function showNotification(message, type = 'success') {
+            console.log(`Affichage de la notification: ${message} (${type})`);
+            const container = document.getElementById('notification-container');
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type} show`;
+            alert.textContent = message;
+            container.appendChild(alert);
+            setTimeout(() => {
+                alert.classList.remove('show');
+                setTimeout(() => alert.remove(), 500);
+            }, 4000);
+        }
+
+        // Toggle like for campaign
         function toggleLike(button, campaignId) {
             const token = localStorage.getItem('jwt_token');
             if (!token) {
-                alert('Vous devez être connecté pour aimer une campagne.');
+                showNotification('Vous devez être connecté pour aimer une campagne.', 'danger');
                 window.location.href = '{{ route("login") }}';
                 return;
             }
@@ -832,47 +880,302 @@
                             button.classList.add('liked');
                             icon.style.color = '#dc3545';
                             text.textContent = 'Ne plus aimer';
+                            showNotification('Merci pour votre réactivité !');
                         } else {
                             button.classList.remove('liked');
                             icon.style.color = '';
                             text.textContent = 'J\'aime cette campagne';
+                            showNotification('Like retiré.');
                         }
                     } else {
-                        alert(data.error || 'Erreur lors de l\'action');
+                        showNotification(data.error || 'Erreur lors de l\'action', 'danger');
                     }
                 })
                 .catch(error => {
-                    console.error('Erreur:', error);
-                    alert('Une erreur est survenue');
+                    console.error('Erreur lors du like de la campagne:', error);
+                    showNotification('Une erreur est survenue', 'danger');
                 });
         }
 
+        // Toggle like for comment
+        function toggleCommentLike(button, commentId) {
+            const token = localStorage.getItem('jwt_token');
+            if (!token) {
+                showNotification('Vous devez être connecté pour aimer un commentaire.', 'danger');
+                window.location.href = '{{ route("login") }}';
+                return;
+            }
+
+            fetch('{{ route("api.comments.like", [$campaign->id, "comment" => "COMMENT_ID"]) }}'.replace('COMMENT_ID', commentId), {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Accept': 'application/json'
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        button.classList.toggle('liked');
+                        const icon = button.querySelector('i');
+                        const countSpan = button.querySelector('.comment-likes-count');
+                        countSpan.textContent = data.likes_count;
+
+                        if (data.action === 'liked') {
+                            button.classList.add('liked');
+                            icon.style.color = '#dc3545';
+                            showNotification('Merci pour votre réactivité !');
+                        } else {
+                            button.classList.remove('liked');
+                            icon.style.color = '';
+                            showNotification('Like retiré.');
+                        }
+                    } else {
+                        showNotification(data.error || 'Erreur lors de l\'action', 'danger');
+                    }
+                })
+                .catch(error => {
+                    console.error('Erreur lors du like du commentaire:', error);
+                    showNotification('Une erreur est survenue', 'danger');
+                });
+        }
+
+        // Add comment via AJAX
+        document.getElementById('comment-form')?.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const token = localStorage.getItem('jwt_token');
+            if (!token) {
+                showNotification('Vous devez être connecté pour commenter.', 'danger');
+                window.location.href = '{{ route("login") }}';
+                return;
+            }
+
+            const textarea = this.querySelector('textarea[name="content"]');
+            const content = textarea.value.trim();
+            if (!content) {
+                showNotification('Le commentaire ne peut pas être vide.', 'danger');
+                return;
+            }
+
+            const formData = new FormData(this);
+            fetch('{{ route("front.campaigns.comments.store", $campaign->id) }}', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Accept': 'application/json'
+                },
+                body: formData
+            })
+                .then(response => {
+                    console.log('Réponse HTTP (ajout commentaire):', response.status, response.statusText);
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Données reçues (ajout commentaire):', data);
+                    if (data.success) {
+                        const commentsList = document.querySelector('.comments-list');
+                        const commentCount = document.querySelector('.comments-header h3');
+                        const newComment = document.createElement('div');
+                        newComment.className = 'comment';
+                        newComment.id = `comment-${data.comment.id}`;
+                        const updateUrl = '{{ route("front.campaigns.comments.update", [$campaign->id, "COMMENT_ID"]) }}'.replace('COMMENT_ID', data.comment.id);
+                        newComment.innerHTML = `
+                            <div class="comment-header">
+                                <span class="comment-author">${data.comment.user_name}</span>
+                                <span class="comment-date">À l'instant</span>
+                            </div>
+                            <div class="comment-content" id="comment-content-${data.comment.id}">
+                                ${data.comment.content}
+                            </div>
+                            <div class="comment-actions">
+                                <button class="comment-action-btn like-btn" onclick="toggleCommentLike(this, ${data.comment.id})" title="J'aime">
+                                    <i class="bi bi-heart"></i>
+                                    <span class="comment-likes-count">0</span>
+                                </button>
+                                <button class="comment-action-btn edit-btn" onclick="showEditForm(${data.comment.id})" title="Modifier">
+                                    <i class="bi bi-pencil"></i>
+                                </button>
+                                <button class="comment-action-btn delete-btn" onclick="deleteComment(${data.comment.id})" title="Supprimer">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </div>
+                            <div class="comment-edit-form" id="edit-form-${data.comment.id}" style="display: none;">
+                                <form class="edit-comment-form" data-comment-id="${data.comment.id}" method="POST" action="${updateUrl}" onsubmit="return false;">
+                                    <input type="hidden" name="_method" value="PUT">
+                                    <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                                    <textarea name="content" class="comment-input" required>${data.comment.content}</textarea>
+                                    <div class="comment-edit-actions">
+                                        <button type="submit" class="comment-submit">
+                                            <i class="bi bi-save"></i> Enregistrer
+                                        </button>
+                                        <button type="button" class="comment-cancel-btn" onclick="hideEditForm(${data.comment.id})">
+                                            <i class="bi bi-x"></i> Annuler
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        `;
+                        commentsList.prepend(newComment);
+                        commentCount.textContent = `Commentaires (${data.comments_count})`;
+                        textarea.value = '';
+                        showNotification('Merci pour votre commentaire !');
+                    } else {
+                        showNotification(data.error || 'Erreur lors de l\'ajout du commentaire', 'danger');
+                    }
+                })
+                .catch(error => {
+                    console.error('Erreur lors de l\'ajout du commentaire:', error);
+                    showNotification('Une erreur est survenue', 'danger');
+                });
+        });
+
+        // Edit comment via AJAX
+        document.querySelectorAll('.edit-comment-form').forEach(form => {
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const commentId = this.getAttribute('data-comment-id');
+                const token = localStorage.getItem('jwt_token');
+                if (!token) {
+                    showNotification('Vous devez être connecté pour modifier un commentaire.', 'danger');
+                    window.location.href = '{{ route("login") }}';
+                    return;
+                }
+
+                const textarea = this.querySelector('textarea[name="content"]');
+                const content = textarea.value.trim();
+                if (!content) {
+                    showNotification('Le commentaire ne peut pas être vide.', 'danger');
+                    return;
+                }
+
+                const formData = new FormData();
+                formData.append('content', content);
+                formData.append('_method', 'PUT');
+                formData.append('_token', '{{ csrf_token() }}');
+
+                const updateUrl = '{{ route("front.campaigns.comments.update", [$campaign->id, "COMMENT_ID"]) }}'.replace('COMMENT_ID', commentId);
+
+                console.log('Début de la soumission du formulaire pour le commentaire ID:', commentId);
+                console.log('Contenu du textarea:', content);
+                console.log('URL de la requête:', updateUrl);
+                console.log('Données envoyées:', Object.fromEntries(formData));
+
+                fetch(updateUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json'
+                    },
+                    body: formData
+                })
+                    .then(response => {
+                        console.log('Réponse HTTP (modification commentaire):', response.status, response.statusText);
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log('Données reçues (modification commentaire):', data);
+                        if (data.success) {
+                            document.getElementById(`comment-content-${commentId}`).textContent = data.comment.content;
+                            hideEditForm(commentId);
+                            showNotification('Commentaire modifié avec succès !');
+                        } else {
+                            showNotification(data.error || 'Erreur lors de la modification', 'danger');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Erreur lors de la modification du commentaire:', error);
+                        showNotification('Une erreur est survenue', 'danger');
+                    });
+            });
+        });
+
         // Gestion du formulaire de modification des commentaires
         function showEditForm(commentId) {
+            console.log('Affichage du formulaire d\'édition pour le commentaire ID:', commentId);
             document.getElementById('comment-content-' + commentId).style.display = 'none';
             document.getElementById('edit-form-' + commentId).style.display = 'block';
         }
 
         function hideEditForm(commentId) {
+            console.log('Masquage du formulaire d\'édition pour le commentaire ID:', commentId);
             document.getElementById('comment-content-' + commentId).style.display = 'block';
             document.getElementById('edit-form-' + commentId).style.display = 'none';
         }
 
+        // Supprimer un commentaire directement
+        function deleteComment(commentId) {
+            console.log('Tentative de suppression du commentaire ID:', commentId);
+            const token = localStorage.getItem('jwt_token');
+            console.log('Token JWT:', token ? 'Présent' : 'Absent');
+            if (!token) {
+                console.error('Aucun token JWT trouvé');
+                showNotification('Vous devez être connecté pour supprimer un commentaire.', 'danger');
+                window.location.href = '{{ route("login") }}';
+                return;
+            }
+
+            const deleteUrl = '{{ route("front.campaigns.comments.delete", [$campaign->id, "COMMENT_ID"]) }}'.replace('COMMENT_ID', commentId);
+            console.log('Envoi de la requête DELETE à:', deleteUrl);
+
+            fetch(deleteUrl, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Accept': 'application/json'
+                }
+            })
+                .then(response => {
+                    console.log('Réponse HTTP (suppression commentaire):', response.status, response.statusText);
+                    if (!response.ok) {
+                        throw new Error(`Erreur HTTP: ${response.status} ${response.statusText}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Données reçues (suppression commentaire):', data);
+                    if (data.success) {
+                        const commentElement = document.getElementById('comment-' + commentId);
+                        if (commentElement) {
+                            commentElement.remove();
+                            console.log('Commentaire ID:', commentId, 'supprimé du DOM');
+                        } else {
+                            console.error('Commentaire ID:', commentId, 'non trouvé dans le DOM');
+                        }
+                        const commentCount = document.querySelector('.comments-header h3');
+                        commentCount.textContent = `Commentaires (${data.comments_count})`;
+                        showNotification('Commentaire supprimé avec succès !');
+                    } else {
+                        console.error('Erreur serveur:', data.error);
+                        showNotification(data.error || 'Erreur lors de la suppression', 'danger');
+                    }
+                })
+                .catch(error => {
+                    console.error('Erreur lors de la requête DELETE:', error);
+                    showNotification('Une erreur est survenue: ' + error.message, 'danger');
+                });
+        }
+
         // Modal de partage
         function openShareModal() {
+            console.log('Ouverture de la modale de partage');
             document.getElementById('shareModal').classList.add('active');
         }
 
         function closeShareModal() {
+            console.log('Fermeture de la modale de partage');
             document.getElementById('shareModal').classList.remove('active');
         }
 
         // Fonctions de partage
         function shareOnFacebook() {
             const url = encodeURIComponent(window.location.href);
-            const title = encodeURIComponent('{{ $campaign->title }} - Echofy');
             window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, '_blank');
             closeShareModal();
+            showNotification('Campagne partagée sur Facebook !');
         }
 
         function shareOnTwitter() {
@@ -880,12 +1183,14 @@
             const text = encodeURIComponent('Découvrez cette campagne environnementale sur Echofy : {{ $campaign->title }}');
             window.open(`https://twitter.com/intent/tweet?url=${url}&text=${text}`, '_blank');
             closeShareModal();
+            showNotification('Campagne partagée sur Twitter !');
         }
 
         function shareOnLinkedIn() {
             const url = encodeURIComponent(window.location.href);
             window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${url}`, '_blank');
             closeShareModal();
+            showNotification('Campagne partagée sur LinkedIn !');
         }
 
         function shareOnWhatsApp() {
@@ -893,16 +1198,17 @@
             const text = encodeURIComponent('Découvrez cette campagne environnementale : {{ $campaign->title }}');
             window.open(`https://wa.me/?text=${text} ${url}`, '_blank');
             closeShareModal();
+            showNotification('Campagne partagée sur WhatsApp !');
         }
 
         function copyLink() {
             navigator.clipboard.writeText(window.location.href).then(() => {
-                alert('Lien copié dans le presse-papiers !');
+                showNotification('Lien copié dans le presse-papiers !');
                 closeShareModal();
             });
         }
 
-        // Fermer le modal en cliquant à l'extérieur
+        // Fermer la modale de partage en cliquant à l'extérieur
         document.getElementById('shareModal').addEventListener('click', function(e) {
             if (e.target === this) {
                 closeShareModal();

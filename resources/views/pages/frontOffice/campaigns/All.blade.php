@@ -8,6 +8,9 @@
     <!--==================================================-->
     <section class="campaigns-area home-six">
         <div class="container">
+            <!-- Notification Container -->
+            <div id="notification-container" style="position: fixed; top: 20px; right: 20px; z-index: 1000;"></div>
+
             <div class="row">
                 <div class="col-md-12 text-center">
                     <div class="section-title center">
@@ -25,16 +28,26 @@
                                 <input type="text" name="search" placeholder="Rechercher une campagne..." id="searchInput" value="{{ $search ?? '' }}">
                             </div>
                             <div class="category-filter">
-                                <button type="submit" name="category" value="all" class="category-btn {{ $category == 'all' ? 'active' : '' }}">Toutes</button>
-                                <button type="submit" name="category" value="recyclage" class="category-btn {{ $category == 'recyclage' ? 'active' : '' }}">Recyclage</button>
-                                <button type="submit" name="category" value="climat" class="category-btn {{ $category == 'climat' ? 'active' : '' }}">Climat</button>
-                                <button type="submit" name="category" value="biodiversite" class="category-btn {{ $category == 'biodiversite' ? 'active' : '' }}">Biodiversité</button>
-                                <button type="submit" name="category" value="eau" class="category-btn {{ $category == 'eau' ? 'active' : '' }}">Eau</button>
-                                <button type="submit" name="category" value="energie" class="category-btn {{ $category == 'energie' ? 'active' : '' }}">Énergie</button>
-                                <button type="submit" name="category" value="transport" class="category-btn {{ $category == 'transport' ? 'active' : '' }}">Transport</button>
-                                <button type="submit" name="category" value="alimentation" class="category-btn {{ $category == 'alimentation' ? 'active' : '' }}">Alimentation</button>
-                                <button type="submit" name="category" value="pollution" class="category-btn {{ $category == 'pollution' ? 'active' : '' }}">Pollution</button>
-                                <button type="submit" name="category" value="sensibilisation" class="category-btn {{ $category == 'sensibilisation' ? 'active' : '' }}">Sensibilisation</button>
+                                <select name="category" id="categorySelect">
+                                    <option value="all" {{ $category == 'all' ? 'selected' : '' }}>Toutes</option>
+                                    <option value="recyclage" {{ $category == 'recyclage' ? 'selected' : '' }}>Recyclage</option>
+                                    <option value="climat" {{ $category == 'climat' ? 'selected' : '' }}>Climat</option>
+                                    <option value="biodiversite" {{ $category == 'biodiversite' ? 'selected' : '' }}>Biodiversité</option>
+                                    <option value="eau" {{ $category == 'eau' ? 'selected' : '' }}>Eau</option>
+                                    <option value="energie" {{ $category == 'energie' ? 'selected' : '' }}>Énergie</option>
+                                    <option value="transport" {{ $category == 'transport' ? 'selected' : '' }}>Transport</option>
+                                    <option value="alimentation" {{ $category == 'alimentation' ? 'selected' : '' }}>Alimentation</option>
+                                    <option value="pollution" {{ $category == 'pollution' ? 'selected' : '' }}>Pollution</option>
+                                    <option value="sensibilisation" {{ $category == 'sensibilisation' ? 'selected' : '' }}>Sensibilisation</option>
+                                </select>
+                            </div>
+                            <div class="status-filter">
+                                <select name="status" id="statusSelect">
+                                    <option value="all" {{ $status == 'all' ? 'selected' : '' }}>Tous</option>
+                                    <option value="upcoming" {{ $status == 'upcoming' ? 'selected' : '' }}>À venir</option>
+                                    <option value="active" {{ $status == 'active' ? 'selected' : '' }}>En cours</option>
+                                    <option value="ended" {{ $status == 'ended' ? 'selected' : '' }}>Terminé</option>
+                                </select>
                             </div>
                         </form>
                     </div>
@@ -94,11 +107,7 @@
                     </div>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-lg-12 text-center">
 
-                </div>
-            </div>
         </div>
     </section>
     <!--==================================================-->
@@ -132,10 +141,9 @@
 
         .filters {
             display: flex;
-            justify-content: space-between;
+            flex-direction: row;
             align-items: center;
             margin-bottom: 2rem;
-            flex-wrap: wrap;
             gap: 1rem;
         }
 
@@ -146,8 +154,8 @@
             border-radius: 25px;
             padding: 0.5rem 1rem;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            flex: 1;
-            max-width: 400px;
+            flex: 2;
+            min-width: 200px;
         }
 
         .search-bar input {
@@ -163,13 +171,13 @@
             margin-right: 0.5rem;
         }
 
-        .category-filter {
-            display: flex;
-            gap: 0.5rem;
-            flex-wrap: wrap;
+        .category-filter, .status-filter {
+            flex: 1;
+            min-width: 150px;
         }
 
-        .category-btn {
+        .category-filter select, .status-filter select {
+            width: 100%;
             padding: 0.5rem 1rem;
             border: 2px solid #28a745;
             background: white;
@@ -178,12 +186,16 @@
             cursor: pointer;
             transition: all 0.3s ease;
             font-weight: 500;
+            font-size: 1rem;
         }
 
-        .category-btn.active,
-        .category-btn:hover {
-            background: #28a745;
-            color: white;
+        .category-filter select:focus, .status-filter select:focus {
+            outline: none;
+            border-color: #218838;
+        }
+
+        .category-filter select option, .status-filter select option {
+            color: #333;
         }
 
         .campaigns-grid {
@@ -349,10 +361,6 @@
             margin-left: 0.5rem;
         }
 
-        .load-more {
-            margin-top: 3rem;
-        }
-
         .pagination {
             display: flex;
             justify-content: center;
@@ -374,6 +382,28 @@
             color: white;
         }
 
+        .alert {
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 8px;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .alert.show {
+            opacity: 1;
+        }
+
+        .alert-success {
+            background: rgba(40, 167, 69, 0.1);
+            color: #28a745;
+        }
+
+        .alert-danger {
+            background: rgba(220, 53, 69, 0.1);
+            color: #dc3545;
+        }
+
         @media (max-width: 768px) {
             .section-title.center h1 {
                 font-size: 2rem;
@@ -385,12 +415,23 @@
             }
 
             .filters {
-                flex-direction: column;
-                align-items: stretch;
+                flex-direction: row;
+                flex-wrap: nowrap;
+                gap: 0.5rem;
             }
 
             .search-bar {
-                max-width: none;
+                flex: 2;
+                min-width: 100px;
+            }
+
+            .category-filter, .status-filter {
+                flex: 1;
+                min-width: 100px;
+            }
+
+            .category-filter select, .status-filter select {
+                font-size: 0.9rem;
             }
         }
     </style>
@@ -398,7 +439,21 @@
 
 @push('scripts')
     <script>
-        // Recherche
+        // Afficher une notification temporaire
+        function showNotification(message, type = 'success') {
+            console.log(`Affichage de la notification: ${message} (${type})`);
+            const container = document.getElementById('notification-container');
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type} show`;
+            alert.textContent = message;
+            container.appendChild(alert);
+            setTimeout(() => {
+                alert.classList.remove('show');
+                setTimeout(() => alert.remove(), 500);
+            }, 4000);
+        }
+
+        // Recherche avec rechargement
         document.getElementById('searchInput').addEventListener('input', function() {
             const form = document.getElementById('filterForm');
             clearTimeout(this.searchTimeout);
@@ -406,6 +461,111 @@
                 form.submit();
             }, 500); // Débouncer de 500ms
         });
+
+        // Filtrage AJAX pour catégorie et statut
+        function filterCampaigns() {
+            const category = document.getElementById('categorySelect').value;
+            const status = document.getElementById('statusSelect').value;
+            console.log('Filtrage des campagnes:', { category, status });
+
+            fetch('{{ route("api.campaigns.filter") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({ category, status })
+            })
+                .then(response => {
+                    console.log('Réponse HTTP (filtrage):', response.status, response.statusText);
+                    if (!response.ok) {
+                        throw new Error('Erreur réseau');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Données reçues (filtrage):', data);
+                    if (data.success) {
+                        updateCampaignsGrid(data.campaigns);
+                        showNotification('Campagnes filtrées avec succès !');
+                    } else {
+                        showNotification(data.error || 'Erreur lors du filtrage', 'danger');
+                    }
+                })
+                .catch(error => {
+                    console.error('Erreur lors du filtrage:', error);
+                    showNotification('Une erreur est survenue', 'danger');
+                });
+        }
+
+        // Mettre à jour la grille des campagnes
+        function updateCampaignsGrid(campaigns) {
+            const grid = document.querySelector('.campaigns-grid');
+            grid.innerHTML = '';
+
+            if (campaigns.length === 0) {
+                grid.innerHTML = '<p class="text-center">Aucune campagne trouvée.</p>';
+                return;
+            }
+
+            campaigns.forEach(campaign => {
+                const isLiked = {{ auth()->check() ? '!!' . auth()->user()->likedCampaigns()->where('campaign_id', "' + campaign.id + '").exists() : 'false' }};
+                const campaignBox = document.createElement('div');
+                campaignBox.className = 'single-campaign-box';
+                campaignBox.setAttribute('data-category', campaign.category);
+                campaignBox.onclick = () => goToCampaignDetail(campaign.id);
+                campaignBox.innerHTML = `
+                    <div class="campaign-thumb">
+                        <img src="${campaign.thumbnail}" alt="${campaign.title}">
+                        <div class="campaign-status">${campaign.status.charAt(0).toUpperCase() + campaign.status.slice(1)}</div>
+                    </div>
+                    <div class="campaign-content">
+                        <div class="campaign-text">
+                            <span>${campaign.category.charAt(0).toUpperCase() + campaign.category.slice(1)}</span>
+                        </div>
+                        <h4>${campaign.title.substring(0, 50)}${campaign.title.length > 50 ? '...' : ''}</h4>
+                        <p>${campaign.content.substring(0, 150)}${campaign.content.length > 150 ? '...' : ''}</p>
+                        <div class="campaign-dates">
+                            <span><i class="bi bi-calendar2-event"></i> ${campaign.start_date}</span>
+                            <span><i class="bi bi-calendar2-check"></i> ${campaign.end_date}</span>
+                        </div>
+                        <div class="campaign-actions">
+                            <div class="campaign-stats">
+                                <div class="stat-item">
+                                    <i class="bi bi-eye"></i>
+                                    <span>${campaign.views_count}</span>
+                                </div>
+                                <div class="stat-item">
+                                    <i class="bi bi-heart"></i>
+                                    <span>${campaign.likes_count}</span>
+                                </div>
+                                <div class="stat-item">
+                                    <i class="bi bi-chat"></i>
+                                    <span>${campaign.comments_count}</span>
+                                </div>
+                            </div>
+                            <div class="action-buttons">
+                                <button class="action-btn ${isLiked ? 'liked' : ''}" onclick="event.stopPropagation(); toggleLike(this, ${campaign.id})">
+                                    <i class="bi bi-heart"></i>
+                                </button>
+                                <button class="action-btn" onclick="event.stopPropagation(); shareCampaign(${campaign.id})">
+                                    <i class="bi bi-share"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="echofy-button style-five">
+                            <a href="/campaigns/${campaign.id}">En savoir plus<i class="bi bi-arrow-right-short"></i></a>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(campaignBox);
+            });
+        }
+
+        // Événements pour les filtres
+        document.getElementById('categorySelect').addEventListener('change', filterCampaigns);
+        document.getElementById('statusSelect').addEventListener('change', filterCampaigns);
 
         // Navigation vers le détail
         function goToCampaignDetail(campaignId) {
@@ -423,7 +583,7 @@
             } else {
                 const url = window.location.origin + '/campaigns/' + campaignId;
                 navigator.clipboard.writeText(url).then(() => {
-                    alert('Lien copié dans le presse-papiers !');
+                    showNotification('Lien copié dans le presse-papiers !');
                 });
             }
         }
@@ -432,7 +592,7 @@
         function toggleLike(button, campaignId) {
             const token = localStorage.getItem('jwt_token');
             if (!token) {
-                alert('Vous devez être connecté pour aimer une campagne.');
+                showNotification('Vous devez être connecté pour aimer une campagne.', 'danger');
                 window.location.href = '{{ route("login") }}';
                 return;
             }
@@ -457,15 +617,15 @@
                         }
                         const stats = button.closest('.campaign-actions').querySelector('.stat-item:nth-child(2) span');
                         stats.textContent = data.likes_count;
+                        showNotification(data.action === 'liked' ? 'Merci pour votre réactivité !' : 'Like retiré.');
                     } else {
-                        alert(data.error || 'Erreur lors de l\'action');
+                        showNotification(data.error || 'Erreur lors de l\'action', 'danger');
                     }
                 })
                 .catch(error => {
                     console.error('Erreur:', error);
-                    alert('Une erreur est survenue');
+                    showNotification('Une erreur est survenue', 'danger');
                 });
         }
     </script>
 @endpush
-

@@ -161,9 +161,13 @@ Route::prefix('campaigns')->group(function () {
     Route::post('/{campaign}/comments', [FrontCampaignController::class, 'storeComment'])
         ->middleware(\App\Http\Middleware\VerifyJWT::class)
         ->name('front.campaigns.comments.store');
+
+    Route::post('/{campaign}/comments/{comment}/like', [FrontCampaignController::class, 'likeComment'])
+        ->middleware(\App\Http\Middleware\VerifyJWT::class)
+        ->name('api.comments.like');
 });
 
-
+Route::post('/campaigns/filter', [FrontCampaignController::class, 'filter'])->name('api.campaigns.filter');
 // API routes
 Route::post('/campaigns/{campaign}/like', [FrontCampaignController::class, 'like'])
     ->middleware(\App\Http\Middleware\VerifyJWT::class)

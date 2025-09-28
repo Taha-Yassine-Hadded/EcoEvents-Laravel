@@ -7,6 +7,7 @@ use App\Models\Campaign;
 use App\Models\CampaignComment;
 use App\Models\CampaignLike;
 use App\Models\CampaignView;
+use App\Models\CommentLike;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
@@ -24,6 +25,7 @@ class FrontCampaignController extends Controller
         try {
             $search = $request->query('search', '');
             $category = $request->query('category', 'all');
+            $status = $request->query('status', 'all'); // New status filter
 
             $query = Campaign::query()
                 ->with('creator')
@@ -40,6 +42,18 @@ class FrontCampaignController extends Controller
 
             if ($category !== 'all') {
                 $query->where('category', $category);
+            }
+
+            if ($status !== 'all') {
+                $today = Carbon::today();
+                if ($status === 'upcoming') {
+                    $query->where('start_date', '>', $today);
+                } elseif ($status === 'active') {
+                    $query->where('start_date', '<=', $today)
+                        ->where('end_date', '>=', $today);
+                } elseif ($status === 'ended') {
+                    $query->where('end_date', '<', $today);
+                }
             }
 
             $campaigns = $query->paginate(6);
@@ -71,14 +85,71 @@ class FrontCampaignController extends Controller
                 'campaigns' => $campaigns,
                 'campaignsForJs' => $campaignsForJs,
                 'search' => $search,
-                'category' => $category
+                'category' => $category,
+                'status' => $status // Pass status to the view
             ]);
         } catch (\Exception $e) {
             Log::error('Erreur lors du chargement des campagnes front-office: ' . $e->getMessage());
             return response()->json(['error' => 'Erreur serveur'], 500);
         }
     }
+    /**
+     * Filtrer les campagnes pour l'API
+     */
+    public function filter(Request $request)
+    {
+        try {
+            $category = $request->input('category', 'all');
+            $status = $request->input('status', 'all');
 
+            $query = Campaign::query()
+                ->with('creator')
+                ->where('status', '!=', 'draft')
+                ->orderBy('created_at', 'desc');
+
+            if ($category !== 'all') {
+                $query->where('category', $category);
+            }
+
+            if ($status !== 'all') {
+                $today = Carbon::today();
+                if ($status === 'upcoming') {
+                    $query->where('start_date', '>', $today);
+                } elseif ($status === 'active') {
+                    $query->where('start_date', '<=', $today)
+                        ->where('end_date', '>=', $today);
+                } elseif ($status === 'ended') {
+                    $query->where('end_date', '<', $today);
+                }
+            }
+
+            $campaigns = $query->get()->map(function ($campaign) {
+                return [
+                    'id' => $campaign->id,
+                    'title' => $campaign->title,
+                    'content' => strip_tags($campaign->content),
+                    'category' => $campaign->category,
+                    'status' => $this->calculateStatus($campaign->start_date, $campaign->end_date),
+                    'start_date' => $campaign->start_date->format('d/m/Y'),
+                    'end_date' => $campaign->end_date->format('d/m/Y'),
+                    'views_count' => $campaign->views_count,
+                    'likes_count' => $campaign->likes_count,
+                    'comments_count' => $campaign->comments_count,
+                    'thumbnail' => !empty($campaign->media_urls['images']) && is_array($campaign->media_urls['images']) && Storage::disk('public')->exists($campaign->media_urls['images'][0])
+                        ? Storage::url($campaign->media_urls['images'][0])
+                        : asset('assets/images/home6/placeholder.jpg'),
+                ];
+            });
+
+            return response()->json([
+                'success' => true,
+                'campaigns' => $campaigns
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Erreur lors du filtrage des campagnes via API: ' . $e->getMessage());
+            return response()->json(['error' => 'Erreur serveur'], 500);
+        }
+    }
 
     /**
      * Calculer le statut en fonction des dates
@@ -150,38 +221,6 @@ class FrontCampaignController extends Controller
             return response()->json(['error' => 'Erreur serveur'], 500);
         }
     }
-    /**
-     * Enregistrer un commentaire
-     */
-    public function storeComment(Request $request, Campaign $campaign)
-    {
-        try {
-            // Récupérer l'utilisateur authentifié via le guard 'api'
-            $user = $request->auth ?? Auth::guard('api')->user();
-            if (!$user) {
-                Log::warning('Aucun utilisateur authentifié pour commenter', ['campaign_id' => $campaign->id]);
-                return back()->withErrors(['error' => 'Vous devez être connecté pour commenter.']);
-            }
-
-            $request->validate([
-                'content' => 'required|string|max:1000',
-            ]);
-
-            $comment = CampaignComment::create([
-                'campaign_id' => $campaign->id,
-                'user_id' => $user->id,
-                'content' => $request->input('content'),
-            ]);
-
-            return redirect()->route('front.campaigns.show', $campaign->id)
-                ->with('success', 'Commentaire ajouté avec succès !');
-        } catch (\Exception $e) {
-            Log::error('Erreur lors de l\'ajout du commentaire: ' . $e->getMessage());
-            return back()->withErrors(['error' => 'Erreur lors de l\'ajout du commentaire.']);
-        }
-    }
-
-
 
 
     /**
@@ -228,46 +267,114 @@ class FrontCampaignController extends Controller
     }
 
 
+
+
+
+
+
     /**
-     * Mettre à jour un commentaire
+     * Stocker un nouveau commentaire
      */
-    public function updateComment(Request $request, Campaign $campaign, CampaignComment $comment)
+    public function storeComment(Request $request, Campaign $campaign)
     {
         try {
-            // Récupérer l'utilisateur authentifié via VerifyJWT
             $user = $request->auth;
             if (!$user) {
-                Log::warning('Aucun utilisateur authentifié pour modifier le commentaire', [
-                    'campaign_id' => $campaign->id,
-                    'comment_id' => $comment->id,
-                ]);
-                return back()->withErrors(['error' => 'Vous devez être connecté pour modifier un commentaire.']);
-            }
-
-            // Vérifier que l'utilisateur est l'auteur du commentaire
-            if ($comment->user_id !== $user->id) {
-                Log::warning('Tentative de modification d\'un commentaire non autorisé', [
-                    'user_id' => $user->id,
-                    'comment_id' => $comment->id,
-                ]);
-                return back()->withErrors(['error' => 'Vous ne pouvez modifier que vos propres commentaires.']);
+                Log::warning('Utilisateur non authentifié pour commenter', ['campaign_id' => $campaign->id]);
+                return response()->json(['error' => 'Vous devez être connecté pour commenter.'], 401);
             }
 
             $request->validate([
                 'content' => 'required|string|max:1000',
             ]);
 
+            $comment = CampaignComment::create([
+                'campaign_id' => $campaign->id,
+                'user_id' => $user->id,
+                'content' => $request->input('content'), // Corrigé : utiliser input('content')
+            ]);
+
+            Log::info('Commentaire ajouté', [
+                'user_id' => $user->id,
+                'campaign_id' => $campaign->id,
+                'comment_id' => $comment->id,
+                'content' => $comment->content,
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'comment' => [
+                    'id' => $comment->id,
+                    'content' => $comment->content,
+                    'user_name' => $user->name,
+                ],
+                'comments_count' => $campaign->comments_count,
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Erreur lors de l\'ajout du commentaire: ' . $e->getMessage(), [
+                'campaign_id' => $campaign->id,
+                'user_id' => $user->id ?? 'N/A',
+                'request_data' => $request->all(),
+            ]);
+            return response()->json(['error' => 'Erreur serveur'], 500);
+        }
+    }
+
+    /**
+     * Modifier un commentaire
+     */
+    public function updateComment(Request $request, Campaign $campaign, CampaignComment $comment)
+    {
+        try {
+            // Vérifier que l'utilisateur est le propriétaire du commentaire
+            if ($comment->user_id !== auth()->id()) {
+                return response()->json([
+                    'success' => false,
+                    'error' => 'Vous n\'êtes pas autorisé à modifier ce commentaire.'
+                ], 403);
+            }
+
+            // Valider les données
+            $request->validate([
+                'content' => 'required|string|max:1000',
+            ]);
+
+            // Mettre à jour le commentaire
             $comment->update([
                 'content' => $request->input('content'),
             ]);
 
-            return redirect()->route('front.campaigns.show', $campaign->id)
-                ->with('success', 'Commentaire modifié avec succès !');
+            // Journalisation
+            Log::info('Commentaire modifié', [
+                'user_id' => auth()->id(),
+                'campaign_id' => $campaign->id,
+                'comment_id' => $comment->id,
+                'content' => $request->input('content')
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'comment' => [
+                    'id' => $comment->id,
+                    'content' => $comment->content,
+                ],
+                'message' => 'Commentaire modifié avec succès.'
+            ]);
         } catch (\Exception $e) {
-            Log::error('Erreur lors de la modification du commentaire: ' . $e->getMessage());
-            return back()->withErrors(['error' => 'Erreur lors de la modification du commentaire.']);
+            Log::error('Erreur lors de la modification du commentaire: ' . $e->getMessage(), [
+                'campaign_id' => $campaign->id,
+                'comment_id' => $comment->id,
+                'user_id' => auth()->id(),
+                'request_data' => $request->all()
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'error' => $e->getMessage()
+            ], 500);
         }
     }
+
 
     /**
      * Supprimer un commentaire
@@ -275,32 +382,113 @@ class FrontCampaignController extends Controller
     public function deleteComment(Request $request, Campaign $campaign, CampaignComment $comment)
     {
         try {
-            // Récupérer l'utilisateur authentifié via VerifyJWT
             $user = $request->auth;
             if (!$user) {
-                Log::warning('Aucun utilisateur authentifié pour supprimer le commentaire', [
+                Log::warning('Utilisateur non authentifié pour supprimer un commentaire', [
                     'campaign_id' => $campaign->id,
                     'comment_id' => $comment->id,
                 ]);
-                return back()->withErrors(['error' => 'Vous devez être connecté pour supprimer un commentaire.']);
+                return response()->json(['error' => 'Vous devez être connecté pour supprimer un commentaire.'], 401);
             }
 
-            // Vérifier que l'utilisateur est l'auteur du commentaire
             if ($comment->user_id !== $user->id) {
-                Log::warning('Tentative de suppression d\'un commentaire non autorisé', [
+                Log::warning('Utilisateur non autorisé à supprimer le commentaire', [
                     'user_id' => $user->id,
                     'comment_id' => $comment->id,
                 ]);
-                return back()->withErrors(['error' => 'Vous ne pouvez supprimer que vos propres commentaires.']);
+                return response()->json(['error' => 'Vous n\'êtes pas autorisé à supprimer ce commentaire.'], 403);
             }
 
+            if ($comment->campaign_id !== $campaign->id) {
+                Log::warning('Commentaire non valide pour la campagne', [
+                    'campaign_id' => $campaign->id,
+                    'comment_id' => $comment->id,
+                ]);
+                return response()->json(['error' => 'Commentaire non valide.'], 404);
+            }
+
+            $commentId = $comment->id; // Sauvegarde pour le log
             $comment->delete();
 
-            return redirect()->route('front.campaigns.show', $campaign->id)
-                ->with('success', 'Commentaire supprimé avec succès !');
+            Log::info('Commentaire supprimé', [
+                'user_id' => $user->id,
+                'campaign_id' => $campaign->id,
+                'comment_id' => $commentId,
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'comments_count' => $campaign->comments_count,
+            ]);
         } catch (\Exception $e) {
-            Log::error('Erreur lors de la suppression du commentaire: ' . $e->getMessage());
-            return back()->withErrors(['error' => 'Erreur lors de la suppression du commentaire.']);
+            Log::error('Erreur lors de la suppression du commentaire: ' . $e->getMessage(), [
+                'campaign_id' => $campaign->id,
+                'comment_id' => $comment->id ?? 'N/A',
+                'user_id' => $user->id ?? 'N/A',
+            ]);
+            return response()->json(['error' => 'Erreur serveur'], 500);
+        }
+    }
+
+    /**
+     * Gérer le like/dé-like d'un commentaire
+     */
+    public function likeComment(Request $request, Campaign $campaign, CampaignComment $comment)
+    {
+        try {
+            $user = $request->auth;
+            if (!$user) {
+                Log::warning('Aucun utilisateur authentifié pour liker le commentaire', [
+                    'campaign_id' => $campaign->id,
+                    'comment_id' => $comment->id,
+                ]);
+                return response()->json(['error' => 'Vous devez être connecté pour liker un commentaire.'], 401);
+            }
+
+            if ($comment->campaign_id !== $campaign->id) {
+                Log::warning('Le commentaire n\'appartient pas à la campagne', [
+                    'campaign_id' => $campaign->id,
+                    'comment_id' => $comment->id,
+                ]);
+                return response()->json(['error' => 'Commentaire non valide.'], 404);
+            }
+
+            $existingLike = CommentLike::where('comment_id', $comment->id)
+                ->where('user_id', $user->id)
+                ->first();
+
+            if ($existingLike) {
+                $existingLike->delete();
+                $action = 'unliked';
+            } else {
+                CommentLike::create([
+                    'comment_id' => $comment->id,
+                    'user_id' => $user->id,
+                ]);
+                $action = 'liked';
+            }
+
+            $likesCount = $comment->likes()->count();
+
+            Log::info('Like/Dé-like de commentaire effectué', [
+                'user_id' => $user->id,
+                'comment_id' => $comment->id,
+                'action' => $action,
+                'likes_count' => $likesCount,
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'likes_count' => $likesCount,
+                'action' => $action,
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Erreur lors du like/dé-like du commentaire: ' . $e->getMessage(), [
+                'user_id' => $user->id ?? 'N/A',
+                'comment_id' => $comment->id,
+                'campaign_id' => $campaign->id,
+            ]);
+            return response()->json(['error' => 'Erreur serveur'], 500);
         }
     }
 }

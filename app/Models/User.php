@@ -140,4 +140,12 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->hasMany(CampaignLike::class, 'user_id');
     }
+
+    /**
+     * Relation avec les likes des commentaires
+     */
+    public function commentLikes(): HasMany
+    {
+        return $this->hasMany(CommentLike::class, 'user_id');
+    }
 }
