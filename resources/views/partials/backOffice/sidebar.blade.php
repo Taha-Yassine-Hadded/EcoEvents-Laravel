@@ -6,7 +6,7 @@
             <ul class="nav-list">
                 <!-- Dashboard -->
                 <li class="nav-item">
-                    <a href="{{ route('admin.dashboard') }}" class="nav-link active">
+                    <a href="{{ route('admin.dashboard') }}" class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
                         <i class="fas fa-tachometer-alt"></i>
                         <span class="nav-text">Dashboard</span>
                     </a>
@@ -53,6 +53,20 @@
                         <li><a href="{{ route('admin.campaigns.create') }}" class="submenu-link">Add Compagne</a></li>                          <li><a href="#" class="submenu-link">Categories</a></li>
                         <li><a href="#" class="submenu-link">Tags</a></li>
                     </ul>
+                </li>
+
+                <li class="nav-item">
+                    <a href="{{ route('admin.events.index') }}" class="nav-link {{ request()->routeIs('admin.events.*') ? 'active' : '' }}">
+                        <i class="fas fa-images"></i>
+                        <span class="nav-text">Events</span>
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a href="{{ route('admin.categories.index') }}" class="nav-link {{ request()->routeIs('admin.categories.*') ? 'active' : '' }}">
+                        <i class="fas fa-images"></i>
+                        <span class="nav-text">Categories</span>
+                    </a>
                 </li>
 
 
