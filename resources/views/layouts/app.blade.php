@@ -48,6 +48,27 @@
 
     <!-- Custom EcoEvents Styles -->
     <style>
+        /* Forcer l'arrière-plan blanc sur toute l'application */
+        html, body {
+            background-color: #ffffff !important;
+        }
+        
+        /* Correction pour éviter que le contenu soit caché sous la navbar */
+        .navbar-fixed-top, .fixed-top {
+            position: relative !important;
+        }
+        
+        /* S'assurer que les boutons sont toujours visibles */
+        .btn {
+            z-index: 1050 !important;
+            position: relative !important;
+        }
+        
+        /* Supprimer le padding-top du body si la navbar est fixe */
+        body {
+            padding-top: 0 !important;
+        }
+        
         .header-button .btn-register {
             background: transparent;
             color: #28a745;

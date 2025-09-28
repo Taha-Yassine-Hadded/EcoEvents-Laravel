@@ -8,42 +8,41 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <!-- Favicon -->
-    <link rel="icon" type="image/png" sizes="56x56" href="{{ Vite::asset('resources/assets/images/fav-icon/icon.png') }}">
+    <link rel="icon" type="image/png" sizes="56x56" href="{{ asset('assets/images/fav-icon/icon.png') }}">
 
     <!-- bootstrap CSS -->
-    @vite('resources/assets/css/bootstrap.min.css')
+    <link rel="stylesheet" href="{{ asset('assets/css/bootstrap.min.css') }}">
     <!-- carousel CSS -->
-    @vite('resources/assets/css/owl.carousel.min.css')
+    <link rel="stylesheet" href="{{ asset('assets/css/owl.carousel.min.css') }}">
     <!-- animate CSS -->
-    @vite('resources/assets/css/animate.css')
+    <link rel="stylesheet" href="{{ asset('assets/css/animate.css') }}">
     <!-- animated-text CSS -->
-    @vite('resources/assets/css/animated-text.css')
-    <!-- font-awesome CSS -->
-    @vite('resources/assets/css/all.min.css')
+    <link rel="stylesheet" href="{{ asset('assets/css/animated-text.css') }}">
+    <!-- font-awesome CSS via CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- font-flaticon CSS -->
-    @vite('resources/assets/css/flaticon.css')
+    <link rel="stylesheet" href="{{ asset('assets/css/flaticon.css') }}">
     <!-- theme-default CSS -->
-    @vite('resources/assets/css/theme-default.css')
+    <link rel="stylesheet" href="{{ asset('assets/css/theme-default.css') }}">
     <!-- meanmenu CSS -->
-    @vite('resources/assets/css/meanmenu.min.css')
+    <link rel="stylesheet" href="{{ asset('assets/css/meanmenu.min.css') }}">
     <!-- transitions CSS -->
-    @vite('resources/assets/css/owl.transitions.css')
+    <link rel="stylesheet" href="{{ asset('assets/css/owl.transitions.css') }}">
     <!-- venobox CSS -->
-    @vite('resources/assets/venobox/venobox.css')
+    <link rel="stylesheet" href="{{ asset('assets/venobox/venobox.css') }}">
     <!-- bootstrap icons -->
-    @vite('resources/assets/css/bootstrap-icons.css')
+    <link rel="stylesheet" href="{{ asset('assets/css/bootstrap-icons.css') }}">
     <!-- Main Style CSS -->
-    @vite('resources/assets/css/style.css')
+    <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
     <!-- responsive CSS -->
-    @vite('resources/assets/css/responsive.css')
+    <link rel="stylesheet" href="{{ asset('assets/css/responsive.css') }}">
 
     <!-- modernizr js -->
-    @vite('resources/assets/js/vendor/modernizr-3.5.0.min.js')
+    <script src="{{ asset('assets/js/vendor/modernizr-3.5.0.min.js') }}"></script>
 
     <!-- extra plugins -->
     <link rel="stylesheet" href="https://unpkg.com/splitting/dist/splitting.css" />
     <link rel="stylesheet" href="https://unpkg.com/splitting/dist/splitting-cells.css" />
-
     @stack('styles')
 
     <!-- Admin Layout Styles -->
@@ -277,25 +276,25 @@
     </div>
 
     <!-- Scripts -->
-    @vite('resources/assets/js/vendor/jquery-3.6.2.min.js')
-    @vite('resources/assets/js/popper.min.js')
-    @vite('resources/assets/js/bootstrap.min.js')
-    @vite('resources/assets/js/owl.carousel.min.js')
-    @vite('resources/assets/js/jquery.counterup.min.js')
-    @vite('resources/assets/js/waypoints.min.js')
-    @vite('resources/assets/js/wow.js')
-    @vite('resources/assets/js/imagesloaded.pkgd.min.js')
-    @vite('resources/assets/venobox/venobox.js')
-    @vite('resources/assets/js/animated-text.js')
-    @vite('resources/assets/venobox/venobox.min.js')
-    @vite('resources/assets/js/isotope.pkgd.min.js')
-    @vite('resources/assets/js/jquery.meanmenu.js')
-    @vite('resources/assets/js/jquery.scrollUp.js')
-    @vite('resources/assets/js/theme.js')
-    @vite('resources/assets/js/coustom.js')
-    @vite('resources/assets/js/jquery.barfiller.js')
-    @vite('resources/assets/js/vanilla-tilt.min.js')
-    @vite('resources/assets/js/silik-slider.js')
+    <script src="{{ asset('assets/js/vendor/jquery-3.6.2.min.js') }}"></script>
+    <script src="{{ asset('assets/js/popper.min.js') }}"></script>
+    <script src="{{ asset('assets/js/bootstrap.min.js') }}"></script>
+    <script src="{{ asset('assets/js/owl.carousel.min.js') }}"></script>
+    <script src="{{ asset('assets/js/jquery.counterup.min.js') }}"></script>
+    <script src="{{ asset('assets/js/waypoints.min.js') }}"></script>
+    <script src="{{ asset('assets/js/wow.js') }}"></script>
+    <script src="{{ asset('assets/js/imagesloaded.pkgd.min.js') }}"></script>
+    <script src="{{ asset('assets/venobox/venobox.js') }}"></script>
+    <script src="{{ asset('assets/js/animated-text.js') }}"></script>
+    <script src="{{ asset('assets/venobox/venobox.min.js') }}"></script>
+    <script src="{{ asset('assets/js/isotope.pkgd.min.js') }}"></script>
+    <script src="{{ asset('assets/js/jquery.meanmenu.js') }}"></script>
+    <script src="{{ asset('assets/js/jquery.scrollUp.js') }}"></script>
+    <script src="{{ asset('assets/js/theme.js') }}"></script>
+    <script src="{{ asset('assets/js/coustom.js') }}"></script>
+    <script src="{{ asset('assets/js/jquery.barfiller.js') }}"></script>
+    <script src="{{ asset('assets/js/vanilla-tilt.min.js') }}"></script>
+    <script src="{{ asset('assets/js/silik-slider.js') }}"></script>
 
     <script src="https://unpkg.com/splitting/dist/splitting.min.js"></script>
     <script>Splitting();</script>
