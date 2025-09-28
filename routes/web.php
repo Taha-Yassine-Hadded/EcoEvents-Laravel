@@ -139,8 +139,11 @@ Route::prefix('admin/campaigns')->middleware([\App\Http\Middleware\VerifyJWT::cl
     Route::post('/{id}/duplicate', [CampaignController::class, 'duplicate'])->name('admin.campaigns.duplicate');
     Route::get('/{id}/export', [CampaignController::class, 'export'])->name('admin.campaigns.export');
     Route::post('/{id}/notify', [CampaignController::class, 'notify'])->name('admin.campaigns.notify');
+    Route::get('/{id}/comments', [CampaignController::class, 'comments'])->name('admin.campaigns.comments');
+    Route::delete('/{id}/comments/{comment}', [CampaignController::class, 'deleteComment'])->name('admin.campaigns.comments.delete');
 
-});
+}
+);
 
 Route::prefix('campaigns')->group(function () {
     Route::get('/', [FrontCampaignController::class, 'index'])->name('front.campaigns.index');
