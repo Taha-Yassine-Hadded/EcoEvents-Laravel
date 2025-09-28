@@ -16,6 +16,7 @@
                     <ul>
                         <li><a href="{{ url('/') }}">Accueil</a></li>
                         <li><a href="{{ url('/about') }}">À propos</a></li>
+                        <li><a href="{{ route('communities.index') }}">Communautés</a></li>
                         <li><a href="#">Événements</a></li>
                         <li><a href="{{ url('/campaigns?search=&category=all&status=all') }}">Nos Campagnes</a></li>
                         <li><a href="{{ url('/contact') }}">Contact</a></li>
@@ -40,6 +41,10 @@
                                 <a href="#" class="profile-link">
                                     <i class="bi bi-person"></i>
                                     Profile
+                                </a>
+                                <a href="{{ route('organizer.communities.index') }}" class="organizer-link" id="organizer-link" style="display: none;">
+                                    <i class="bi bi-people"></i>
+                                    Mes Communautés
                                 </a>
                                 <a href="#" id="theme-toggle" class="theme-toggle">
                                     <i class="bi bi-moon"></i>
@@ -82,7 +87,12 @@
                     </ul>
                 </li>
                 <li><a href="{{ url('/about') }}">About</a></li>
+
+                <li><a href="{{ route('communities.index') }}">Communautés</a></li>
+                <li><a href="{{ url('/blog') }}">Blog</a></li>
+
                 <li><a href="{{ url('/campaigns?search=&category=all&status=all') }}">Nos Campagnes</a></li>
+
                 <li><a href="{{ url('/contact') }}">Contact</a></li>
                 <li id="mobile-auth-area">
                     <div class="mobile-auth-buttons" id="mobile-auth-buttons">
@@ -98,6 +108,10 @@
                             <a href="#" class="profile-link">
                                 <i class="bi bi-person"></i>
                                 Profile
+                            </a>
+                            <a href="{{ route('organizer.communities.index') }}" class="organizer-link" id="mobile-organizer-link" style="display: none;">
+                                <i class="bi bi-people"></i>
+                                Mes Communautés
                             </a>
                             <a href="#" id="mobile-theme-toggle" class="theme-toggle">
                                 <i class="bi bi-moon"></i>
@@ -407,6 +421,12 @@
 
                         // Mettre à jour l'avatar
                         updateAvatar(data.user);
+
+                        // Afficher le lien organisateur si l'utilisateur est organisateur
+                        if (data.user.role === 'organizer') {
+                            document.getElementById('organizer-link').style.display = 'flex';
+                            document.getElementById('mobile-organizer-link').style.display = 'flex';
+                        }
 
                         // Configurer les dropdowns
                         setupDropdown('user-avatar', 'user-dropdown');
