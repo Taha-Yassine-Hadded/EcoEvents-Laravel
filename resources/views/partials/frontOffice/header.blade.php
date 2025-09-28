@@ -17,7 +17,7 @@
                         <li><a href="{{ url('/') }}">Accueil</a></li>
                         <li><a href="{{ url('/about') }}">À propos</a></li>
                         <li><a href="#">Événements</a></li>
-                        <li><a href="{{ url('/blog') }}">Blog</a></li>
+                        <li><a href="{{ url('/campaigns?search=&category=all&status=all') }}">Nos Campagnes</a></li>
                         <li><a href="{{ url('/contact') }}">Contact</a></li>
                     </ul>
                     <div class="header-secrch-icon search-box-outer">
@@ -82,7 +82,7 @@
                     </ul>
                 </li>
                 <li><a href="{{ url('/about') }}">About</a></li>
-                <li><a href="{{ url('/blog') }}">Blog</a></li>
+                <li><a href="{{ url('/campaigns?search=&category=all&status=all') }}">Nos Campagnes</a></li>
                 <li><a href="{{ url('/contact') }}">Contact</a></li>
                 <li id="mobile-auth-area">
                     <div class="mobile-auth-buttons" id="mobile-auth-buttons">
@@ -372,9 +372,6 @@
         }
     }
 </style>
-
-
-
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {

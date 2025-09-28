@@ -41,6 +41,22 @@
                     </ul>
                 </li>
 
+                <!-- Compagne Management -->
+                <li class="nav-item has-submenu">
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-file-alt"></i>
+                        <span class="nav-text">Compagne</span>
+                        <i class="fas fa-chevron-right submenu-arrow"></i>
+                    </a>
+                    <ul class="submenu">
+                        <li><a href="{{ route('admin.campaigns.index') }}" class="submenu-link">All Compagnes</a></li>
+                        <li><a href="{{ route('admin.campaigns.create') }}" class="submenu-link">Add Compagne</a></li>                          <li><a href="#" class="submenu-link">Categories</a></li>
+                        <li><a href="#" class="submenu-link">Tags</a></li>
+                    </ul>
+                </li>
+
+
+
                 <!-- Media -->
                 <li class="nav-item">
                     <a href="#" class="nav-link">

@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\CampaignController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\Front\FrontCampaignController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AuthController;
@@ -100,7 +102,7 @@ Route::get('/dashboard', [DashboardController::class, 'index'])
 // Test route avec un seul middleware
 Route::get('/test', function () {
     return 'Test route works!';
-})->middleware(\App\Http\Middleware\RoleGuard::class);
+})->middleware(\App\Http\Middleware\VerifyJWT::class);
 
 
 // Simple register test
@@ -124,3 +126,50 @@ Route::post('/logout', [LoginController::class, 'logout'])->middleware(\App\Http
 Route::get('/user', [UserController::class, 'getUser'])
     ->middleware(\App\Http\Middleware\VerifyJWT::class)
     ->name('user.get');
+
+
+// Routes pour la gestion des campagnes
+Route::prefix('admin/campaigns')->middleware([\App\Http\Middleware\VerifyJWT::class, \App\Http\Middleware\RoleGuard::class . ':admin'])->group(function () {
+    Route::get('/create', [CampaignController::class, 'create'])->name('admin.campaigns.create');
+    Route::post('/store', [CampaignController::class, 'store'])->name('admin.campaigns.store');
+    Route::get('/', [CampaignController::class, 'index'])->name('admin.campaigns.index');
+    Route::delete('/{id}', [CampaignController::class, 'destroy'])->name('admin.campaigns.destroy');
+    Route::get('/{id}', [CampaignController::class, 'show'])->name('admin.campaigns.show');
+    Route::post('/{id}', [CampaignController::class, 'update'])->name('admin.campaigns.update');
+    Route::post('/{id}/duplicate', [CampaignController::class, 'duplicate'])->name('admin.campaigns.duplicate');
+    Route::get('/{id}/export', [CampaignController::class, 'export'])->name('admin.campaigns.export');
+    Route::post('/{id}/notify', [CampaignController::class, 'notify'])->name('admin.campaigns.notify');
+
+});
+
+Route::prefix('campaigns')->group(function () {
+    Route::get('/', [FrontCampaignController::class, 'index'])->name('front.campaigns.index');
+    Route::get('/{campaign}', [FrontCampaignController::class, 'show'])
+        ->middleware(\App\Http\Middleware\VerifyJWT::class)
+        ->name('front.campaigns.show');
+
+
+    Route::put('/{campaign}/comments/{comment}', [FrontCampaignController::class, 'updateComment'])
+        ->middleware(\App\Http\Middleware\VerifyJWT::class)
+        ->name('front.campaigns.comments.update');
+
+    Route::delete('/{campaign}/comments/{comment}', [FrontCampaignController::class, 'deleteComment'])
+        ->middleware(\App\Http\Middleware\VerifyJWT::class)
+        ->name('front.campaigns.comments.delete');
+
+
+    Route::post('/{campaign}/comments', [FrontCampaignController::class, 'storeComment'])
+        ->middleware(\App\Http\Middleware\VerifyJWT::class)
+        ->name('front.campaigns.comments.store');
+
+    Route::post('/{campaign}/comments/{comment}/like', [FrontCampaignController::class, 'likeComment'])
+        ->middleware(\App\Http\Middleware\VerifyJWT::class)
+        ->name('api.comments.like');
+});
+
+Route::post('/campaigns/filter', [FrontCampaignController::class, 'filter'])->name('api.campaigns.filter');
+// API routes
+Route::post('/campaigns/{campaign}/like', [FrontCampaignController::class, 'like'])
+    ->middleware(\App\Http\Middleware\VerifyJWT::class)
+    ->name('api.campaigns.like');// Dans web.php, dans le groupe admin/campaigns
+//Route::delete('/{id}', [CampaignController::class, 'destroy'])->name('admin.campaigns.destroy');
