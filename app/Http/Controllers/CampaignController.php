@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Campaign;
+use App\Models\CampaignComment; // Ajout du modèle Comment
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -66,6 +67,34 @@ class CampaignController extends Controller
         }
     }
 
+
+
+
+    /**
+     * Supprimer une campagne
+     */
+    public function destroy($id)
+    {
+        try {
+            $campaign = Campaign::findOrFail($id);
+
+            // Supprimer les images associées
+            if (!empty($campaign->media_urls['images'])) {
+                foreach ($campaign->media_urls['images'] as $image) {
+                    Storage::disk('public')->delete($image);
+                }
+            }
+
+            $campaign->delete();
+
+            return response()->json(['success' => true, 'message' => 'Campagne supprimée avec succès']);
+        } catch (\Exception $e) {
+            Log::error('Erreur lors de la suppression de la campagne ID ' . $id . ': ' . $e->getMessage());
+            return response()->json(['error' => 'Erreur lors de la suppression'], 500);
+        }
+    }
+
+    
     /**
      * Enregistrer une nouvelle campagne
      */
@@ -128,19 +157,42 @@ class CampaignController extends Controller
         }
     }
 
+
+
+
+
+
     /**
      * Afficher les détails d'une campagne
      */
     public function show($id)
     {
         try {
-            $campaign = Campaign::with('creator')->findOrFail($id);
+            // Vérifier si l'ID est numérique
+            if (!is_numeric($id) || $id <= 0) {
+                Log::error('ID de campagne invalide : ' . $id);
+                return response()->json(['error' => 'ID de campagne invalide'], 400);
+            }
+
+            $campaign = Campaign::with('creator:id,name,email,created_at')
+                ->findOrFail($id);
+
+            // Mettre à jour le statut
             $campaign->status = $this->calculateStatus($campaign->start_date, $campaign->end_date);
 
-            return view('pages.backOffice.campaigns.show', compact('campaign'));
-        } catch (\Exception $e) {
-            Log::error('Erreur lors du chargement de la campagne ID ' . $id . ': ' . $e->getMessage());
+            // Charger les commentaires
+            $comments = CampaignComment::where('campaign_id', $id)
+                ->with('user:id,name')
+                ->orderBy('created_at', 'desc')
+                ->get();
+
+            return view('pages.backOffice.campaigns.show', compact('campaign', 'comments'));
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            Log::error('Campagne non trouvée pour l\'ID ' . $id . ': ' . $e->getMessage());
             return response()->json(['error' => 'Campagne non trouvée'], 404);
+        } catch (\Exception $e) {
+            Log::error('Erreur inattendue lors du chargement de la campagne ID ' . $id . ': ' . $e->getMessage());
+            return response()->json(['error' => 'Erreur serveur'], 500);
         }
     }
 
@@ -163,7 +215,8 @@ class CampaignController extends Controller
                 'contact_info' => 'nullable|string|max:1000',
                 'media.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
                 'video_url' => 'nullable|url|max:255',
-                'website_url' => 'nullable|url|max:255'
+                'website_url' => 'nullable|url|max:255',
+                'deleted_images' => 'nullable|json'
             ]);
 
             // Mettre à jour les champs
@@ -177,20 +230,45 @@ class CampaignController extends Controller
             $campaign->actions = array_filter($request->input('actions', []));
             $campaign->contact_info = $validated['contact_info'] ?? null;
 
-            // Gérer l'upload d'image et autres médias
+            // Gérer les images
             $mediaUrls = $campaign->media_urls ?? ['images' => [], 'videos' => [], 'website' => null];
-            if ($request->hasFile('media')) {
-                foreach ($request->file('media') as $file) {
-                    $path = $file->store('campaigns', 'public');
-                    $mediaUrls['images'][] = $path;
+
+            // Supprimer les images marquées comme supprimées
+            if ($request->has('deleted_images')) {
+                $deletedImages = json_decode($request->input('deleted_images'), true) ?? [];
+                foreach ($deletedImages as $imagePath) {
+                    if (isset($mediaUrls['images']) && in_array($imagePath, $mediaUrls['images'])) {
+                        Storage::disk('public')->delete($imagePath);
+                        $mediaUrls['images'] = array_diff($mediaUrls['images'], [$imagePath]);
+                    }
                 }
+                $mediaUrls['images'] = array_values($mediaUrls['images'] ?? []);
             }
+
+            // Gérer l'upload de nouvelles images
+            if ($request->hasFile('media')) {
+                foreach ($request->file('media') as $index => $file) {
+                    if ($file && $file->isValid()) {
+                        // Supprimer l'image existante à cet index si elle existe
+                        if (isset($mediaUrls['images'][$index])) {
+                            Storage::disk('public')->delete($mediaUrls['images'][$index]);
+                        }
+                        $path = $file->store('campaigns', 'public');
+                        $mediaUrls['images'][$index] = $path;
+                    }
+                }
+                $mediaUrls['images'] = array_values(array_filter($mediaUrls['images'] ?? []));
+            }
+
+            // Gérer les URLs de vidéo et site web
             if ($request->filled('video_url')) {
-                $mediaUrls['videos'] = array_unique(array_merge($mediaUrls['videos'] ?? [], [$validated['video_url']]));
+                $mediaUrls['videos'] = [$validated['video_url']];
+            } else {
+                $mediaUrls['videos'] = $mediaUrls['videos'] ?? [];
             }
-            if ($request->filled('website_url')) {
-                $mediaUrls['website'] = $validated['website_url'];
-            }
+            // Vérifier l'existence de la clé 'website' avant accès
+            $mediaUrls['website'] = $validated['website_url'] ?? (isset($mediaUrls['website']) ? $mediaUrls['website'] : null);
+
             $campaign->media_urls = array_filter($mediaUrls, fn($value) => !empty($value) || $value !== null);
 
             $campaign->save();
@@ -200,39 +278,16 @@ class CampaignController extends Controller
                 'campaign' => [
                     'id' => $campaign->id,
                     'title' => $campaign->title,
-                    'content' => $campaign->content,
                     'category' => $campaign->category,
                     'status' => $campaign->status,
-                    'updated_at' => $campaign->updated_at->format('d/m/Y H:i')
-                ]
+                    'updated_at' => $campaign->updated_at->format('d/m/Y H:i'),
+                    'media_urls' => $campaign->media_urls
+                ],
+                'message' => 'Campagne mise à jour avec succès'
             ]);
         } catch (\Exception $e) {
             Log::error('Erreur lors de la mise à jour de la campagne ID ' . $id . ': ' . $e->getMessage());
-            return response()->json(['error' => 'Erreur lors de la mise à jour'], 500);
-        }
-    }
-
-    /**
-     * Supprimer une campagne
-     */
-    public function destroy($id)
-    {
-        try {
-            $campaign = Campaign::findOrFail($id);
-
-            // Supprimer les images associées
-            if (!empty($campaign->media_urls['images'])) {
-                foreach ($campaign->media_urls['images'] as $image) {
-                    Storage::disk('public')->delete($image);
-                }
-            }
-
-            $campaign->delete();
-
-            return response()->json(['success' => true]);
-        } catch (\Exception $e) {
-            Log::error('Erreur lors de la suppression de la campagne ID ' . $id . ': ' . $e->getMessage());
-            return response()->json(['error' => 'Erreur lors de la suppression'], 500);
+            return response()->json(['error' => 'Erreur lors de la mise à jour: ' . $e->getMessage()], 500);
         }
     }
 
@@ -243,18 +298,58 @@ class CampaignController extends Controller
     {
         try {
             $original = Campaign::findOrFail($id);
-            $newCampaign = $original->replicate();
-            $newCampaign->title = $original->title . ' (Copie)';
-            $newCampaign->created_at = now();
-            $newCampaign->updated_at = now();
-            $newCampaign->save();
+            $newMediaUrls = $original->media_urls ?? ['images' => [], 'videos' => [], 'website' => null];
 
-            return response()->json(['success' => true, 'campaign_id' => $newCampaign->id]);
+            // Copier les images
+            if (!empty($newMediaUrls['images'])) {
+                $newImages = [];
+                foreach ($newMediaUrls['images'] as $image) {
+                    if (Storage::disk('public')->exists($image)) {
+                        $newPath = 'campaigns/' . uniqid() . '.' . pathinfo($image, PATHINFO_EXTENSION);
+                        Storage::disk('public')->copy($image, $newPath);
+                        $newImages[] = $newPath;
+                    }
+                }
+                $newMediaUrls['images'] = $newImages;
+            }
+
+            $newCampaign = Campaign::create([
+                'title' => $original->title . ' (Copie)',
+                'content' => $original->content,
+                'category' => $original->category,
+                'start_date' => $original->start_date,
+                'end_date' => $original->end_date,
+                'contact_info' => $original->contact_info,
+                'media_urls' => $newMediaUrls,
+                'objectives' => $original->objectives,
+                'actions' => $original->actions,
+                'created_by' => Auth::id(),
+                'status' => 'upcoming',
+                'views_count' => 0,
+                'likes_count' => 0,
+                'comments_count' => 0,
+                'shares_count' => 0,
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'campaign_id' => $newCampaign->id,
+                'message' => 'Campagne dupliquée avec succès'
+            ]);
         } catch (\Exception $e) {
             Log::error('Erreur lors de la duplication de la campagne ID ' . $id . ': ' . $e->getMessage());
             return response()->json(['error' => 'Erreur lors de la duplication'], 500);
         }
     }
+
+
+
+
+
+
+
+
+
 
     /**
      * Exporter les données d'une campagne
@@ -271,22 +366,42 @@ class CampaignController extends Controller
     }
 
     /**
-     * Envoyer une notification aux participants
+     * Afficher les commentaires d'une campagne
      */
-    public function notify(Request $request, $id)
+    public function comments($id)
     {
         try {
-            $validated = $request->validate([
-                'message' => 'required|string|max:500'
+            $campaign = Campaign::findOrFail($id);
+            $comments = CampaignComment::where('campaign_id', $id)->with('user')->orderBy('created_at', 'desc')->get();
+            return response()->json([
+                'success' => true,
+                'comments' => $comments->map(function ($comment) {
+                    return [
+                        'id' => $comment->id,
+                        'content' => $comment->content,
+                        'user' => $comment->user ? $comment->user->name : 'Anonyme',
+                        'created_at' => $comment->created_at->format('d/m/Y H:i')
+                    ];
+                })
             ]);
-
-            // Logique d'envoi de notification (par exemple, via email ou notification push)
-            Log::info('Notification envoyée pour la campagne ID ' . $id . ': ' . $validated['message']);
-
-            return response()->json(['success' => true]);
         } catch (\Exception $e) {
-            Log::error('Erreur lors de l\'envoi de la notification pour la campagne ID ' . $id . ': ' . $e->getMessage());
-            return response()->json(['error' => 'Erreur lors de l\'envoi de la notification'], 500);
+            Log::error('Erreur lors du chargement des commentaires de la campagne ID ' . $id . ': ' . $e->getMessage());
+            return response()->json(['error' => 'Erreur lors du chargement des commentaires'], 500);
+        }
+    }
+
+    /**
+     * Supprimer un commentaire
+     */
+    public function deleteComment($id, $commentId)
+    {
+        try {
+            $comment = CampaignComment::where('campaign_id', $id)->findOrFail($commentId);
+            $comment->delete();
+            return response()->json(['success' => true, 'message' => 'Commentaire supprimé']);
+        } catch (\Exception $e) {
+            Log::error('Erreur lors de la suppression du commentaire ID ' . $commentId . ': ' . $e->getMessage());
+            return response()->json(['error' => 'Erreur lors de la suppression du commentaire'], 500);
         }
     }
 
