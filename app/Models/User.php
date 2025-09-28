@@ -135,4 +135,22 @@ class User extends Authenticatable implements JWTSubject
     {
         return [];
     }
+
+    /**
+     * Get communities created by this user (if organizer).
+     */
+    public function createdCommunities()
+    {
+        return $this->hasMany(Community::class, 'organizer_id');
+    }
+
+    /**
+     * Get communities this user is member of.
+     */
+    public function memberCommunities()
+    {
+        return $this->belongsToMany(Community::class, 'community_members', 'user_id', 'community_id')
+                    ->withPivot(['status', 'is_active', 'joined_at'])
+                    ->withTimestamps();
+    }
 }

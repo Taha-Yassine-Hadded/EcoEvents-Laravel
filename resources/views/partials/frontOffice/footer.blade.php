@@ -2,7 +2,7 @@
 <!-- Start Echofy Footer Area Home-Six -->
 <!--==================================================-->
 <div class="footer-area home-six" 
-    style="background: url('{{ asset('assets/images/home6/footer-bg.jpg') }}') no-repeat center center; background-size: cover;">
+    style="background: #f8f9fa !important; color: #333 !important;">
     <div class="container">
         <div class="row"> 
             <div class="col-lg-4 col-md-6">
