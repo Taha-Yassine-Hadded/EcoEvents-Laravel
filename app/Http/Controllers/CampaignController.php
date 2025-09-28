@@ -31,8 +31,7 @@ class CampaignController extends Controller
                     'start_date' => $campaign->start_date->toDateString(),
                     'end_date' => $campaign->end_date->toDateString(),
                     'views_count' => $campaign->views_count,
-                    'likes_count' => $campaign->likes_count,
-                    'comments_count' => $campaign->comments_count,
+                    'shares_count' => $campaign->shares_count,
                     'thumbnail' => !empty($campaign->media_urls['images']) && is_array($campaign->media_urls['images']) && Storage::disk('public')->exists($campaign->media_urls['images'][0])
                         ? Storage::url($campaign->media_urls['images'][0])
                         : 'https://via.placeholder.com/60x60?text=Image',
@@ -75,12 +74,17 @@ class CampaignController extends Controller
         try {
             $validated = $request->validate([
                 'title' => 'required|string|min:10|max:255',
-               // 'description' => 'required|string|min:50|max:300',
                 'content' => 'required|string|min:100|max:2000',
                 'category' => 'required|in:recyclage,climat,biodiversite,eau,energie,transport,alimentation,pollution,sensibilisation',
                 'start_date' => 'required|date',
                 'end_date' => 'required|date|after:start_date',
-                'media.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
+                'objectives.*' => 'nullable|string|max:500',
+                'actions.*' => 'nullable|string|max:500',
+                'contact_info' => 'nullable|string|max:1000',
+                'media.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+                'video_url' => 'nullable|url|max:255',
+                'website_url' => 'nullable|url|max:255',
+                'terms' => 'required|accepted'
             ]);
 
             $campaign = new Campaign();
@@ -91,16 +95,25 @@ class CampaignController extends Controller
             $campaign->end_date = Carbon::parse($validated['end_date']);
             $campaign->status = $this->calculateStatus($campaign->start_date, $campaign->end_date);
             $campaign->created_by = Auth::id();
+            $campaign->objectives = array_filter($request->input('objectives', []));
+            $campaign->actions = array_filter($request->input('actions', []));
+            $campaign->contact_info = $validated['contact_info'] ?? null;
 
-            // Gérer l'upload d'image
+            // Gérer l'upload d'image et autres médias
+            $mediaUrls = ['images' => [], 'videos' => [], 'website' => null];
             if ($request->hasFile('media')) {
-                $mediaUrls = ['images' => []];
                 foreach ($request->file('media') as $file) {
                     $path = $file->store('campaigns', 'public');
                     $mediaUrls['images'][] = $path;
                 }
-                $campaign->media_urls = $mediaUrls;
             }
+            if ($request->filled('video_url')) {
+                $mediaUrls['videos'][] = $validated['video_url'];
+            }
+            if ($request->filled('website_url')) {
+                $mediaUrls['website'] = $validated['website_url'];
+            }
+            $campaign->media_urls = array_filter($mediaUrls, fn($value) => !empty($value) || $value !== null);
 
             $campaign->save();
 
@@ -141,12 +154,16 @@ class CampaignController extends Controller
 
             $validated = $request->validate([
                 'title' => 'required|string|min:10|max:255',
-               // 'description' => 'required|string|min:50|max:300',
                 'content' => 'required|string|min:100|max:2000',
                 'category' => 'required|in:recyclage,climat,biodiversite,eau,energie,transport,alimentation,pollution,sensibilisation',
                 'start_date' => 'required|date',
                 'end_date' => 'required|date|after:start_date',
-                'media.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
+                'objectives.*' => 'nullable|string|max:500',
+                'actions.*' => 'nullable|string|max:500',
+                'contact_info' => 'nullable|string|max:1000',
+                'media.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+                'video_url' => 'nullable|url|max:255',
+                'website_url' => 'nullable|url|max:255'
             ]);
 
             // Mettre à jour les champs
@@ -156,16 +173,25 @@ class CampaignController extends Controller
             $campaign->start_date = Carbon::parse($validated['start_date']);
             $campaign->end_date = Carbon::parse($validated['end_date']);
             $campaign->status = $this->calculateStatus($campaign->start_date, $campaign->end_date);
+            $campaign->objectives = array_filter($request->input('objectives', []));
+            $campaign->actions = array_filter($request->input('actions', []));
+            $campaign->contact_info = $validated['contact_info'] ?? null;
 
-            // Gérer l'upload d'image
+            // Gérer l'upload d'image et autres médias
+            $mediaUrls = $campaign->media_urls ?? ['images' => [], 'videos' => [], 'website' => null];
             if ($request->hasFile('media')) {
-                $mediaUrls = $campaign->media_urls ?? ['images' => []];
                 foreach ($request->file('media') as $file) {
                     $path = $file->store('campaigns', 'public');
                     $mediaUrls['images'][] = $path;
                 }
-                $campaign->media_urls = $mediaUrls;
             }
+            if ($request->filled('video_url')) {
+                $mediaUrls['videos'] = array_unique(array_merge($mediaUrls['videos'] ?? [], [$validated['video_url']]));
+            }
+            if ($request->filled('website_url')) {
+                $mediaUrls['website'] = $validated['website_url'];
+            }
+            $campaign->media_urls = array_filter($mediaUrls, fn($value) => !empty($value) || $value !== null);
 
             $campaign->save();
 
@@ -255,7 +281,6 @@ class CampaignController extends Controller
             ]);
 
             // Logique d'envoi de notification (par exemple, via email ou notification push)
-            // À implémenter selon votre système de notification
             Log::info('Notification envoyée pour la campagne ID ' . $id . ': ' . $validated['message']);
 
             return response()->json(['success' => true]);

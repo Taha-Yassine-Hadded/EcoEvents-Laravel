@@ -19,6 +19,9 @@ class Campaign extends Model
     protected $fillable = [
         'title',
         'content',
+        'objectives',
+        'actions',
+        'contact_info',
         'media_urls',
         'category',
         'start_date',
@@ -38,6 +41,8 @@ class Campaign extends Model
     {
         return [
             'media_urls' => 'array',
+            'objectives' => 'array',
+            'actions' => 'array',
             'start_date' => 'datetime',
             'end_date' => 'datetime',
             'views_count' => 'integer',

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\CampaignController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\Front\FrontCampaignController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AuthController;
@@ -140,5 +141,31 @@ Route::prefix('admin/campaigns')->middleware([\App\Http\Middleware\VerifyJWT::cl
     Route::post('/{id}/notify', [CampaignController::class, 'notify'])->name('admin.campaigns.notify');
 
 });
-// Dans web.php, dans le groupe admin/campaigns
+
+Route::prefix('campaigns')->group(function () {
+    Route::get('/', [FrontCampaignController::class, 'index'])->name('front.campaigns.index');
+    Route::get('/{campaign}', [FrontCampaignController::class, 'show'])
+        ->middleware(\App\Http\Middleware\VerifyJWT::class)
+        ->name('front.campaigns.show');
+
+
+    Route::put('/{campaign}/comments/{comment}', [FrontCampaignController::class, 'updateComment'])
+        ->middleware(\App\Http\Middleware\VerifyJWT::class)
+        ->name('front.campaigns.comments.update');
+
+    Route::delete('/{campaign}/comments/{comment}', [FrontCampaignController::class, 'deleteComment'])
+        ->middleware(\App\Http\Middleware\VerifyJWT::class)
+        ->name('front.campaigns.comments.delete');
+
+
+    Route::post('/{campaign}/comments', [FrontCampaignController::class, 'storeComment'])
+        ->middleware(\App\Http\Middleware\VerifyJWT::class)
+        ->name('front.campaigns.comments.store');
+});
+
+
+// API routes
+Route::post('/campaigns/{campaign}/like', [FrontCampaignController::class, 'like'])
+    ->middleware(\App\Http\Middleware\VerifyJWT::class)
+    ->name('api.campaigns.like');// Dans web.php, dans le groupe admin/campaigns
 //Route::delete('/{id}', [CampaignController::class, 'destroy'])->name('admin.campaigns.destroy');
