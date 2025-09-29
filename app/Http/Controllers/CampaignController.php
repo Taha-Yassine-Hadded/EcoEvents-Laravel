@@ -94,7 +94,7 @@ class CampaignController extends Controller
         }
     }
 
-    
+
     /**
      * Enregistrer une nouvelle campagne
      */

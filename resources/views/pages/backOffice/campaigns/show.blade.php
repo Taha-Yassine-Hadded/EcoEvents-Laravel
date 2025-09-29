@@ -1,3 +1,4 @@
+
 @extends('layouts.admin')
 
 @section('title', 'Gestion de la Campagne - Echofy')
@@ -72,7 +73,10 @@
 
             <div class="campaign-image-section">
                 <div class="campaign-image-gallery">
-                    @forelse ($campaign->media_urls['images'] ?? [] as $index => $image)
+                    @php
+                        $mediaUrls = $campaign->media_urls ?? ['images' => [], 'videos' => [], 'website' => null];
+                    @endphp
+                    @forelse ($mediaUrls['images'] as $index => $image)
                         <div class="campaign-image" data-image-index="{{ $index }}">
                             <img src="{{ Storage::disk('public')->exists($image) ? Storage::url($image) : 'https://via.placeholder.com/800x300?text=Image' }}" alt="{{ $campaign->title }}" id="campaignImage{{ $index }}">
                             <div class="image-upload-overlay" id="imageUploadOverlay{{ $index }}">
@@ -110,6 +114,7 @@
             </h1>
         </div>
 
+        <!-- Rest of the Blade content remains unchanged -->
         <div class="content-grid">
             <div class="main-content fade-in stagger-delay-2">
                 <div class="form-group">
@@ -156,13 +161,13 @@
                 <!-- URL de la vidéo -->
                 <div class="form-group">
                     <label for="videoUrl">URL de la vidéo</label>
-                    <input type="url" class="form-control editable" id="videoUrl" data-field="video_url" value="{{ $campaign->media_urls['videos'][0] ?? '' }}" disabled>
+                    <input type="url" class="form-control editable" id="videoUrl" data-field="video_url" value="{{ $mediaUrls['videos'][0] ?? '' }}" disabled>
                 </div>
 
                 <!-- URL du site web -->
                 <div class="form-group">
                     <label for="websiteUrl">URL du site web</label>
-                    <input type="url" class="form-control editable" id="websiteUrl" data-field="website_url" value="{{ $campaign->media_urls['website'] ?? '' }}" disabled>
+                    <input type="url" class="form-control editable" id="websiteUrl" data-field="website_url" value="{{ $mediaUrls['website'] ?? '' }}" disabled>
                 </div>
             </div>
 
@@ -342,96 +347,46 @@
 
     @push('styles')
         <style>
-            * {
-                margin: 0;
-                padding: 0;
-                box-sizing: border-box;
+            body.edit-mode .editable:not(:disabled) {
+                border: 2px solid #007bff;
+                box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
             }
 
-            body {
-                font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-                background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-                color: #334155;
-                line-height: 1.6;
+            body.edit-mode .editable[contenteditable="true"] {
+                outline: none;
+                cursor: text;
             }
 
-            .container {
-                max-width: 1400px;
-                margin: 0 auto;
-                padding: 2rem 1rem;
+            body.edit-mode .image-upload-overlay {
+                display: flex !important;
             }
 
-            /* Notification fixe en haut à droite */
-            #notification-container {
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                z-index: 1000;
-                max-width: 400px;
-            }
-
-            .alert {
-                padding: 16px 20px;
-                margin-bottom: 12px;
-                border-radius: 12px;
-                backdrop-filter: blur(10px);
-                border: 1px solid rgba(255,255,255,0.2);
-                font-weight: 500;
-                transform: translateX(100%);
-                opacity: 0;
-                transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-                box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-            }
-
-            .alert.show {
-                opacity: 1;
-                transform: translateX(0);
-            }
-
-            .alert-success {
-                background: rgba(34, 197, 94, 0.15);
-                color: #166534;
-                border-color: rgba(34, 197, 94, 0.3);
-            }
-
-            .alert-danger {
-                background: rgba(239, 68, 68, 0.15);
-                color: #dc2626;
-                border-color: rgba(239, 68, 68, 0.3);
-            }
-
-            /* En-tête de section */
             .content-header {
                 text-align: center;
-                margin-bottom: 3rem;
+                padding: 2rem 0;
+                background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
             }
 
             .section-header {
-                text-align: center;
+                max-width: 800px;
+                margin: 0 auto;
             }
 
             .section-subtitle {
-                display: inline-flex;
+                font-size: 1rem;
+                color: #6c757d;
+                display: flex;
                 align-items: center;
-                gap: 8px;
-                background: linear-gradient(135deg, #10b981, #059669);
-                -webkit-background-clip: text;
-                -webkit-text-fill-color: transparent;
-                background-clip: text;
-                font-size: 1.1rem;
-                font-weight: 600;
-                margin-bottom: 16px;
+                justify-content: center;
+                gap: 0.5rem;
+                margin-bottom: 0.5rem;
             }
 
             .section-title {
-                font-size: 3rem;
-                font-weight: 800;
-                background: linear-gradient(135deg, #1e293b, #475569);
-                -webkit-background-clip: text;
-                -webkit-text-fill-color: transparent;
-                background-clip: text;
-                line-height: 1.2;
-                margin-bottom: 16px;
+                font-size: 2.5rem;
+                font-weight: 700;
+                color: #343a40;
+                margin-bottom: 1rem;
             }
 
             .breadcrumb-nav {
@@ -440,103 +395,89 @@
             }
 
             .breadcrumb {
-                display: flex;
-                gap: 8px;
-                list-style: none;
+                background: none;
                 padding: 0;
                 margin: 0;
+                display: flex;
+                list-style: none;
             }
 
-            .breadcrumb-item a {
-                color: #10b981;
-                text-decoration: none;
-                font-weight: 500;
-            }
-
-            .breadcrumb-item a:hover {
-                text-decoration: underline;
-            }
-
-            .breadcrumb-item.active {
-                color: #64748b;
-                font-weight: 600;
+            .breadcrumb-item {
+                font-size: 0.9rem;
             }
 
             .breadcrumb-item + .breadcrumb-item::before {
-                content: '/';
-                color: #64748b;
-                margin-right: 8px;
+                content: ">";
+                padding: 0 0.5rem;
+                color: #6c757d;
             }
 
-            /* Campaign Header */
-            .campaign-header {
-                background: rgba(255, 255, 255, 0.9);
-                backdrop-filter: blur(20px);
-                border: 1px solid rgba(255, 255, 255, 0.3);
-                border-radius: 24px;
+            .breadcrumb-item a {
+                color: #007bff;
+                text-decoration: none;
+            }
+
+            .breadcrumb-item.active {
+                color: #6c757d;
+            }
+
+            .container {
+                max-width: 1200px;
+                margin: 0 auto;
                 padding: 2rem;
+            }
+
+            .campaign-header {
                 margin-bottom: 2rem;
-                box-shadow: 0 8px 25px rgba(0,0,0,0.08);
-                position: relative;
             }
 
             .edit-mode-toggle {
-                position: absolute;
-                top: 1.5rem;
-                right: 1.5rem;
                 display: flex;
-                gap: 0.5rem;
+                gap: 1rem;
+                justify-content: flex-end;
+                margin-bottom: 1rem;
             }
 
             .toggle-btn {
-                padding: 0.6rem 1.2rem;
-                border: none;
-                border-radius: 12px;
-                cursor: pointer;
-                font-weight: 600;
-                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-                display: flex;
+                display: inline-flex;
                 align-items: center;
                 gap: 0.5rem;
-                font-size: 0.95rem;
+                padding: 0.5rem 1rem;
+                border-radius: 5px;
+                font-size: 1rem;
+                cursor: pointer;
+                transition: all 0.3s ease;
             }
 
             .btn-edit {
-                background: rgba(16, 185, 129, 0.1);
-                color: #10b981;
-                border: 2px solid #10b981;
-            }
-
-            .btn-edit:hover {
-                background: #10b981;
+                background: #007bff;
                 color: white;
+                border: none;
             }
 
             .btn-save {
-                background: #10b981;
+                background: #28a745;
                 color: white;
+                border: none;
                 display: none;
-            }
-
-            .btn-save:hover {
-                background: #059669;
             }
 
             .btn-cancel {
-                background: #6c757d;
+                background: #dc3545;
                 color: white;
+                border: none;
                 display: none;
             }
 
-            .btn-cancel:hover {
-                background: #5a6268;
+            .toggle-btn:hover {
+                opacity: 0.9;
             }
 
             .campaign-meta {
                 display: flex;
                 align-items: center;
                 gap: 1rem;
-                margin-bottom: 1.5rem;
+                margin-bottom: 1rem;
             }
 
             .status-info {
@@ -548,50 +489,43 @@
             .status-badge {
                 padding: 0.5rem 1rem;
                 border-radius: 20px;
-                font-weight: 600;
-                text-align: center;
-                min-width: 80px;
+                font-size: 0.9rem;
+                font-weight: 500;
+                text-transform: uppercase;
             }
 
             .status-active {
-                background: rgba(16, 185, 129, 0.1);
-                color: #10b981;
-            }
-
-            .status-ended {
-                background: rgba(108, 117, 125, 0.1);
-                color: #6c757d;
+                background: #28a745;
+                color: white;
             }
 
             .status-upcoming {
-                background: rgba(255, 193, 7, 0.1);
-                color: #ffc107;
+                background: #ffc107;
+                color: #343a40;
             }
 
-            .category-badge {
-                background: rgba(16, 185, 129, 0.1);
-                color: #10b981;
-                padding: 0.5rem 1rem;
-                border-radius: 20px;
-                font-weight: 600;
+            .status-ended {
+                background: #6c757d;
+                color: white;
             }
 
             .select-wrapper {
                 position: relative;
+                display: inline-block;
             }
 
-            .select-wrapper .select-arrow {
+            .select-arrow {
                 position: absolute;
-                right: 16px;
+                right: 10px;
                 top: 50%;
                 transform: translateY(-50%);
-                color: #64748b;
                 pointer-events: none;
-                transition: transform 0.3s ease;
+                color: #6c757d;
             }
 
-            .select-wrapper:hover .select-arrow {
-                transform: translateY(-50%) rotate(180deg);
+            .category-badge {
+                font-size: 0.9rem;
+                color: #6c757d;
             }
 
             .campaign-image-section {
@@ -599,49 +533,50 @@
             }
 
             .campaign-image-gallery {
-                display: flex;
-                flex-wrap: wrap;
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
                 gap: 1rem;
+                margin-bottom: 1rem;
             }
 
             .campaign-image {
-                width: 300px;
-                height: 200px;
-                background: linear-gradient(135deg, #10b981, #059669);
-                border-radius: 16px;
-                overflow: hidden;
                 position: relative;
+                border-radius: 10px;
+                overflow: hidden;
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
             }
 
             .campaign-image img {
                 width: 100%;
-                height: 100%;
+                height: 150px;
                 object-fit: cover;
-                transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-            }
-
-            .campaign-image:hover img {
-                transform: scale(1.1);
+                display: block;
             }
 
             .image-upload-overlay {
                 position: absolute;
                 top: 0;
                 left: 0;
-                right: 0;
-                bottom: 0;
-                background: rgba(0,0,0,0.7);
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.5);
                 display: none;
                 align-items: center;
                 justify-content: center;
                 color: white;
+                text-align: center;
                 cursor: pointer;
-                font-size: 1.2rem;
-                transition: all 0.3s ease;
+                transition: background 0.3s ease;
             }
 
-            .edit-mode .image-upload-overlay {
+            .image-upload-overlay:hover {
+                background: rgba(0, 0, 0, 0.7);
+            }
+
+            .image-upload-overlay div {
                 display: flex;
+                flex-direction: column;
+                gap: 0.5rem;
             }
 
             .remove-image-btn {
@@ -666,49 +601,19 @@
             }
 
             .add-image-btn {
-                padding: 0.6rem 1.2rem;
-                border: none;
-                border-radius: 12px;
-                cursor: pointer;
-                font-weight: 600;
-                background: #10b981;
+                padding: 0.5rem 1rem;
+                background: #007bff;
                 color: white;
-                margin-top: 1rem;
-                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                transition: all 0.3s ease;
             }
 
             .add-image-btn:hover {
-                background: #059669;
+                background: #0056b3;
             }
 
-            .campaign-header h1 {
-                font-size: 1.8rem;
-                font-weight: 700;
-                color: #1e293b;
-                position: relative;
-                display: inline-block;
-            }
-
-            .edit-indicator {
-                position: absolute;
-                top: -5px;
-                right: -5px;
-                width: 20px;
-                height: 20px;
-                background: #10b981;
-                border-radius: 50%;
-                display: none;
-                align-items: center;
-                justify-content: center;
-                color: white;
-                font-size: 0.8rem;
-            }
-
-            .edit-mode .editable:hover .edit-indicator {
-                display: flex;
-            }
-
-            /* Content Grid */
             .content-grid {
                 display: grid;
                 grid-template-columns: 2fr 1fr;
@@ -717,37 +622,10 @@
             }
 
             .main-content {
-                background: rgba(255, 255, 255, 0.9);
-                backdrop-filter: blur(20px);
-                border: 1px solid rgba(255, 255, 255, 0.3);
-                border-radius: 24px;
+                background: white;
                 padding: 2rem;
-                box-shadow: 0 8px 25px rgba(0,0,0,0.08);
-            }
-
-            .sidebar-content {
-                display: flex;
-                flex-direction: column;
-                gap: 1.5rem;
-            }
-
-            .info-card {
-                background: rgba(255, 255, 255, 0.9);
-                backdrop-filter: blur(20px);
-                border: 1px solid rgba(255, 255, 255, 0.3);
-                border-radius: 24px;
-                padding: 1.5rem;
-                box-shadow: 0 8px 25px rgba(0,0,0,0.08);
-            }
-
-            .card-title {
-                color: #10b981;
-                font-weight: 600;
-                font-size: 1.1rem;
-                margin-bottom: 1rem;
-                display: flex;
-                align-items: center;
-                gap: 0.5rem;
+                border-radius: 10px;
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
             }
 
             .form-group {
@@ -756,59 +634,33 @@
 
             .form-group label {
                 display: block;
+                font-weight: 500;
                 margin-bottom: 0.5rem;
-                color: #1e293b;
-                font-weight: 600;
+                color: #343a40;
             }
 
             .form-control {
                 width: 100%;
-                padding: 0.8rem;
-                border: 2px solid #e2e8f0;
-                border-radius: 12px;
+                padding: 0.5rem;
+                border: 1px solid #ced4da;
+                border-radius: 5px;
                 font-size: 1rem;
-                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-                font-family: inherit;
-                background: white;
+                transition: border-color 0.3s ease;
             }
 
             .form-control:focus {
+                border-color: #007bff;
                 outline: none;
-                border-color: #10b981;
-                box-shadow: 0 0 0 0.2rem rgba(16, 185, 129, 0.1);
-            }
-
-            .form-control:disabled {
-                background: #f8f9fa;
-                color: #6c757d;
-            }
-
-            .editable {
-                border: 2px dashed transparent;
-                border-radius: 12px;
-                padding: 0.3rem;
-                transition: all 0.3s ease;
-            }
-
-            .edit-mode .editable:hover {
-                border-color: #10b981;
-                background: rgba(16, 185, 129, 0.05);
-                cursor: text;
-            }
-
-            textarea.form-control {
-                resize: vertical;
-                min-height: 120px;
+                box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
             }
 
             .character-count {
+                font-size: 0.8rem;
+                color: #6c757d;
+                margin-top: 0.5rem;
                 text-align: right;
-                color: #64748b;
-                font-size: 0.875rem;
-                margin-top: 0.25rem;
             }
 
-            /* Dynamic Lists */
             .dynamic-list {
                 display: flex;
                 flex-direction: column;
@@ -818,130 +670,142 @@
 
             .list-item {
                 display: flex;
-                gap: 0.5rem;
-                align-items: center;
+                gap: 1rem;
+                align-items: flex-start;
             }
 
             .list-item textarea {
                 flex: 1;
             }
 
-            .add-btn, .remove-btn {
-                padding: 0.6rem 1.2rem;
-                border: none;
-                border-radius: 12px;
-                cursor: pointer;
-                font-weight: 600;
-                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            }
-
-            .add-btn {
-                background: #10b981;
-                color: white;
-            }
-
-            .add-btn:hover {
-                background: #059669;
-            }
-
             .remove-btn {
                 background: #dc3545;
                 color: white;
+                border: none;
+                padding: 0.5rem;
+                border-radius: 5px;
+                cursor: pointer;
+                transition: all 0.3s ease;
             }
 
             .remove-btn:hover {
                 background: #c82333;
             }
 
-            /* Stats Grid */
+            .add-btn {
+                padding: 0.5rem 1rem;
+                background: #28a745;
+                color: white;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                transition: all 0.3s ease;
+            }
+
+            .add-btn:hover {
+                background: #218838;
+            }
+
+            .sidebar-content {
+                display: flex;
+                flex-direction: column;
+                gap: 1.5rem;
+            }
+
+            .info-card {
+                background: white;
+                padding: 1.5rem;
+                border-radius: 10px;
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            }
+
+            .card-title {
+                font-size: 1.25rem;
+                font-weight: 500;
+                margin-bottom: 1rem;
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                color: #343a40;
+            }
+
             .stats-grid {
                 display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+                grid-template-columns: repeat(2, 1fr);
                 gap: 1rem;
-                margin-bottom: 1.5rem;
             }
 
             .stat-item {
                 text-align: center;
-                padding: 1rem;
-                background: rgba(255, 255, 255, 0.9);
-                border-radius: 12px;
-                box-shadow: 0 4px 12px rgba(0,0,0,0.05);
             }
 
             .stat-number {
                 font-size: 1.5rem;
                 font-weight: 700;
-                color: #10b981;
-                margin-bottom: 0.3rem;
+                color: #007bff;
             }
 
             .stat-label {
                 font-size: 0.9rem;
-                color: #64748b;
+                color: #6c757d;
             }
 
-            /* Creator Info */
             .creator-info {
                 display: flex;
-                align-items: center;
                 gap: 1rem;
+                align-items: center;
             }
 
             .creator-avatar {
                 width: 50px;
                 height: 50px;
-                border-radius: 50%;
-                background: linear-gradient(135deg, #10b981, #059669);
+                background: #007bff;
+                color: white;
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                color: white;
-                font-weight: 600;
-                font-size: 1.2rem;
+                border-radius: 50%;
+                font-weight: 500;
             }
 
             .creator-details h4 {
-                color: #1e293b;
-                margin-bottom: 0.2rem;
+                margin: 0;
+                font-size: 1.1rem;
+                color: #343a40;
             }
 
             .creator-details p {
-                color: #64748b;
+                margin: 0.2rem 0;
                 font-size: 0.9rem;
+                color: #6c757d;
             }
 
-            /* Dates Info */
             .dates-info {
-                background: rgba(255, 255, 255, 0.9);
-                padding: 1rem;
-                border-radius: 12px;
-                border-left: 4px solid #10b981;
+                display: flex;
+                flex-direction: column;
+                gap: 1rem;
             }
 
             .date-item {
                 display: flex;
                 justify-content: space-between;
-                margin-bottom: 0.5rem;
+                font-size: 0.9rem;
             }
 
             .date-label {
-                font-weight: 600;
-                color: #1e293b;
+                color: #6c757d;
             }
 
             .date-value {
-                color: #64748b;
+                color: #343a40;
+                font-weight: 500;
             }
 
-            /* Actions Section */
             .actions-section {
-                background: rgba(255, 255, 255, 0.9);
-                backdrop-filter: blur(20px);
-                border: 1px solid rgba(255, 255, 255, 0.3);
-                border-radius: 24px;
+                background: white;
                 padding: 2rem;
-                box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+                border-radius: 10px;
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
                 margin-bottom: 2rem;
             }
 
@@ -952,50 +816,54 @@
             }
 
             .action-btn {
+                display: block;
                 padding: 1rem;
-                border: 2px solid #e2e8f0;
-                border-radius: 16px;
-                background: rgba(255, 255, 255, 0.9);
-                cursor: pointer;
-                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                border-radius: 10px;
                 text-align: center;
                 text-decoration: none;
-                color: #1e293b;
+                transition: all 0.3s ease;
+            }
+
+            .action-btn.primary {
+                background: #007bff;
+                color: white;
+            }
+
+            .action-btn.success {
+                background: #28a745;
+                color: white;
+            }
+
+            .action-btn.danger {
+                background: #dc3545;
+                color: white;
             }
 
             .action-btn:hover {
-                border-color: #10b981;
-                background: rgba(16, 185, 129, 0.05);
-                transform: translateY(-2px);
+                opacity: 0.9;
+            }
+
+            .action-btn strong {
+                display: block;
+                font-size: 1rem;
+                margin-bottom: 0.5rem;
+            }
+
+            .action-btn small {
+                font-size: 0.8rem;
+                opacity: 0.8;
             }
 
             .action-btn i {
-                font-size: 2rem;
+                font-size: 1.5rem;
                 margin-bottom: 0.5rem;
-                display: block;
             }
 
-            .action-btn.primary i {
-                color: #007bff;
-            }
-
-            .action-btn.success i {
-                color: #10b981;
-            }
-
-            .action-btn.danger i {
-                color: #dc3545;
-            }
-
-            /* Comments Section */
             .comments-section {
-                background: rgba(255, 255, 255, 0.9);
-                backdrop-filter: blur(20px);
-                border: 1px solid rgba(255, 255, 255, 0.3);
-                border-radius: 24px;
+                background: white;
                 padding: 2rem;
-                box-shadow: 0 8px 25px rgba(0,0,0,0.08);
-                margin-bottom: 2rem;
+                border-radius: 10px;
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
             }
 
             .comments-list {
@@ -1005,41 +873,35 @@
             }
 
             .comment-item {
-                background: white;
-                border-radius: 12px;
-                padding: 1rem;
-                box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+                border-bottom: 1px solid #e9ecef;
+                padding-bottom: 1rem;
             }
 
             .comment-header {
                 display: flex;
                 justify-content: space-between;
+                font-size: 0.9rem;
                 margin-bottom: 0.5rem;
             }
 
             .comment-author {
-                font-weight: 600;
-                color: #1e293b;
+                font-weight: 500;
+                color: #343a40;
             }
 
             .comment-date {
-                color: #64748b;
-                font-size: 0.9rem;
+                color: #6c757d;
             }
 
             .comment-content {
-                color: #334155;
+                font-size: 1rem;
+                color: #343a40;
                 margin-bottom: 0.5rem;
             }
 
             .comment-actions {
                 display: flex;
-                justify-content: flex-end;
-            }
-
-            .comment-actions .action-btn {
-                padding: 0.5rem 1rem;
-                font-size: 0.9rem;
+                gap: 0.5rem;
             }
 
             .empty-state {
@@ -1047,36 +909,92 @@
                 padding: 2rem;
             }
 
-            .empty-icon {
-                font-size: 3rem;
-                color: #cbd5e1;
+            .empty-icon i {
+                font-size: 2rem;
+                color: #6c757d;
                 margin-bottom: 1rem;
             }
 
             .empty-title {
-                font-size: 1.3rem;
-                font-weight: 600;
-                color: #475569;
+                font-size: 1.25rem;
+                color: #343a40;
                 margin-bottom: 0.5rem;
             }
 
             .empty-description {
-                color: #64748b;
-                font-size: 1rem;
+                font-size: 0.9rem;
+                color: #6c757d;
             }
 
-            /* Modal */
-            .delete-modal {
-                display: none;
+            .loading-overlay {
                 position: fixed;
                 top: 0;
                 left: 0;
                 width: 100%;
                 height: 100%;
-                background: rgba(0,0,0,0.5);
-                z-index: 1000;
-                justify-content: center;
+                background: rgba(0, 0, 0, 0.5);
+                display: none;
                 align-items: center;
+                justify-content: center;
+                z-index: 1000;
+            }
+
+            .loading-overlay.show {
+                display: flex;
+            }
+
+            .loading-spinner {
+                border: 4px solid #f3f3f3;
+                border-top: 4px solid #007bff;
+                border-radius: 50%;
+                width: 40px;
+                height: 40px;
+                animation: spin 1s linear infinite;
+            }
+
+            @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+
+            .alert {
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 1rem;
+                border-radius: 5px;
+                z-index: 1000;
+                opacity: 0;
+                transition: opacity 0.5s ease, transform 0.5s ease;
+                transform: translateY(-20px);
+            }
+
+            .alert.show {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+            .alert-success {
+                background: #28a745;
+                color: white;
+            }
+
+            .alert-danger {
+                background: #dc3545;
+                color: white;
+            }
+
+            .delete-modal {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.5);
+                display: none;
+                align-items: center;
+                justify-content: center;
+                z-index: 1000;
             }
 
             .delete-modal.active {
@@ -1086,58 +1004,42 @@
             .modal-content {
                 background: white;
                 padding: 2rem;
-                border-radius: 16px;
-                max-width: 500px;
-                width: 90%;
+                border-radius: 10px;
                 text-align: center;
-                box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+                max-width: 400px;
+                width: 100%;
             }
 
-            .modal-icon {
-                font-size: 3rem;
+            .modal-icon i {
+                font-size: 2rem;
                 color: #dc3545;
                 margin-bottom: 1rem;
             }
 
             .modal-title {
-                color: #1e293b;
+                font-size: 1.25rem;
+                color: #343a40;
                 margin-bottom: 1rem;
-                font-size: 1.3rem;
             }
 
             .modal-text {
-                color: #64748b;
-                margin-bottom: 2rem;
-                line-height: 1.5;
+                font-size: 1rem;
+                color: #6c757d;
+                margin-bottom: 1.5rem;
             }
 
             .modal-actions {
                 display: flex;
-                justify-content: center;
                 gap: 1rem;
+                justify-content: center;
             }
 
             .btn {
-                padding: 0.6rem 1.2rem;
+                padding: 0.5rem 1rem;
                 border: none;
-                border-radius: 12px;
+                border-radius: 5px;
                 cursor: pointer;
-                font-weight: 600;
-                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-                display: flex;
-                align-items: center;
-                gap: 0.5rem;
-                font-size: 0.95rem;
-            }
-
-            .btn-danger {
-                background: #dc3545;
-                color: white;
-            }
-
-            .btn-danger:hover {
-                background: #c82333;
-                transform: translateY(-1px);
+                transition: all 0.3s ease;
             }
 
             .btn-cancel {
@@ -1149,105 +1051,44 @@
                 background: #5a6268;
             }
 
-            /* Animations de chargement */
-            .loading-overlay {
-                position: fixed;
-                inset: 0;
-                background: rgba(248, 250, 252, 0.8);
-                backdrop-filter: blur(4px);
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                z-index: 9999;
-                opacity: 0;
-                visibility: hidden;
-                transition: all 0.3s ease;
+            .btn-danger {
+                background: #dc3545;
+                color: white;
             }
 
-            .loading-overlay.show {
-                opacity: 1;
-                visibility: visible;
+            .btn-danger:hover {
+                background: #c82333;
             }
 
-            .loading-spinner {
-                width: 50px;
-                height: 50px;
-                border: 4px solid #e2e8f0;
-                border-top: 4px solid #10b981;
-                border-radius: 50%;
-                animation: spin 1s linear infinite;
-            }
-
-            @keyframes spin {
-                0% { transform: rotate(0deg); }
-                100% { transform: rotate(360deg); }
-            }
-
-            /* Responsive Design */
-            @media (max-width: 1024px) {
-                .content-grid {
-                    grid-template-columns: 1fr;
-                }
-
-                .campaign-meta {
-                    flex-direction: column;
-                    align-items: flex-start;
-                }
-
-                .edit-mode-toggle {
-                    position: static;
-                    margin-bottom: 1rem;
-                }
-
-                .actions-grid {
-                    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-                }
-            }
-
-            @media (max-width: 768px) {
-                .section-title {
-                    font-size: 2rem;
-                }
-
-                .campaign-image {
-                    height: 150px;
-                    width: 100%;
-                }
-
-                .actions-grid {
-                    grid-template-columns: 1fr;
-                }
-
-                .campaign-header {
-                    margin: 0 -1rem 2rem;
-                    border-radius: 0;
-                }
-
-                .main-content, .actions-section, .comments-section {
-                    margin: 0 -1rem 2rem;
-                    border-radius: 0;
-                }
-            }
-
-            /* Animations d'entrée */
             .fade-in {
                 opacity: 0;
-                transform: translateY(30px);
-                animation: fadeInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+                animation: fadeIn 0.5s ease forwards;
             }
 
-            @keyframes fadeInUp {
-                to {
-                    opacity: 1;
-                    transform: translateY(0);
-                }
+            .stagger-delay-1 {
+                animation-delay: 0.1s;
             }
 
-            .stagger-delay-1 { animation-delay: 0.1s; }
-            .stagger-delay-2 { animation-delay: 0.2s; }
-            .stagger-delay-3 { animation-delay: 0.3s; }
-            .stagger-delay-4 { animation-delay: 0.4s; }
-            .stagger-delay-5 { animation-delay: 0.5s; }
+            .stagger-delay-2 {
+                animation-delay: 0.2s;
+            }
+
+            .stagger-delay-3 {
+                animation-delay: 0.3s;
+            }
+
+            .stagger-delay-4 {
+                animation-delay: 0.4s;
+            }
+
+            .stagger-delay-5 {
+                animation-delay: 0.5s;
+            }
+
+            @keyframes fadeIn {
+                from { opacity: 0; transform: translateY(20px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
         </style>
     @endpush
 
@@ -1347,34 +1188,34 @@
                 // Restaurer les images
                 document.querySelector('.campaign-image-gallery').innerHTML = `{!! json_encode($campaign->media_urls['images'] ?? []) !!}`.length > 0 ?
                     `{!! json_encode($campaign->media_urls['images']) !!}`.map((image, index) => `
-                    <div class="campaign-image" data-image-index="${index}">
-                        <img src="${image ? '{{ Storage::url("' + image + '") }}' : 'https://via.placeholder.com/800x300?text=Image'}" alt="{{ $campaign->title }}" id="campaignImage${index}">
-                        <div class="image-upload-overlay" id="imageUploadOverlay${index}">
+                        <div class="campaign-image" data-image-index="${index}">
+                            <img src="/storage/${image}" alt="{{ $campaign->title }}" id="campaignImage${index}">
+                            <div class="image-upload-overlay" id="imageUploadOverlay${index}">
+                                <div>
+                                    <i class="bi bi-camera"></i>
+                                    <div>Cliquer pour changer l'image</div>
+                                </div>
+                            </div>
+                            <input type="file" id="imageUpload${index}" accept="image/*" style="display: none;" data-image-index="${index}">
+                            <button class="remove-image-btn" onclick="removeImage(${index})" style="display: none;">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </div>
+                    `).join('') :
+                    `<div class="campaign-image" data-image-index="0">
+                        <img src="https://via.placeholder.com/800x300?text=Image" alt="{{ $campaign->title }}" id="campaignImage0">
+                        <div class="image-upload-overlay" id="imageUploadOverlay0">
                             <div>
                                 <i class="bi bi-camera"></i>
-                                <div>Cliquer pour changer l'image</div>
+                                <div>Cliquer pour ajouter une image</div>
                             </div>
                         </div>
-                        <input type="file" id="imageUpload${index}" accept="image/*" style="display: none;" data-image-index="${index}">
-                        <button class="remove-image-btn" onclick="removeImage(${index})" style="display: none;">
-                            <i class="bi bi-trash"></i>
-                        </button>
-                    </div>
-                `).join('') :
-                    `<div class="campaign-image" data-image-index="0">
-                    <img src="https://via.placeholder.com/800x300?text=Image" alt="{{ $campaign->title }}" id="campaignImage0">
-                    <div class="image-upload-overlay" id="imageUploadOverlay0">
-                        <div>
-                            <i class="bi bi-camera"></i>
-                            <div>Cliquer pour ajouter une image</div>
-                        </div>
-                    </div>
-                    <input type="file" id="imageUpload0" accept="image/*" style="display: none;" data-image-index="0">
-                </div>`;
+                        <input type="file" id="imageUpload0" accept="image/*" style="display: none;" data-image-index="0">
+                    </div>`;
 
                 imageCount = {{ count($campaign->media_urls['images'] ?? []) }};
+                localStorage.removeItem('deletedImages');
                 setupImageUpload();
-
                 originalData = {};
             }
 
@@ -1444,30 +1285,30 @@
                             const gallery = document.querySelector('.campaign-image-gallery');
                             gallery.innerHTML = data.campaign.media_urls.images.length > 0 ?
                                 data.campaign.media_urls.images.map((image, index) => `
-                                <div class="campaign-image" data-image-index="${index}">
-                                    <img src="${image ? '{{ Storage::url("' + image + '") }}' : 'https://via.placeholder.com/800x300?text=Image'}" alt="${data.campaign.title}" id="campaignImage${index}">
-                                    <div class="image-upload-overlay" id="imageUploadOverlay${index}">
+                                    <div class="campaign-image" data-image-index="${index}">
+                                        <img src="/storage/${image}" alt="${data.campaign.title}" id="campaignImage${index}">
+                                        <div class="image-upload-overlay" id="imageUploadOverlay${index}">
+                                            <div>
+                                                <i class="bi bi-camera"></i>
+                                                <div>Cliquer pour changer l'image</div>
+                                            </div>
+                                        </div>
+                                        <input type="file" id="imageUpload${index}" accept="image/*" style="display: none;" data-image-index="${index}">
+                                        <button class="remove-image-btn" onclick="removeImage(${index})" style="display: none;">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </div>
+                                `).join('') :
+                                `<div class="campaign-image" data-image-index="0">
+                                    <img src="https://via.placeholder.com/800x300?text=Image" alt="${data.campaign.title}" id="campaignImage0">
+                                    <div class="image-upload-overlay" id="imageUploadOverlay0">
                                         <div>
                                             <i class="bi bi-camera"></i>
-                                            <div>Cliquer pour changer l'image</div>
+                                            <div>Cliquer pour ajouter une image</div>
                                         </div>
                                     </div>
-                                    <input type="file" id="imageUpload${index}" accept="image/*" style="display: none;" data-image-index="${index}">
-                                    <button class="remove-image-btn" onclick="removeImage(${index})" style="display: none;">
-                                        <i class="bi bi-trash"></i>
-                                    </button>
-                                </div>
-                            `).join('') :
-                                `<div class="campaign-image" data-image-index="0">
-                                <img src="https://via.placeholder.com/800x300?text=Image" alt="${data.campaign.title}" id="campaignImage0">
-                                <div class="image-upload-overlay" id="imageUploadOverlay0">
-                                    <div>
-                                        <i class="bi bi-camera"></i>
-                                        <div>Cliquer pour ajouter une image</div>
-                                    </div>
-                                </div>
-                                <input type="file" id="imageUpload0" accept="image/*" style="display: none;" data-image-index="0">
-                            </div>`;
+                                    <input type="file" id="imageUpload0" accept="image/*" style="display: none;" data-image-index="0">
+                                </div>`;
 
                             imageCount = data.campaign.media_urls.images.length;
                             localStorage.removeItem('deletedImages');
@@ -1506,6 +1347,8 @@
                     .catch(error => {
                         console.error('Erreur réseau:', error.message);
                         showNotification('Une erreur est survenue: ' + error.message, 'danger');
+                        saveBtn.innerHTML = originalText;
+                        saveBtn.disabled = false;
                     });
             }
 
@@ -1607,18 +1450,18 @@
                 newImage.className = 'campaign-image';
                 newImage.dataset.imageIndex = newIndex;
                 newImage.innerHTML = `
-                <img src="https://via.placeholder.com/800x300?text=Image" alt="{{ $campaign->title }}" id="campaignImage${newIndex}">
-                <div class="image-upload-overlay" id="imageUploadOverlay${newIndex}">
-                    <div>
-                        <i class="bi bi-camera"></i>
-                        <div>Cliquer pour ajouter une image</div>
+                    <img src="https://via.placeholder.com/800x300?text=Image" alt="{{ $campaign->title }}" id="campaignImage${newIndex}">
+                    <div class="image-upload-overlay" id="imageUploadOverlay${newIndex}">
+                        <div>
+                            <i class="bi bi-camera"></i>
+                            <div>Cliquer pour ajouter une image</div>
+                        </div>
                     </div>
-                </div>
-                <input type="file" id="imageUpload${newIndex}" accept="image/*" style="display: none;" data-image-index="${newIndex}">
-                <button class="remove-image-btn" onclick="removeImage(${newIndex})" style="display: ${isEditMode ? 'inline-flex' : 'none'};">
-                    <i class="bi bi-trash"></i>
-                </button>
-            `;
+                    <input type="file" id="imageUpload${newIndex}" accept="image/*" style="display: none;" data-image-index="${newIndex}">
+                    <button class="remove-image-btn" onclick="removeImage(${newIndex})" style="display: ${isEditMode ? 'inline-flex' : 'none'};">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                `;
                 gallery.appendChild(newImage);
                 setupImageUpload();
             }
@@ -1630,9 +1473,10 @@
                     const deletedImages = JSON.parse(localStorage.getItem('deletedImages') || '[]');
                     const imgSrc = document.getElementById(`campaignImage${index}`).src;
                     if (!imgSrc.includes('placeholder')) {
-                        deletedImages.push(imgSrc.replace('{{ url('/') }}/storage/', ''));
+                        const relativePath = imgSrc.replace(/^.*\/storage\//, '');
+                        deletedImages.push(relativePath);
+                        localStorage.setItem('deletedImages', JSON.stringify(deletedImages));
                     }
-                    localStorage.setItem('deletedImages', JSON.stringify(deletedImages));
                     imageDiv.remove();
                     showNotification('Image supprimée. Enregistrez pour confirmer.', 'success');
                 }
@@ -1662,9 +1506,9 @@
                 const item = document.createElement('div');
                 item.className = 'list-item';
                 item.innerHTML = `
-                <textarea class="form-control editable" data-field="${fieldName}"></textarea>
-                <button class="remove-btn" onclick="removeListItem(this)" style="display: ${isEditMode ? 'inline-flex' : 'none'};"><i class="bi bi-trash"></i></button>
-            `;
+                    <textarea class="form-control editable" data-field="${fieldName}"></textarea>
+                    <button class="remove-btn" onclick="removeListItem(this)" style="display: ${isEditMode ? 'inline-flex' : 'none'};"><i class="bi bi-trash"></i></button>
+                `;
                 list.appendChild(item);
                 if (isEditMode) {
                     item.querySelector('.editable').disabled = false;
@@ -1756,32 +1600,32 @@
                             commentsList.innerHTML = '';
                             if (data.comments.length === 0) {
                                 commentsList.innerHTML = `
-                                <div class="empty-state">
-                                    <div class="empty-icon">
-                                        <i class="bi bi-chat"></i>
+                                    <div class="empty-state">
+                                        <div class="empty-icon">
+                                            <i class="bi bi-chat"></i>
+                                        </div>
+                                        <h3 class="empty-title">Aucun commentaire</h3>
+                                        <p class="empty-description">Aucun commentaire n'a été publié pour cette campagne.</p>
                                     </div>
-                                    <h3 class="empty-title">Aucun commentaire</h3>
-                                    <p class="empty-description">Aucun commentaire n'a été publié pour cette campagne.</p>
-                                </div>
-                            `;
+                                `;
                             } else {
                                 data.comments.forEach(comment => {
                                     const commentItem = document.createElement('div');
                                     commentItem.className = 'comment-item';
                                     commentItem.dataset.commentId = comment.id;
                                     commentItem.innerHTML = `
-                                    <div class="comment-header">
-                                        <span class="comment-author">${comment.user}</span>
-                                        <span class="comment-date">${comment.created_at}</span>
-                                    </div>
-                                    <div class="comment-content">${comment.content}</div>
-                                    <div class="comment-actions">
-                                        <button class="action-btn danger" onclick="deleteComment(${comment.id})">
-                                            <i class="bi bi-trash"></i>
-                                            Supprimer
-                                        </button>
-                                    </div>
-                                `;
+                                        <div class="comment-header">
+                                            <span class="comment-author">${comment.user}</span>
+                                            <span class="comment-date">${comment.created_at}</span>
+                                        </div>
+                                        <div class="comment-content">${comment.content}</div>
+                                        <div class="comment-actions">
+                                            <button class="action-btn danger" onclick="deleteComment(${comment.id})">
+                                                <i class="bi bi-trash"></i>
+                                                Supprimer
+                                            </button>
+                                        </div>
+                                    `;
                                     commentsList.appendChild(commentItem);
                                 });
                             }
@@ -1819,14 +1663,14 @@
                                 }
                                 if (!document.querySelector('.comment-item')) {
                                     document.getElementById('commentsList').innerHTML = `
-                                    <div class="empty-state">
-                                        <div class="empty-icon">
-                                            <i class="bi bi-chat"></i>
+                                        <div class="empty-state">
+                                            <div class="empty-icon">
+                                                <i class="bi bi-chat"></i>
+                                            </div>
+                                            <h3 class="empty-title">Aucun commentaire</h3>
+                                            <p class="empty-description">Aucun commentaire n'a été publié pour cette campagne.</p>
                                         </div>
-                                        <h3 class="empty-title">Aucun commentaire</h3>
-                                        <p class="empty-description">Aucun commentaire n'a été publié pour cette campagne.</p>
-                                    </div>
-                                `;
+                                    `;
                                 }
                             } else {
                                 showNotification(data.error || 'Erreur lors de la suppression du commentaire', 'danger');
