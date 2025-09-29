@@ -15,7 +15,7 @@
                             <div class="hero-content">
                                 <h4 data-splitting>Solutions For Enviromental Protection</h4>
                                 <h1 data-splitting>Your Journey to Solar</h1>
-                                <h1 data-splitting>Empowerment</h1>
+                                <h1 data-splitting>Empowerments</h1>
                             </div>
                             <div class="echofy-button style-five">
                                 <a href="#">Find Out More<i class="bi bi-arrow-right-short"></i></a>
