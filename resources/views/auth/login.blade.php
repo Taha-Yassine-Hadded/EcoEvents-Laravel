@@ -171,6 +171,8 @@
                     // Rediriger sans token dans l'URL
                     if (data.user.role === 'admin') {
                         window.location.href = '{{ route("admin.dashboard") }}';
+                    } else if (data.user.role === 'sponsor') {
+                        window.location.href = '{{ route("sponsor.dashboard") }}';
                     } else {
                         window.location.href = '{{ route("home") }}';
                     }

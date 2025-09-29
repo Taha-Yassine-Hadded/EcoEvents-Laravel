@@ -46,7 +46,7 @@ class Campaign extends Model
     }
 
     /**
-     * Get the user that created the campaign.
+     * Get the user that created the campaign.join user->compain
      */
     public function creator(): BelongsTo
     {
@@ -101,5 +101,21 @@ class Campaign extends Model
     public function incrementShares(): void
     {
         $this->increment('shares_count');
+    }
+
+    /**
+     * Relation avec Sponsorships
+     */
+    public function sponsorships()
+    {
+        return $this->hasMany(Sponsorship::class);
+    }
+
+    /**
+     * Relation avec Sponsors à travers Sponsorships
+     */
+    public function sponsors()
+    {
+        return $this->hasManyThrough(Sponsor::class, Sponsorship::class);
     }
 }

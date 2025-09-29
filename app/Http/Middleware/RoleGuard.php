@@ -24,7 +24,7 @@ class RoleGuard
                 'headers' => $request->headers->all(),
             ]);
 
-            // Vérifier si l'utilisateur a le rôle admin
+            // Vérifier si l'utilisateur a le rôle requis
             if (!$user || $user->role !== $role) {
                 Log::warning('RoleGuard: Accès non autorisé, rôle insuffisant', [
                     'user_id' => $user ? $user->id : null,
@@ -32,7 +32,16 @@ class RoleGuard
                     'required_role' => $role,
                     'url' => $request->url(),
                 ]);
-                return redirect()->route('home')->with('error', 'Accès non autorisé : réservé aux administrateurs.');
+                
+                $roleMessages = [
+                    'admin' => 'administrateurs',
+                    'organizer' => 'organisateurs',
+                    'sponsor' => 'sponsors',
+                    'user' => 'utilisateurs'
+                ];
+                
+                $roleMessage = $roleMessages[$role] ?? $role;
+                return redirect()->route('home')->with('error', "Accès non autorisé : réservé aux {$roleMessage}.");
             }
 
             Log::info('RoleGuard: Autorisation réussie', [

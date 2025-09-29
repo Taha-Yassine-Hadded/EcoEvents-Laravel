@@ -102,7 +102,7 @@
                             <h3>Type de compte</h3>
                             <div class="role-selection">
                                 <div class="row">
-                                    <div class="col-md-6">
+                                    <div class="col-md-4">
                                         <div class="role-option">
                                             <input type="radio" id="role_user" name="role" value="user" 
                                                    {{ old('role', 'user') == 'user' ? 'checked' : '' }}>
@@ -115,7 +115,7 @@
                                             </label>
                                         </div>
                                     </div>
-                                    <div class="col-md-6">
+                                    <div class="col-md-4">
                                         <div class="role-option">
                                             <input type="radio" id="role_organizer" name="role" value="organizer" 
                                                    {{ old('role') == 'organizer' ? 'checked' : '' }}>
@@ -125,6 +125,19 @@
                                                 </div>
                                                 <h4>Organisateur</h4>
                                                 <p>Je souhaite créer et organiser des événements</p>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="role-option">
+                                            <input type="radio" id="role_sponsor" name="role" value="sponsor" 
+                                                   {{ old('role') == 'sponsor' ? 'checked' : '' }}>
+                                            <label for="role_sponsor" class="role-card">
+                                                <div class="role-icon">
+                                                    <i class="bi bi-heart"></i>
+                                                </div>
+                                                <h4>Sponsor</h4>
+                                                <p>Je souhaite soutenir financièrement les événements</p>
                                             </label>
                                         </div>
                                     </div>

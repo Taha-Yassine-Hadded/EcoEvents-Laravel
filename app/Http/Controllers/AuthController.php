@@ -36,7 +36,7 @@ class AuthController extends Controller
                 'password' => ['required', 'confirmed', 'min:8'],
                 'phone' => ['nullable', 'string', 'max:20'],
                 'city' => ['nullable', 'string', 'max:100'],
-                'role' => ['required', 'in:user,organizer'],
+                'role' => ['required', 'in:user,organizer,sponsor'],
                 'address' => ['nullable', 'string', 'max:255'],
                 'bio' => ['nullable', 'string', 'max:1000'],
                 'interests' => ['nullable', 'array'],

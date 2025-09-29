@@ -98,6 +98,135 @@
     </div>
 </div>
 
+<!-- Gestion des Sponsors -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="card-title">Gestion des Sponsors</h6>
+                <button class="btn btn-primary btn-sm" onclick="loadSponsors()">
+                    <i class="fas fa-sync-alt"></i> Actualiser
+                </button>
+            </div>
+            <div class="card-body">
+                <!-- Filtres -->
+                <div class="row mb-3">
+                    <div class="col-md-3">
+                        <input type="text" id="searchSponsor" class="form-control" placeholder="Rechercher...">
+                    </div>
+                    <div class="col-md-2">
+                        <select id="statusFilter" class="form-control">
+                            <option value="">Tous les statuts</option>
+                            <option value="pending">En attente</option>
+                            <option value="approved">Approuvé</option>
+                            <option value="rejected">Rejeté</option>
+                            <option value="active">Actif</option>
+                            <option value="inactive">Inactif</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <button class="btn btn-outline-primary" onclick="filterSponsors()">
+                            <i class="fas fa-search"></i> Filtrer
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Liste des Sponsors -->
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="sponsorsTable">
+                        <thead>
+                            <tr>
+                                <th>Nom</th>
+                                <th>Email</th>
+                                <th>Entreprise</th>
+                                <th>Statut</th>
+                                <th>Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="sponsorsTableBody">
+                            <!-- Les données seront chargées via AJAX -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Gestion des Campagnes -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="card-title">Gestion des Campagnes</h6>
+                <div>
+                    <button class="btn btn-success btn-sm me-2" onclick="createCampaign()">
+                        <i class="fas fa-plus"></i> Nouvelle Campagne
+                    </button>
+                    <button class="btn btn-primary btn-sm" onclick="loadCampaigns()">
+                        <i class="fas fa-sync-alt"></i> Actualiser
+                    </button>
+                </div>
+            </div>
+            <div class="card-body">
+                <!-- Filtres -->
+                <div class="row mb-3">
+                    <div class="col-md-3">
+                        <input type="text" id="searchCampaign" class="form-control" placeholder="Rechercher campagne...">
+                    </div>
+                    <div class="col-md-2">
+                        <select id="statusCampaignFilter" class="form-control">
+                            <option value="">Tous les statuts</option>
+                            <option value="draft">Brouillon</option>
+                            <option value="active">Active</option>
+                            <option value="paused">En pause</option>
+                            <option value="completed">Terminée</option>
+                            <option value="cancelled">Annulée</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <select id="typeCampaignFilter" class="form-control">
+                            <option value="">Tous les types</option>
+                            <option value="event">Événement</option>
+                            <option value="festival">Festival</option>
+                            <option value="conference">Conférence</option>
+                            <option value="sport">Sport</option>
+                            <option value="culture">Culture</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <button class="btn btn-outline-primary" onclick="filterCampaigns()">
+                            <i class="fas fa-search"></i> Filtrer
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Liste des Campagnes -->
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="campaignsTable">
+                        <thead>
+                            <tr>
+                                <th>Nom</th>
+                                <th>Type</th>
+                                <th>Statut</th>
+                                <th>Date Début</th>
+                                <th>Date Fin</th>
+                                <th>Budget</th>
+                                <th>Sponsors</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="campaignsTableBody">
+                            <!-- Les données seront chargées via AJAX -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Charts Row -->
 <div class="row">
     <!-- Revenue Chart -->
@@ -548,7 +677,960 @@ document.addEventListener('DOMContentLoaded', function() {
             this.style.transform = 'translateY(0)';
         });
     });
+
+    // ==================== GESTION DES SPONSORS ====================
+    
+    // Fonction pour charger les sponsors - Fonction globale
+    window.loadSponsors = async function() {
+        try {
+            const token = localStorage.getItem('jwt_token');
+            if (!token) {
+                console.error('Token JWT manquant');
+                return;
+            }
+
+            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || 
+                             document.querySelector('input[name="_token"]')?.value ||
+                             '{{ csrf_token() }}';
+            
+            const response = await fetch('/admin/sponsors', {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'Authorization': 'Bearer ' + token,
+                    'X-CSRF-TOKEN': csrfToken,
+                }
+            });
+
+            if (response.ok) {
+                const data = await response.text();
+                // Extraire les données des sponsors depuis la réponse HTML
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(data, 'text/html');
+                
+                // Essayer de récupérer les données JSON si disponibles
+                const jsonScript = doc.querySelector('script[type="application/json"]');
+                if (jsonScript) {
+                    const sponsors = JSON.parse(jsonScript.textContent);
+                    displaySponsors(sponsors);
+                } else {
+                    // Fallback: utiliser l'API directe
+                    await loadSponsorsFromAPI();
+                }
+            } else {
+                console.error('Erreur lors du chargement des sponsors:', response.status);
+                await loadSponsorsFromAPI();
+            }
+        } catch (error) {
+            console.error('Erreur:', error);
+            await loadSponsorsFromAPI();
+        }
+    }
+
+    // Charger les sponsors depuis l'API
+    async function loadSponsorsFromAPI() {
+        // Aller directement à loadSponsorsDirectly car /api/sponsors n'existe pas
+        await loadSponsorsDirectly();
+    };
+
+    // Charger les sponsors directement depuis la base
+    async function loadSponsorsDirectly() {
+        try {
+            const token = localStorage.getItem('jwt_token');
+            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || 
+                             document.querySelector('input[name="_token"]')?.value ||
+                             '{{ csrf_token() }}';
+            
+            const response = await fetch('/admin/sponsors/data', {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'Authorization': 'Bearer ' + token,
+                    'X-CSRF-TOKEN': csrfToken,
+                }
+            });
+
+            if (response.ok) {
+                const sponsors = await response.json();
+                console.log('Sponsors chargés:', sponsors);
+                displaySponsors(sponsors);
+            } else {
+                console.error('Impossible de charger les sponsors:', response.status);
+                displayTestSponsors();
+            }
+        } catch (error) {
+            console.error('Erreur directe:', error);
+            displayTestSponsors();
+        }
+    }
+
+    // Afficher les sponsors dans le tableau
+    function displaySponsors(sponsors) {
+        const tbody = document.getElementById('sponsorsTableBody');
+        tbody.innerHTML = '';
+
+        sponsors.forEach(sponsor => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${sponsor.name}</td>
+                <td>${sponsor.email}</td>
+                <td>${sponsor.company_name || 'N/A'}</td>
+                <td><span class="badge badge-${window.getStatusClass(sponsor.status)}">${window.getStatusText(sponsor.status)}</span></td>
+                <td>${window.formatDate(sponsor.created_at)}</td>
+                <td>
+                    <button class="btn btn-sm btn-outline-primary" onclick="viewSponsor(${sponsor.id})">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                    ${sponsor.status === 'pending' ? `
+                        <button class="btn btn-sm btn-outline-success" onclick="approveSponsor(${sponsor.id})">
+                            <i class="fas fa-check"></i>
+                        </button>
+                        <button class="btn btn-sm btn-outline-danger" onclick="rejectSponsor(${sponsor.id})">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    ` : ''}
+                    <button class="btn btn-sm btn-outline-${sponsor.status === 'active' ? 'warning' : 'success'}" onclick="toggleStatus(${sponsor.id}, '${sponsor.status}')">
+                        <i class="fas fa-${sponsor.status === 'active' ? 'pause' : 'play'}"></i>
+                    </button>
+                    <button class="btn btn-sm btn-outline-danger" onclick="deleteSponsor(${sponsor.id})">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </td>
+            `;
+            tbody.appendChild(row);
+        });
+    }
+
+    // Données de test
+    function displayTestSponsors() {
+        const testSponsors = [
+            { id: 1, name: 'Test Sponsor 1', email: 'sponsor1@test.com', company_name: 'Test Company 1', status: 'pending', created_at: new Date() },
+            { id: 2, name: 'Test Sponsor 2', email: 'sponsor2@test.com', company_name: 'Test Company 2', status: 'approved', created_at: new Date() },
+            { id: 3, name: 'Test Sponsor 3', email: 'sponsor3@test.com', company_name: 'Test Company 3', status: 'active', created_at: new Date() }
+        ];
+        displaySponsors(testSponsors);
+    }
+
+
 });
+
+
+    // Charger les sponsors au chargement de la page
+    window.loadSponsors();
+</script>
+
+<script>
+// ==================== FONCTIONS GLOBALES POUR LES SPONSORS ====================
+
+// Actions sur les sponsors - Fonctions globales
+window.approveSponsor = async function(id) {
+    if (!confirm('Approuver ce sponsor ?')) return;
+    
+    try {
+        const token = localStorage.getItem('jwt_token');
+        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || 
+                         document.querySelector('input[name="_token"]')?.value ||
+                         '{{ csrf_token() }}';
+        
+        const response = await fetch(`/admin/sponsors/${id}/approve`, {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Authorization': 'Bearer ' + token,
+                'X-CSRF-TOKEN': csrfToken,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (response.ok) {
+            alert('Sponsor approuvé avec succès !');
+            window.loadSponsors();
+        } else {
+            alert('Erreur lors de l\'approbation: ' + response.status);
+        }
+    } catch (error) {
+        console.error('Erreur:', error);
+        alert('Erreur de connexion: ' + error.message);
+    }
+};
+
+window.rejectSponsor = async function(id) {
+    if (!confirm('Rejeter ce sponsor ?')) return;
+    
+    try {
+        const token = localStorage.getItem('jwt_token');
+        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || 
+                         document.querySelector('input[name="_token"]')?.value ||
+                         '{{ csrf_token() }}';
+        
+        const response = await fetch(`/admin/sponsors/${id}/reject`, {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Authorization': 'Bearer ' + token,
+                'X-CSRF-TOKEN': csrfToken,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (response.ok) {
+            alert('Sponsor rejeté avec succès !');
+            window.loadSponsors();
+        } else {
+            alert('Erreur lors du rejet: ' + response.status);
+        }
+    } catch (error) {
+        console.error('Erreur:', error);
+        alert('Erreur de connexion: ' + error.message);
+    }
+};
+
+window.toggleStatus = async function(id, currentStatus) {
+    const action = currentStatus === 'active' ? 'désactiver' : 'activer';
+    if (!confirm(`${action.charAt(0).toUpperCase() + action.slice(1)} ce sponsor ?`)) return;
+    
+    try {
+        const token = localStorage.getItem('jwt_token');
+        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || 
+                         document.querySelector('input[name="_token"]')?.value ||
+                         '{{ csrf_token() }}';
+        
+        const response = await fetch(`/admin/sponsors/${id}/toggle-status`, {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Authorization': 'Bearer ' + token,
+                'X-CSRF-TOKEN': csrfToken,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (response.ok) {
+            alert(`Sponsor ${action} avec succès !`);
+            window.loadSponsors();
+        } else {
+            alert('Erreur lors du changement de statut: ' + response.status);
+        }
+    } catch (error) {
+        console.error('Erreur:', error);
+        alert('Erreur de connexion: ' + error.message);
+    }
+};
+
+window.deleteSponsor = async function(id) {
+    if (!confirm('Supprimer définitivement ce sponsor ?\n\nCette action supprimera :\n• Le compte sponsor\n• Tous ses sponsorships\n• Ses fichiers')) return;
+    
+    try {
+        const token = localStorage.getItem('jwt_token');
+        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || 
+                         document.querySelector('input[name="_token"]')?.value ||
+                         '{{ csrf_token() }}';
+        
+        console.log('Token CSRF:', csrfToken);
+        console.log('JWT Token:', token ? 'Présent' : 'Absent');
+        
+        // Créer un FormData pour éviter les problèmes de CORS
+        const formData = new FormData();
+        formData.append('_method', 'DELETE');
+        formData.append('_token', csrfToken);
+        
+        const headers = {
+            'Accept': 'application/json',
+            'X-CSRF-TOKEN': csrfToken
+        };
+        
+        // Ajouter l'authorization seulement si le token existe
+        if (token) {
+            headers['Authorization'] = 'Bearer ' + token;
+        }
+        
+        const response = await fetch(`/admin/sponsors/${id}`, {
+            method: 'POST',
+            headers: headers,
+            body: formData
+        });
+
+        console.log('Response status:', response.status);
+        
+        if (response.ok) {
+            alert('Sponsor supprimé avec succès !');
+            window.loadSponsors();
+        } else {
+            const errorData = await response.text();
+            console.error('Erreur response:', errorData);
+            alert('Erreur lors de la suppression: ' + response.status + ' - ' + errorData);
+        }
+    } catch (error) {
+        console.error('Erreur:', error);
+        alert('Erreur de connexion: ' + error.message);
+    }
+};
+
+window.viewSponsor = async function(id) {
+    try {
+        const token = localStorage.getItem('jwt_token');
+        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || 
+                         document.querySelector('input[name="_token"]')?.value ||
+                         '{{ csrf_token() }}';
+        
+        const response = await fetch(`/admin/sponsors/${id}`, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Authorization': 'Bearer ' + token,
+                'X-CSRF-TOKEN': csrfToken,
+                'X-Requested-With': 'XMLHttpRequest',
+            }
+        });
+
+        if (response.ok) {
+            const sponsor = await response.json();
+            showSponsorDetailsModal(sponsor);
+        } else {
+            alert('Erreur lors du chargement des détails: ' + response.status);
+        }
+    } catch (error) {
+        console.error('Erreur:', error);
+        alert('Erreur de connexion: ' + error.message);
+    }
+};
+
+function showSponsorDetailsModal(sponsor) {
+    // Créer la modal si elle n'existe pas
+    let modal = document.getElementById('sponsorDetailsModal');
+    if (!modal) {
+        modal = createSponsorDetailsModal();
+    }
+    
+    // Remplir les données du sponsor
+    document.getElementById('sponsorId').textContent = sponsor.id;
+    document.getElementById('sponsorName').textContent = sponsor.name || 'N/A';
+    document.getElementById('sponsorEmail').textContent = sponsor.email || 'N/A';
+    document.getElementById('sponsorPhone').textContent = sponsor.phone || 'N/A';
+    document.getElementById('sponsorCompany').textContent = sponsor.company_name || 'N/A';
+    document.getElementById('sponsorWebsite').textContent = sponsor.website || 'N/A';
+    document.getElementById('sponsorAddress').textContent = sponsor.address || 'N/A';
+    document.getElementById('sponsorCity').textContent = sponsor.city || 'N/A';
+    document.getElementById('sponsorBio').textContent = sponsor.bio || 'N/A';
+    document.getElementById('sponsorStatus').textContent = window.getStatusText(sponsor.status);
+    document.getElementById('sponsorStatus').className = `badge badge-${window.getStatusClass(sponsor.status)}`;
+    document.getElementById('sponsorCreatedAt').textContent = window.formatDate(sponsor.created_at);
+    document.getElementById('sponsorUpdatedAt').textContent = window.formatDate(sponsor.updated_at);
+    
+    // Gérer l'image de profil
+    const profileImage = document.getElementById('sponsorProfileImage');
+    if (sponsor.profile_image) {
+        profileImage.src = `/storage/${sponsor.profile_image}`;
+        profileImage.style.display = 'block';
+    } else {
+        profileImage.style.display = 'none';
+    }
+    
+    // Gérer le logo
+    const logoImage = document.getElementById('sponsorLogo');
+    if (sponsor.logo) {
+        logoImage.src = `/storage/${sponsor.logo}`;
+        logoImage.style.display = 'block';
+    } else {
+        logoImage.style.display = 'none';
+    }
+    
+    // Afficher la modal
+    const bootstrapModal = new bootstrap.Modal(modal);
+    bootstrapModal.show();
+}
+
+function createSponsorDetailsModal() {
+    const modalHtml = `
+        <div class="modal fade" id="sponsorDetailsModal" tabindex="-1" aria-labelledby="sponsorDetailsModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header bg-primary text-white">
+                        <h5 class="modal-title" id="sponsorDetailsModalLabel">
+                            <i class="fas fa-user"></i> Détails du Sponsor
+                        </h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <!-- Informations personnelles -->
+                            <div class="col-md-6">
+                                <div class="card mb-3">
+                                    <div class="card-header">
+                                        <h6 class="mb-0"><i class="fas fa-user"></i> Informations Personnelles</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="text-center mb-3">
+                                            <img id="sponsorProfileImage" src="" alt="Photo de profil" class="img-thumbnail" style="width: 100px; height: 100px; object-fit: cover; display: none;">
+                                        </div>
+                                        <table class="table table-sm">
+                                            <tr>
+                                                <td><strong>ID:</strong></td>
+                                                <td id="sponsorId">-</td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Nom:</strong></td>
+                                                <td id="sponsorName">-</td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Email:</strong></td>
+                                                <td id="sponsorEmail">-</td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Téléphone:</strong></td>
+                                                <td id="sponsorPhone">-</td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Statut:</strong></td>
+                                                <td><span id="sponsorStatus" class="badge">-</span></td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Informations entreprise -->
+                            <div class="col-md-6">
+                                <div class="card mb-3">
+                                    <div class="card-header">
+                                        <h6 class="mb-0"><i class="fas fa-building"></i> Informations Entreprise</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="text-center mb-3">
+                                            <img id="sponsorLogo" src="" alt="Logo entreprise" class="img-thumbnail" style="width: 80px; height: 80px; object-fit: contain; display: none;">
+                                        </div>
+                                        <table class="table table-sm">
+                                            <tr>
+                                                <td><strong>Entreprise:</strong></td>
+                                                <td id="sponsorCompany">-</td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Site Web:</strong></td>
+                                                <td id="sponsorWebsite">-</td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Adresse:</strong></td>
+                                                <td id="sponsorAddress">-</td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Ville:</strong></td>
+                                                <td id="sponsorCity">-</td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Description -->
+                        <div class="card mb-3">
+                            <div class="card-header">
+                                <h6 class="mb-0"><i class="fas fa-info-circle"></i> Description</h6>
+                            </div>
+                            <div class="card-body">
+                                <p id="sponsorBio" class="mb-0">-</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Dates -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h6 class="mb-0"><i class="fas fa-calendar"></i> Informations Temporelles</h6>
+                            </div>
+                            <div class="card-body">
+                                <table class="table table-sm">
+                                    <tr>
+                                        <td><strong>Inscrit le:</strong></td>
+                                        <td id="sponsorCreatedAt">-</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Modifié le:</strong></td>
+                                        <td id="sponsorUpdatedAt">-</td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                            <i class="fas fa-times"></i> Fermer
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // Ajouter la modal au body
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+    
+    return document.getElementById('sponsorDetailsModal');
+}
+
+window.filterSponsors = function() {
+    const search = document.getElementById('searchSponsor').value;
+    const status = document.getElementById('statusFilter').value;
+    
+    // Filtrer les lignes du tableau
+    const rows = document.querySelectorAll('#sponsorsTableBody tr');
+    rows.forEach(row => {
+        const name = row.cells[0].textContent.toLowerCase();
+        const email = row.cells[1].textContent.toLowerCase();
+        const company = row.cells[2].textContent.toLowerCase();
+        const statusCell = row.cells[3].textContent.toLowerCase();
+        
+        const matchesSearch = !search || name.includes(search.toLowerCase()) || email.includes(search.toLowerCase()) || company.includes(search.toLowerCase());
+        const matchesStatus = !status || statusCell.includes(status.toLowerCase());
+        
+        row.style.display = matchesSearch && matchesStatus ? '' : 'none';
+    });
+};
+
+// Fonctions utilitaires globales
+window.getStatusClass = function(status) {
+    const classes = {
+        'pending': 'warning',
+        'approved': 'success',
+        'rejected': 'danger',
+        'active': 'primary',
+        'inactive': 'secondary'
+    };
+    return classes[status] || 'secondary';
+};
+
+window.getStatusText = function(status) {
+    const texts = {
+        'pending': 'En attente',
+        'approved': 'Approuvé',
+        'rejected': 'Rejeté',
+        'active': 'Actif',
+        'inactive': 'Inactif'
+    };
+    return texts[status] || status;
+};
+
+window.formatDate = function(dateString) {
+    return new Date(dateString).toLocaleDateString('fr-FR');
+};
+
+// ==================== GESTION DES CAMPAGNES ====================
+
+// Charger les campagnes au chargement de la page
+window.loadCampaigns = async function() {
+    try {
+        const token = localStorage.getItem('jwt_token');
+        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || 
+                         document.querySelector('input[name="_token"]')?.value ||
+                         '{{ csrf_token() }}';
+        
+        const response = await fetch('/admin/campaigns/data', {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Authorization': 'Bearer ' + token,
+                'X-CSRF-TOKEN': csrfToken,
+                'X-Requested-With': 'XMLHttpRequest',
+            }
+        });
+
+        if (response.ok) {
+            const campaigns = await response.json();
+            console.log('Campagnes chargées:', campaigns);
+            displayCampaigns(campaigns);
+        } else {
+            console.error('Erreur lors du chargement des campagnes:', response.status);
+            displayTestCampaigns();
+        }
+    } catch (error) {
+        console.error('Erreur:', error);
+        displayTestCampaigns();
+    }
+};
+
+// Afficher les campagnes dans le tableau
+function displayCampaigns(campaigns) {
+    const tbody = document.getElementById('campaignsTableBody');
+    tbody.innerHTML = '';
+
+    campaigns.forEach(campaign => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td><strong>${campaign.title || campaign.name}</strong></td>
+            <td><span class="badge badge-info">${getCampaignTypeText(campaign.type || 'event')}</span></td>
+            <td><span class="badge badge-${getCampaignStatusClass(campaign.status)}">${getCampaignStatusText(campaign.status)}</span></td>
+            <td>${window.formatDate(campaign.start_date || campaign.created_at)}</td>
+            <td>${window.formatDate(campaign.end_date || campaign.created_at)}</td>
+            <td>${formatCurrency(campaign.budget || 0)}</td>
+            <td><span class="badge badge-primary">${getSponsorsCount(campaign.id)}</span></td>
+            <td>
+                <button class="btn btn-sm btn-outline-primary" onclick="viewCampaign(${campaign.id})" title="Voir détails">
+                    <i class="fas fa-eye"></i>
+                </button>
+                <button class="btn btn-sm btn-outline-warning" onclick="editCampaign(${campaign.id})" title="Modifier">
+                    <i class="fas fa-edit"></i>
+                </button>
+                <button class="btn btn-sm btn-outline-info" onclick="managePackages(${campaign.id})" title="Gérer packages">
+                    <i class="fas fa-box"></i>
+                </button>
+                ${campaign.status !== 'completed' && campaign.status !== 'cancelled' ? `
+                    <button class="btn btn-sm btn-outline-${campaign.status === 'active' ? 'warning' : 'success'}" onclick="toggleCampaignStatus(${campaign.id}, '${campaign.status}')" title="${campaign.status === 'active' ? 'Pauser' : 'Activer'}">
+                        <i class="fas fa-${campaign.status === 'active' ? 'pause' : 'play'}"></i>
+                    </button>
+                ` : ''}
+                <button class="btn btn-sm btn-outline-danger" onclick="deleteCampaign(${campaign.id})" title="Supprimer">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </td>
+        `;
+        tbody.appendChild(row);
+    });
+}
+
+// Données de test pour les campagnes
+function displayTestCampaigns() {
+    const testCampaigns = [
+        { 
+            id: 1, 
+            title: 'Festival Écologique 2024', 
+            type: 'festival', 
+            status: 'active', 
+            start_date: '2024-06-15', 
+            end_date: '2024-06-18', 
+            budget: 50000,
+            created_at: '2024-01-15'
+        },
+        { 
+            id: 2, 
+            title: 'Conférence Tech 2024', 
+            type: 'conference', 
+            status: 'draft', 
+            start_date: '2024-09-20', 
+            end_date: '2024-09-22', 
+            budget: 25000,
+            created_at: '2024-02-10'
+        },
+        { 
+            id: 3, 
+            title: 'Tournoi de Football', 
+            type: 'sport', 
+            status: 'completed', 
+            start_date: '2024-03-01', 
+            end_date: '2024-03-03', 
+            budget: 15000,
+            created_at: '2024-01-20'
+        }
+    ];
+    displayCampaigns(testCampaigns);
+}
+
+// Fonctions utilitaires pour les campagnes
+function getCampaignTypeText(type) {
+    const types = {
+        'event': 'Événement',
+        'festival': 'Festival',
+        'conference': 'Conférence',
+        'sport': 'Sport',
+        'culture': 'Culture'
+    };
+    return types[type] || 'Événement';
+}
+
+function getCampaignStatusClass(status) {
+    const classes = {
+        'draft': 'secondary',
+        'active': 'success',
+        'paused': 'warning',
+        'completed': 'info',
+        'cancelled': 'danger'
+    };
+    return classes[status] || 'secondary';
+}
+
+function getCampaignStatusText(status) {
+    const texts = {
+        'draft': 'Brouillon',
+        'active': 'Active',
+        'paused': 'En pause',
+        'completed': 'Terminée',
+        'cancelled': 'Annulée'
+    };
+    return texts[status] || status;
+}
+
+function formatCurrency(amount) {
+    return new Intl.NumberFormat('fr-FR', {
+        style: 'currency',
+        currency: 'TND'
+    }).format(amount);
+}
+
+function getSponsorsCount(campaignId) {
+    // Pour l'instant, retourner un nombre aléatoire
+    // Plus tard, on fera un appel API pour récupérer le vrai nombre
+    return Math.floor(Math.random() * 10);
+}
+
+// Actions sur les campagnes
+window.viewCampaign = async function(id) {
+    try {
+        const token = localStorage.getItem('jwt_token');
+        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || 
+                         document.querySelector('input[name="_token"]')?.value ||
+                         '{{ csrf_token() }}';
+        
+        const response = await fetch(`/admin/campaigns/${id}`, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Authorization': 'Bearer ' + token,
+                'X-CSRF-TOKEN': csrfToken,
+                'X-Requested-With': 'XMLHttpRequest',
+            }
+        });
+
+        if (response.ok) {
+            const campaign = await response.json();
+            showCampaignDetailsModal(campaign);
+        } else {
+            alert('Erreur lors du chargement des détails: ' + response.status);
+        }
+    } catch (error) {
+        console.error('Erreur:', error);
+        alert('Erreur de connexion: ' + error.message);
+    }
+};
+
+window.editCampaign = function(id) {
+    alert(`Modifier la campagne ID: ${id}\n\nFonctionnalité à implémenter.`);
+};
+
+window.managePackages = function(id) {
+    alert(`Gérer les packages pour la campagne ID: ${id}\n\nFonctionnalité à implémenter.`);
+};
+
+window.toggleCampaignStatus = async function(id, currentStatus) {
+    const action = currentStatus === 'active' ? 'pauser' : 'activer';
+    if (!confirm(`${action.charAt(0).toUpperCase() + action.slice(1)} cette campagne ?`)) return;
+    
+    try {
+        const token = localStorage.getItem('jwt_token');
+        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || 
+                         document.querySelector('input[name="_token"]')?.value ||
+                         '{{ csrf_token() }}';
+        
+        const response = await fetch(`/admin/campaigns/${id}/toggle-status`, {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Authorization': 'Bearer ' + token,
+                'X-CSRF-TOKEN': csrfToken,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (response.ok) {
+            alert(`Campagne ${action} avec succès !`);
+            window.loadCampaigns();
+        } else {
+            alert('Erreur lors du changement de statut: ' + response.status);
+        }
+    } catch (error) {
+        console.error('Erreur:', error);
+        alert('Erreur de connexion: ' + error.message);
+    }
+};
+
+window.deleteCampaign = async function(id) {
+    if (!confirm('Supprimer définitivement cette campagne ?\n\nCette action supprimera :\n• La campagne\n• Tous ses packages\n• Toutes les propositions de sponsoring')) return;
+    
+    try {
+        const token = localStorage.getItem('jwt_token');
+        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || 
+                         document.querySelector('input[name="_token"]')?.value ||
+                         '{{ csrf_token() }}';
+        
+        const formData = new FormData();
+        formData.append('_method', 'DELETE');
+        formData.append('_token', csrfToken);
+        
+        const headers = {
+            'Accept': 'application/json',
+            'X-CSRF-TOKEN': csrfToken
+        };
+        
+        if (token) {
+            headers['Authorization'] = 'Bearer ' + token;
+        }
+        
+        const response = await fetch(`/admin/campaigns/${id}`, {
+            method: 'POST',
+            headers: headers,
+            body: formData
+        });
+
+        if (response.ok) {
+            alert('Campagne supprimée avec succès !');
+            window.loadCampaigns();
+        } else {
+            const errorData = await response.text();
+            console.error('Erreur response:', errorData);
+            alert('Erreur lors de la suppression: ' + response.status);
+        }
+    } catch (error) {
+        console.error('Erreur:', error);
+        alert('Erreur de connexion: ' + error.message);
+    }
+};
+
+window.createCampaign = function() {
+    alert('Créer une nouvelle campagne\n\nFonctionnalité à implémenter.');
+};
+
+window.filterCampaigns = function() {
+    const search = document.getElementById('searchCampaign').value;
+    const status = document.getElementById('statusCampaignFilter').value;
+    const type = document.getElementById('typeCampaignFilter').value;
+    
+    // Filtrer les lignes du tableau
+    const rows = document.querySelectorAll('#campaignsTableBody tr');
+    rows.forEach(row => {
+        const name = row.cells[0].textContent.toLowerCase();
+        const typeCell = row.cells[1].textContent.toLowerCase();
+        const statusCell = row.cells[2].textContent.toLowerCase();
+        
+        const matchesSearch = !search || name.includes(search.toLowerCase());
+        const matchesStatus = !status || statusCell.includes(status.toLowerCase());
+        const matchesType = !type || typeCell.includes(type.toLowerCase());
+        
+        row.style.display = matchesSearch && matchesStatus && matchesType ? '' : 'none';
+    });
+};
+
+// Modal pour afficher les détails d'une campagne
+function showCampaignDetailsModal(campaign) {
+    // Créer la modal si elle n'existe pas
+    let modal = document.getElementById('campaignDetailsModal');
+    if (!modal) {
+        modal = createCampaignDetailsModal();
+    }
+    
+    // Remplir les données de la campagne
+    document.getElementById('campaignTitle').textContent = campaign.title || campaign.name || 'N/A';
+    document.getElementById('campaignType').textContent = getCampaignTypeText(campaign.type);
+    document.getElementById('campaignStatus').textContent = getCampaignStatusText(campaign.status);
+    document.getElementById('campaignStatus').className = `badge badge-${getCampaignStatusClass(campaign.status)}`;
+    document.getElementById('campaignDescription').textContent = campaign.description || 'N/A';
+    document.getElementById('campaignStartDate').textContent = window.formatDate(campaign.start_date);
+    document.getElementById('campaignEndDate').textContent = window.formatDate(campaign.end_date);
+    document.getElementById('campaignBudget').textContent = formatCurrency(campaign.budget || 0);
+    document.getElementById('campaignLocation').textContent = campaign.location || 'N/A';
+    document.getElementById('campaignCreatedAt').textContent = window.formatDate(campaign.created_at);
+    document.getElementById('campaignUpdatedAt').textContent = window.formatDate(campaign.updated_at);
+    
+    // Afficher la modal
+    const bootstrapModal = new bootstrap.Modal(modal);
+    bootstrapModal.show();
+}
+
+function createCampaignDetailsModal() {
+    const modalHtml = `
+        <div class="modal fade" id="campaignDetailsModal" tabindex="-1" aria-labelledby="campaignDetailsModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header bg-info text-white">
+                        <h5 class="modal-title" id="campaignDetailsModalLabel">
+                            <i class="fas fa-bullhorn"></i> Détails de la Campagne
+                        </h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="card mb-3">
+                                    <div class="card-header">
+                                        <h6 class="mb-0"><i class="fas fa-info-circle"></i> Informations Générales</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <table class="table table-sm">
+                                            <tr>
+                                                <td><strong>Titre:</strong></td>
+                                                <td id="campaignTitle">-</td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Type:</strong></td>
+                                                <td id="campaignType">-</td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Statut:</strong></td>
+                                                <td><span id="campaignStatus" class="badge">-</span></td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Budget:</strong></td>
+                                                <td id="campaignBudget">-</td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Localisation:</strong></td>
+                                                <td id="campaignLocation">-</td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card mb-3">
+                                    <div class="card-header">
+                                        <h6 class="mb-0"><i class="fas fa-calendar"></i> Dates</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <table class="table table-sm">
+                                            <tr>
+                                                <td><strong>Date début:</strong></td>
+                                                <td id="campaignStartDate">-</td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Date fin:</strong></td>
+                                                <td id="campaignEndDate">-</td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Créée le:</strong></td>
+                                                <td id="campaignCreatedAt">-</td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Modifiée le:</strong></td>
+                                                <td id="campaignUpdatedAt">-</td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header">
+                                <h6 class="mb-0"><i class="fas fa-align-left"></i> Description</h6>
+                            </div>
+                            <div class="card-body">
+                                <p id="campaignDescription" class="mb-0">-</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                            <i class="fas fa-times"></i> Fermer
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // Ajouter la modal au body
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+    
+    return document.getElementById('campaignDetailsModal');
+}
+
+// Charger les campagnes au chargement de la page
+window.loadCampaigns();
 </script>
 @endpush
 @endsection
