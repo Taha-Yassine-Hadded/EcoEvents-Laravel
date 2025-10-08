@@ -6,6 +6,9 @@ use App\Http\Controllers\Front\FrontCampaignController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\EventController;
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\RegistrationController;
 use App\Http\Controllers\PasswordResetController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
@@ -305,7 +308,6 @@ Route::prefix('organizer')->name('organizer.')->middleware([\App\Http\Middleware
     Route::post('/membership-requests/{membership}/approve', [\App\Http\Controllers\CommunityController::class, 'approveMembership'])->name('membership.approve');
     Route::post('/membership-requests/{membership}/reject', [\App\Http\Controllers\CommunityController::class, 'rejectMembership'])->name('membership.reject');
 });
-=======
 
 // Routes pour la gestion des campagnes
 Route::prefix('admin/campaigns')->middleware([\App\Http\Middleware\VerifyJWT::class, \App\Http\Middleware\RoleGuard::class . ':admin'])->group(function () {
@@ -355,4 +357,74 @@ Route::post('/campaigns/{campaign}/like', [FrontCampaignController::class, 'like
     ->middleware(\App\Http\Middleware\VerifyJWT::class)
     ->name('api.campaigns.like');// Dans web.php, dans le groupe admin/campaigns
 //Route::delete('/{id}', [CampaignController::class, 'destroy'])->name('admin.campaigns.destroy');
+
+
+
+// --------------------
+// FrontOffice (Public events, visible to all users)
+// --------------------
+Route::get('/events', [EventController::class, 'index'])->name('front.events.index');
+Route::get('/events/{event}', [EventController::class, 'show'])->name('front.events.show');
+
+
+// --------------------
+// FrontOffice Organizer (Own events management)
+// --------------------
+Route::prefix('organizer/events')->middleware([\App\Http\Middleware\VerifyJWT::class, \App\Http\Middleware\RoleGuard::class . ':organizer'])->group(function () {
+    Route::get('/create', [EventController::class, 'create'])->name('front.events.create');
+    Route::post('/', [EventController::class, 'store'])->name('front.events.store');
+    Route::get('/{event}/edit', [EventController::class, 'edit'])->name('front.events.edit');
+    Route::put('/{event}', [EventController::class, 'update'])->name('front.events.update');
+    Route::delete('/{event}', [EventController::class, 'destroy'])->name('front.events.destroy');
+});
+
+// --------------------
+// BackOffice (Admin full CRUD for events and categories)
+// --------------------
+Route::prefix('admin')->middleware([\App\Http\Middleware\VerifyJWT::class, \App\Http\Middleware\RoleGuard::class . ':admin'])->name('admin.')->group(function () {
+
+    // Events
+    Route::get('/events', [EventController::class, 'backIndex'])->name('events.index');
+    Route::get('/events/create', [EventController::class, 'createAdmin'])->name('events.create');
+    Route::get('/events/{event}/details', [EventController::class, 'showAdmin'])->name('admin.events.show');
+    Route::post('/events', [EventController::class, 'storeAdmin'])->name('events.store');
+    Route::get('/events/{event}/edit', [EventController::class, 'editAdmin'])->name('events.edit');
+    Route::put('/events/{event}', [EventController::class, 'updateAdmin'])->name('events.update');
+    Route::delete('/events/{event}', [EventController::class, 'destroyAdmin'])->name('events.destroy');
+
+    // Categories
+    Route::get('/categories', [CategoryController::class, 'index'])->name('categories.index');
+    Route::get('/categories/create', [CategoryController::class, 'create'])->name('categories.create');
+    Route::post('/categories', [CategoryController::class, 'store'])->name('categories.store');
+    Route::get('/categories/{category}/edit', [CategoryController::class, 'edit'])->name('categories.edit');
+    Route::put('/categories/{category}', [CategoryController::class, 'update'])->name('categories.update');
+    Route::delete('/categories/{category}', [CategoryController::class, 'destroy'])->name('categories.destroy');
+});
+
+
+Route::get('/api/categories', function() {
+    $categories = \App\Models\Category::all();
+    return response()->json(['categories' => $categories]);
+});
+
+Route::prefix('organizer/events')->middleware([\App\Http\Middleware\VerifyJWT::class, \App\Http\Middleware\RoleGuard::class . ':organizer'])->group(function () {
+    Route::post('/{event}', [EventController::class, 'updateOrganizer'])->name('organizer.events.update');
+});
+
+// --------------------
+// Event Subscription (AJAX endpoint for all authenticated users)
+// --------------------
+Route::post('/events/{event}/subscribe', [RegistrationController::class, 'subscribe'])
+    ->middleware(\App\Http\Middleware\VerifyJWT::class)
+    ->name('events.subscribe');
+
+Route::delete('/events/{event}/unsubscribe', [RegistrationController::class, 'unsubscribe'])
+    ->middleware(\App\Http\Middleware\VerifyJWT::class)
+    ->name('events.unsubscribe');
+
+Route::get('/events/{event}/registration-status', [RegistrationController::class, 'checkRegistration'])
+    ->middleware(\App\Http\Middleware\VerifyJWT::class)
+    ->name('events.registration.status');
+
+Route::get('/my-registrations', [RegistrationController::class, 'myRegistrations'])->name('registrations.index');
 

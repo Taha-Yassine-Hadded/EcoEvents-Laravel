@@ -15,9 +15,8 @@
                 <div class="header-menu">
                     <ul>
                         <li><a href="{{ url('/') }}">Accueil</a></li>
-                        <li><a href="{{ url('/about') }}">À propos</a></li>
                         <li><a href="{{ route('communities.index') }}">Communautés</a></li>
-                        <li><a href="#">Événements</a></li>
+                        <li><a href="{{ url('/events') }}">Événements</a></li>
                         <li><a href="{{ url('/campaigns?search=&category=all&status=all') }}">Nos Campagnes</a></li>
                         <li><a href="{{ url('/contact') }}">Contact</a></li>
                     </ul>
