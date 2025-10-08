@@ -14,10 +14,9 @@
             <div class="col-lg-9">
                 <div class="header-menu">
                     <ul>
-                        <li><a href="{{ url('/') }}">Accueil</a></li>
                         <li><a href="{{ route('communities.index') }}">Communautés</a></li>
                         <li><a href="{{ url('/events') }}">Événements</a></li>
-                        <li><a href="{{ url('/campaigns?search=&category=all&status=all') }}">Nos Campagnes</a></li>
+                        <li><a href="{{ url('/campaigns?search=&category=all&status=all') }}">Campagnes</a></li>
                         <li><a href="{{ url('/contact') }}">Contact</a></li>
                     </ul>
                     <div class="header-secrch-icon search-box-outer">
@@ -26,8 +25,16 @@
                     <div class="header-button" id="auth-area">
                         <!-- Boutons pour utilisateur non connecté -->
                         <div class="auth-buttons" id="auth-buttons">
-                            <a href="{{ route('login') }}" class="btn-login">Login</a>
-                            <a href="{{ route('register') }}" class="btn-register">S'inscrire</a>
+                            @if(Route::currentRouteName() === 'login')
+                                <!-- Si on est sur la page login, montrer seulement S'inscrire -->
+                                <a href="{{ route('register') }}" class="btn-register">S'inscrire</a>
+                            @elseif(Route::currentRouteName() === 'register')
+                                <!-- Si on est sur la page register, montrer seulement Login -->
+                                <a href="{{ route('login') }}" class="btn-login">Login</a>
+                            @else
+                                <!-- Sur toutes les autres pages-->
+                                <a href="{{ route('login') }}" class="btn-login">Login</a>
+                            @endif
                         </div>
                         <!-- Avatar pour utilisateur connecté (caché par défaut) -->
                         <div class="user-avatar" id="user-avatar" style="display: none;">
@@ -86,7 +93,7 @@
                     </ul>
                 </li>
                 <li><a href="{{ url('/about') }}">About</a></li>
-
+                <li><a href="{{ url('/events') }}">Événements</a></li>
                 <li><a href="{{ route('communities.index') }}">Communautés</a></li>
                 <li><a href="{{ url('/blog') }}">Blog</a></li>
 
