@@ -121,9 +121,9 @@
                             <select class="filter-select" id="statusFilter">
                                 <option value="">Tous les statuts</option>
                                 <option value="ongoing">En cours</option>
-        <option value="completed">Terminé</option>
-        <option value="cancelled">Annulé</option>
-        <option value="upcoming">À venir</option>
+                                <option value="completed">Terminé</option>
+                                <option value="cancelled">Annulé</option>
+                                <option value="upcoming">À venir</option>
                             </select>
                             <select class="filter-select" id="categoryFilter">
                                 <option value="">Toutes catégories</option>
@@ -179,11 +179,16 @@
                                     <td>
                                         <div class="event-info">
                                             <div class="event-thumbnail">
-                                                <img src="{{ $event->img ? asset('storage/' . $event->img) : asset('storage/events/default-event.jpg') }}" alt="{{ $event->title }}">
+                                                @if ($event->img && Storage::disk('public')->exists($event->img))
+                                                    <img src="{{ url('/') }}/storage/{{ $event->img }}" alt="{{ $event->title }}">
+                                                @else
+                                                    <div class="default-event-placeholder d-flex align-items-center justify-content-center" style="height: 60px; background: linear-gradient(135deg, #28a745, #20c997); color: white; border-radius: 8px;">
+                                                        <i class="fas fa-calendar-alt" style="font-size: 1.5rem;"></i>
+                                                    </div>
+                                                @endif
                                             </div>
                                             <div class="event-details">
                                                 <h4>{{ Str::limit($event->title, 50) }}</h4>
-                                                <p>{{ Str::limit(strip_tags($event->description ?? ''), 100) }}</p>
                                                 <div class="event-meta">Créé le {{ $event->created_at->format('d/m/Y') }}</div>
                                             </div>
                                         </div>
@@ -834,7 +839,32 @@
                         return;
                     }
 
-                    Promise.all(selectedEvents.map(id =>
+                    // Store selected events before clearing
+                    const eventsToDelete = [...selectedEvents];
+                    
+                    // Close modal immediately
+                    closeDeleteModal();
+                    
+                    // Remove selected events from local data and update UI immediately
+                    eventsToDelete.forEach(id => {
+                        const row = document.querySelector(`tr[data-id="${id}"]`);
+                        if (row) row.remove();
+                        events = events.filter(e => e.id != id);
+                    });
+                    
+                    // Update UI components
+                    updateStats();
+                    filterEvents();
+                    selectedEvents = [];
+                    updateBulkActions();
+                    
+                    // Reset select all checkbox
+                    const selectAll = document.getElementById('selectAll');
+                    selectAll.checked = false;
+                    selectAll.indeterminate = false;
+                    
+                    // Send delete requests in background
+                    Promise.all(eventsToDelete.map(id =>
                         fetch(`/admin/events/${id}`, {
                             method: 'DELETE',
                             headers: {
@@ -843,34 +873,8 @@
                                 'Accept': 'application/json',
                                 'Content-Type': 'application/json'
                             }
-                        }).then(response => {
-                            if (!response.ok) {
-                                throw new Error(`Erreur HTTP pour ID ${id}: ${response.status}`);
-                            }
-                            return response.json().then(data => ({ id, data }));
                         })
-                    ))
-                        .then(results => {
-                            let success = true;
-                            results.forEach(result => {
-                                if (result.data.success) {
-                                    const row = document.querySelector(`tr[data-id="${result.id}"]`);
-                                    if (row) row.remove();
-                                    events = events.filter(e => e.id != result.id);
-                                } else {
-                                    success = false;
-                                    console.error('Erreur lors de la suppression de l\'événement ID:', result.id, result.data.error);
-                                }
-                            });
-                            closeDeleteModal();
-                            updateStats();
-                            filterEvents();
-                            selectedEvents = [];
-                            updateBulkActions();
-                        })
-                        .catch(error => {
-                            console.error('Erreur réseau lors de la suppression en masse:', error.message);
-                        });
+                    ));
                 };
             }
 
@@ -933,7 +937,9 @@
                 } else {
                     filteredEvents.forEach(event => {
                         const statusText = event.status === 'upcoming' ? 'À venir' : (event.status === 'ongoing' ? 'En cours' : (event.status === 'completed' ? 'Terminé' : 'Annulé'));
-                        const thumbnail = event.img ? `{{ asset('storage/') }}/${event.img}` : `{{ asset('storage/events/default-event.jpg') }}`;
+                        const thumbnail = event.img 
+                            ? `{{ url('/') }}${event.img}`
+                            : null;
                         const organizerName = event.organizer ? event.organizer.name : 'Inconnu';
                         const organizerEmail = event.organizer ? event.organizer.email : 'N/A';
                         const createdAt = event.created_at ? new Date(event.created_at).toLocaleDateString('fr-FR') : 'N/A';
@@ -951,11 +957,13 @@
                             <td>
                                 <div class="event-info">
                                     <div class="event-thumbnail">
-                                        <img src="${thumbnail}" alt="${event.title}">
+                                        ${thumbnail 
+                                            ? `<img src="${thumbnail}" alt="${event.title}" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=&quot;default-event-placeholder d-flex align-items-center justify-content-center&quot; style=&quot;height: 60px; background: linear-gradient(135deg, #28a745, #20c997); color: white; border-radius: 8px;&quot;><i class=&quot;fas fa-calendar-alt&quot; style=&quot;font-size: 1.5rem;&quot;></i></div>';">`
+                                            : '<div class="default-event-placeholder d-flex align-items-center justify-content-center" style="height: 60px; background: linear-gradient(135deg, #28a745, #20c997); color: white; border-radius: 8px;"><i class="fas fa-calendar-alt" style="font-size: 1.5rem;"></i></div>'
+                                        }
                                     </div>
                                     <div class="event-details">
                                         <h4>${event.title.substring(0, 50)}${event.title.length > 50 ? '...' : ''}</h4>
-                                        <p>${(event.content || '').substring(0, 100)}${event.content && event.content.length > 100 ? '...' : ''}</p>
                                         <div class="event-meta">Créé le ${createdAt}</div>
                                     </div>
                                 </div>

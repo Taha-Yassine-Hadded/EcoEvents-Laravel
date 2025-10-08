@@ -31,4 +31,22 @@ class Registration extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    /**
+     * Check if a user is registered for an event
+     */
+    public static function isUserRegistered($eventId, $userId)
+    {
+        return self::where('event_id', $eventId)
+            ->where('user_id', $userId)
+            ->exists();
+    }
+
+    /**
+     * Get registration count for an event
+     */
+    public static function getEventRegistrationCount($eventId)
+    {
+        return self::where('event_id', $eventId)->count();
+    }
 }

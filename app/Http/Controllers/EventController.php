@@ -7,20 +7,85 @@ use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class EventController extends Controller
 {
     // -------------------
     // FrontOffice: Public events (all roles)
     // -------------------
-    public function index()
+    public function index(Request $request)
     {
         try {
-            $events = Event::with('category', 'organizer')->paginate(10);
-            return view('pages.frontOffice.events.index', compact('events'));
+            // Base query with relationships
+            $query = Event::with(['category', 'organizer', 'registrations']);
+            
+            // Apply search filter if provided
+            if ($request->has('search') && !empty($request->search)) {
+                $searchTerm = $request->search;
+                $query->where(function($q) use ($searchTerm) {
+                    $q->where('title', 'like', "%{$searchTerm}%")
+                      ->orWhere('description', 'like', "%{$searchTerm}%")
+                      ->orWhere('location', 'like', "%{$searchTerm}%");
+                });
+            }
+            
+            // Apply category filter if provided
+            if ($request->has('category') && !empty($request->category)) {
+                $query->whereHas('category', function($q) use ($request) {
+                    $q->where('name', $request->category);
+                });
+            }
+            
+            // Apply status filter if provided
+            if ($request->has('status') && !empty($request->status)) {
+                $query->where('status', $request->status);
+            }
+            
+            // Apply organizer filter if provided (for organizers to see only their events)
+            if ($request->has('organizer_filter') && $request->organizer_filter === 'mine' && $request->has('organizer_id')) {
+                $organizerId = $request->get('organizer_id');
+                
+                // Validate that the organizer_id is numeric and exists
+                if (is_numeric($organizerId)) {
+                    $query->where('organizer_id', $organizerId);
+                    Log::info('Applied organizer filter for user ID: ' . $organizerId);
+                } else {
+                    Log::warning('Invalid organizer_id provided: ' . $organizerId);
+                }
+            }
+            
+            // Order by date (upcoming events first)
+            $query->orderBy('date', 'asc');
+            
+            // Paginate results
+            $events = $query->paginate(16)->appends($request->all());
+            
+            // Get categories for sidebar
+            $categories = Category::withCount('events')->orderBy('name')->get();
+            
+            // Get recent events for sidebar (limit 3)
+            $recentEvents = Event::with(['category'])
+                ->orderBy('created_at', 'desc')
+                ->limit(3)
+                ->get();
+            
+            // Get statistics for sidebar
+            $totalEvents = Event::count();
+            $upcomingEvents = Event::where('status', 'upcoming')->count();
+            $ongoingEvents = Event::where('status', 'ongoing')->count();
+            
+            return view('pages.frontOffice.events.index', compact(
+                'events', 
+                'categories', 
+                'recentEvents', 
+                'totalEvents', 
+                'upcomingEvents', 
+                'ongoingEvents'
+            ));
         } catch (\Exception $e) {
             Log::error('Erreur lors du chargement des événements: ' . $e->getMessage());
-            return response()->json(['error' => 'Erreur serveur'], 500);
+            return back()->with('error', 'Erreur lors du chargement des événements.');
         }
     }
 
@@ -57,19 +122,83 @@ class EventController extends Controller
         }
     }
 
-    public function show(Event $event)
+    public function show($id)
     {
         try {
-            return view('pages.frontOffice.events.show', compact('event'));
+            $event = Event::with(['category', 'organizer', 'registrations'])->findOrFail($id);
+            
+            // Get similar events (same category, different event, not cancelled)
+            $similarEvents = Event::with(['category', 'organizer'])
+                ->where('category_id', $event->category_id)
+                ->where('id', '!=', $event->id)
+                ->where('status', '!=', 'cancelled')
+                ->take(6)
+                ->get();
+
+            return view('pages.frontOffice.events.show', compact('event', 'similarEvents'));
         } catch (\Exception $e) {
-            Log::error('Erreur lors du chargement de l\'événement ID ' . $event->id . ': ' . $e->getMessage());
-            return response()->json(['error' => 'Événement non trouvé'], 404);
+            \Log::error('Error loading event details: ' . $e->getMessage());
+            return redirect()->route('front.events.index')->with('error', 'Événement introuvable.');
         }
     }
 
     // -------------------
     // Organizer FrontOffice: Add/Edit own events
     // -------------------
+    public function store(Request $request)
+    {
+        try {
+            $user = JWTAuth::user();
+            
+            // Validate user is organizer
+            if (!$user || $user->role !== 'organizer') {
+                return response()->json(['success' => false, 'message' => 'Non autorisé'], 403);
+            }
+            
+            $request->validate([
+                'title' => 'required|string|max:255',
+                'description' => 'nullable|string',
+                'date' => 'required|date|after:now',
+                'location' => 'required|string|max:255',
+                'capacity' => 'nullable|integer|min:1',
+                'category_id' => 'required|exists:categories,id',
+                'status' => 'required|in:upcoming,ongoing,completed,cancelled',
+                'img' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048'
+            ]);
+            
+            $event = new Event();
+            $event->title = $request->title;
+            $event->description = $request->description;
+            $event->date = $request->date;
+            $event->location = $request->location;
+            $event->capacity = $request->capacity;
+            $event->category_id = $request->category_id;
+            $event->status = $request->status;
+            $event->organizer_id = $user->id;
+            
+            // Handle image upload
+            if ($request->hasFile('img')) {
+                $imagePath = $request->file('img')->store('events', 'public');
+                $event->img = $imagePath;
+            }
+            
+            $event->save();
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Événement créé avec succès',
+                'event' => $event
+            ]);
+            
+        } catch (\Exception $e) {
+            \Log::error('Error creating event: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur lors de la création de l\'événement'
+            ], 500);
+        }
+    }
+
     public function createAdmin(Request $request)
     {
         $this->authorizeRole($request, 'admin'); // Changed to allow admins
@@ -84,7 +213,7 @@ class EventController extends Controller
     }
 
     public function storeAdmin(Request $request)
-{
+    {
     $this->authorizeRole($request, 'admin');
 
     try {
@@ -119,7 +248,7 @@ class EventController extends Controller
     }
 }
 
-// -------------------
+    // -------------------
     // BackOffice: Admin event details
     // -------------------
     public function showAdmin(Event $event)
@@ -200,6 +329,100 @@ public function updateAdmin(Request $request, Event $event)
             return response()->json(['error' => 'Erreur lors de la suppression'], 500);
         }
     }
+
+
+    public function update(Request $request, $id)
+    {
+        try {
+            $user = JWTAuth::user();
+            $event = Event::findOrFail($id);
+            
+            // Check if user is the organizer of this event
+            if ($event->organizer_id !== $user->id) {
+                return response()->json(['success' => false, 'message' => 'Unauthorized'], 403);
+            }
+            
+            $request->validate([
+                'title' => 'required|string|max:255',
+                'description' => 'nullable|string',
+                'date' => 'required|date',
+                'location' => 'required|string|max:255',
+                'capacity' => 'nullable|integer|min:1',
+                'category_id' => 'required|exists:categories,id',
+                'status' => 'required|in:upcoming,ongoing,completed,cancelled',
+                'img' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
+            ]);
+            
+            $event->title = $request->title;
+            $event->description = $request->description;
+            $event->date = $request->date;
+            $event->location = $request->location;
+            $event->capacity = $request->capacity;
+            $event->category_id = $request->category_id;
+            $event->status = $request->status;
+            
+            // Handle image upload
+            if ($request->hasFile('img')) {
+                // Delete old image if exists
+                if ($event->img && Storage::disk('public')->exists($event->img)) {
+                    Storage::disk('public')->delete($event->img);
+                }
+                
+                // Store new image
+                $imagePath = $request->file('img')->store('events', 'public');
+                $event->img = $imagePath;
+            }
+            
+            $event->save();
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Événement mis à jour avec succès',
+                'event' => $event
+            ]);
+            
+        } catch (\Exception $e) {
+            \Log::error('Error updating event: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur lors de la mise à jour de l\'événement'
+            ], 500);
+        }
+    }
+
+    // Organizer delete method for the standard route
+    public function destroy(Event $event)
+    {
+        try {
+            $user = JWTAuth::user();
+            
+            // Check if user is the organizer of this event
+            if ($event->organizer_id !== $user->id) {
+                return response()->json(['success' => false, 'message' => 'Non autorisé'], 403);
+            }
+            
+            // Delete associated image if exists
+            if ($event->img && Storage::disk('public')->exists($event->img)) {
+                Storage::disk('public')->delete($event->img);
+            }
+            
+            $event->delete();
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Événement supprimé avec succès'
+            ]);
+            
+        } catch (\Exception $e) {
+            \Log::error('Error deleting event: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur lors de la suppression de l\'événement'
+            ], 500);
+        }
+    }
+
+
 
     // -------------------
     // Authorization helpers using JWT user

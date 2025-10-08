@@ -31,7 +31,13 @@
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-4">
-                            <img src="{{ $event->img ? Storage::url($event->img) : asset('storage/events/default-event.jpg') }}" alt="{{ $event->title }}" class="img-fluid rounded" style="max-height: 300px; object-fit: cover;">
+                            @if ($event->img && Storage::disk('public')->exists($event->img))
+                                <img src="{{ url('/') }}/storage/{{ $event->img }}" alt="{{ $event->title }}" class="img-fluid rounded" style="max-height: 300px; object-fit: cover;">
+                            @else
+                                <div class="default-event-placeholder d-flex align-items-center justify-content-center" style="height: 300px; background: linear-gradient(135deg, #28a745, #20c997); color: white; border-radius: 8px;">
+                                    <i class="fas fa-calendar-alt" style="font-size: 4rem;"></i>
+                                </div>
+                            @endif
                         </div>
                         <div class="col-md-8">
                             <p><strong>Description :</strong> {{ $event->description ?? 'Aucune description' }}</p>

@@ -222,10 +222,29 @@ Route::prefix('admin')->middleware([\App\Http\Middleware\VerifyJWT::class, \App\
     Route::delete('/categories/{category}', [CategoryController::class, 'destroy'])->name('categories.destroy');
 });
 
-// --------------------
-// Registrations Routes (users only)
-// --------------------
-Route::prefix('user')->middleware([\App\Http\Middleware\VerifyJWT::class, \App\Http\Middleware\RoleGuard::class . ':user'])->group(function () {
-    Route::post('/events/{event}/register', [RegistrationController::class, 'register'])->name('events.register');
-    Route::get('/my-registrations', [RegistrationController::class, 'myRegistrations'])->name('registrations.index');
+
+Route::get('/api/categories', function() {
+    $categories = \App\Models\Category::all();
+    return response()->json(['categories' => $categories]);
 });
+
+Route::prefix('organizer/events')->middleware([\App\Http\Middleware\VerifyJWT::class, \App\Http\Middleware\RoleGuard::class . ':organizer'])->group(function () {
+    Route::post('/{event}', [EventController::class, 'updateOrganizer'])->name('organizer.events.update');
+});
+
+// --------------------
+// Event Subscription (AJAX endpoint for all authenticated users)
+// --------------------
+Route::post('/events/{event}/subscribe', [RegistrationController::class, 'subscribe'])
+    ->middleware(\App\Http\Middleware\VerifyJWT::class)
+    ->name('events.subscribe');
+
+Route::delete('/events/{event}/unsubscribe', [RegistrationController::class, 'unsubscribe'])
+    ->middleware(\App\Http\Middleware\VerifyJWT::class)
+    ->name('events.unsubscribe');
+
+Route::get('/events/{event}/registration-status', [RegistrationController::class, 'checkRegistration'])
+    ->middleware(\App\Http\Middleware\VerifyJWT::class)
+    ->name('events.registration.status');
+
+Route::get('/my-registrations', [RegistrationController::class, 'myRegistrations'])->name('registrations.index');

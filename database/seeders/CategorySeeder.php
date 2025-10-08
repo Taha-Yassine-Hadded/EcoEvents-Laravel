@@ -18,10 +18,13 @@ class CategorySeeder extends Seeder
         ];
 
         foreach ($categories as $category) {
-            Category::create($category);
+            Category::firstOrCreate(['name' => $category['name']], $category);
         }
 
-        // Add a few random ones
-        Category::factory()->count(3)->create();
+        // Add a few random ones if we don't have enough categories
+        $currentCategoryCount = Category::count();
+        if ($currentCategoryCount < 7) {
+            Category::factory()->count(7 - $currentCategoryCount)->create();
+        }
     }
 }

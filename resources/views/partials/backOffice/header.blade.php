@@ -61,6 +61,10 @@
                     <i class="fas fa-chevron-down"></i>
                 </div>
                 <div class="user-dropdown-content">
+                    <a href="/" class="dropdown-item">
+                        <i class="fas fa-home"></i>
+                        Home
+                    </a>
                     <a href="#" class="dropdown-item">
                         <i class="fas fa-user"></i>
                         Profile

@@ -551,7 +551,32 @@
             return;
         }
 
-        const deletePromises = selectedCategories.map(id =>
+        // Store selected categories before clearing
+        const categoriesToDelete = [...selectedCategories];
+        
+        // Close modal immediately
+        closeDeleteModal();
+        
+        // Remove selected categories from local data and update UI immediately
+        categoriesToDelete.forEach(id => {
+            const row = document.querySelector(`tr[data-id="${id}"]`);
+            if (row) row.remove();
+            categories = categories.filter(c => c.id != id);
+        });
+        
+        // Update UI components
+        updateStats();
+        filterCategories();
+        selectedCategories = [];
+        updateBulkActions();
+        
+        // Reset select all checkbox
+        const selectAll = document.getElementById('selectAll');
+        selectAll.checked = false;
+        selectAll.indeterminate = false;
+        
+        // Send delete requests in background
+        Promise.all(categoriesToDelete.map(id =>
             fetch(`{{ route('admin.categories.destroy', ['category' => ':id']) }}`.replace(':id', id), {
                 method: 'DELETE',
                 headers: {
@@ -560,48 +585,8 @@
                     'Accept': 'application/json',
                     'Content-Type': 'application/json'
                 }
-            }).then(response => {
-                if (!response.ok) {
-                    return response.json().then(data => Promise.reject({ id, status: response.status, error: data.error }));
-                }
-                return response.json().then(data => ({ id, data }));
             })
-        );
-
-        Promise.allSettled(deletePromises)
-            .then(results => {
-                console.log('Résultats de la suppression en masse:', results);
-                let successCount = 0;
-                let failedIds = [];
-
-                results.forEach(result => {
-                    if (result.status === 'fulfilled' && result.value.data.success) {
-                        const row = document.querySelector(`tr[data-id="${result.value.id}"]`);
-                        if (row) row.remove();
-                        categories = categories.filter(c => c.id != result.value.id);
-                        successCount++;
-                    } else if (result.status === 'rejected') {
-                        failedIds.push(result.reason.id);
-                        console.error(`Échec de la suppression pour ID ${result.reason.id}: ${result.reason.error || 'Erreur inconnue'}`);
-                    }
-                });
-
-                closeDeleteModal();
-                updateStats();
-                filterCategories();
-                selectedCategories = [];
-
-                if (successCount > 0) {
-                }
-                if (failedIds.length) {
-                    alert(`Échec de la suppression pour les IDs: ${failedIds.join(', ')}. Vérifiez les logs pour plus de détails.`);
-                }
-                updateBulkActions();
-            })
-            .catch(error => {
-                console.error('Erreur réseau lors de la suppression en masse:', error.message);
-                alert('Une erreur est survenue lors de la suppression: ' + error.message);
-            });
+        ));
     };
 }
 

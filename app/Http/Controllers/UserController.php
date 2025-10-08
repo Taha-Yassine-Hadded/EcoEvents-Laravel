@@ -22,8 +22,10 @@ class UserController extends Controller
             return response()->json([
                 'success' => true,
                 'user' => [
+                    'id' => $user->id,
                     'name' => $user->name,
                     'email' => $user->email,
+                    'role' => $user->role,
                     'profile_image' => $user->profile_image_url, // sera null si pas d'image
                     'initials' => $user->initials, // utilise l'attribut du modèle
                     'has_image' => $user->hasProfileImage(), // pour savoir s'il faut afficher l'image ou les initiales
