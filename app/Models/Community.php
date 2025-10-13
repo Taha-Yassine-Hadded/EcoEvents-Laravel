@@ -120,4 +120,13 @@ class Community extends Model
     {
         return $query->where('organizer_id', $organizerId);
     }
+
+    /**
+     * Get the chat room for this community.
+     */
+    public function chatRoom()
+    {
+        return $this->morphOne(\App\Models\ChatRoom::class, 'target')
+            ->where('target_type', 'community');
+    }
 }

@@ -70,7 +70,7 @@
         transform: translateY(-2px);
     }
 
-   
+
     .btn {
         display: inline-block !important;
         visibility: visible !important;
@@ -450,6 +450,12 @@
                                     onclick="navigator.share ? navigator.share({title: '{{ $community->name }}', url: window.location.href}) : alert('Partagez cette URL : ' + window.location.href)">
                                 <i class="fas fa-share-alt me-2"></i>Partager cette communauté
                             </button>
+                            <a href="/ui/communities/{{ $community->id }}/forum" class="btn btn-outline-primary btn-sm">
+                                <i class="fas fa-comments me-2"></i>Accéder au Forum
+                            </a>
+                            <a href="{{ route('ui.chat.whatsapp') }}" class="btn btn-success btn-sm" target="_blank" rel="noopener">
+                                <i class="fas fa-whatsapp me-2"></i>Ouvrir le chat (WhatsApp-like)
+                            </a>
                             <a href="{{ route('communities.index') }}" class="btn btn-outline-secondary btn-sm">
                                 <i class="fas fa-arrow-left me-2"></i>Retour aux communautés
                             </a>

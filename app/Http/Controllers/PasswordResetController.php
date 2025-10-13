@@ -58,8 +58,10 @@ class PasswordResetController extends Controller
                         ->subject('Code de récupération de mot de passe - EcoEvents');
             });
 
+            // Stocker de façon persistante l'email pour les étapes suivantes
+            session()->put('reset_email', $request->email);
+
             return redirect()->route('password.reset.verify')
-                           ->with('email', $request->email)
                            ->with('success', 'Un code de récupération a été envoyé à votre adresse email.');
         } catch (\Exception $e) {
             return back()->with('error', 'Erreur lors de l\'envoi de l\'email. Veuillez réessayer.');
@@ -71,7 +73,7 @@ class PasswordResetController extends Controller
      */
     public function showVerifyCodeForm()
     {
-        if (!session('email')) {
+        if (!session('reset_email')) {
             return redirect()->route('password.request')
                            ->with('error', 'Session expirée. Veuillez recommencer.');
         }
@@ -92,23 +94,30 @@ class PasswordResetController extends Controller
             'code.size' => 'Le code doit contenir exactement 6 chiffres.'
         ]);
 
+        // Sanitize code: keep only digits
+        $sanitizedCode = preg_replace('/\D/', '', $request->code ?? '');
+
         $passwordReset = PasswordReset::where('email', $request->email)
-                                    ->where('token', $request->code)
+                                    ->where('token', $sanitizedCode)
                                     ->first();
 
         if (!$passwordReset) {
             return back()->with('error', 'Code de récupération invalide.');
         }
 
-        // Vérifier si le code n'a pas expiré (15 minutes)
+        // Vérifier si le code a expiré (15 minutes)
         if (Carbon::parse($passwordReset->created_at)->addMinutes(15)->isPast()) {
-            $passwordReset->delete();
+            PasswordReset::where('email', $request->email)
+                ->where('token', $sanitizedCode)
+                ->delete();
             return back()->with('error', 'Le code de récupération a expiré. Veuillez en demander un nouveau.');
         }
 
+        // Stocker l'email et le code de manière persistante en session
+        session()->put('reset_email', $request->email);
+        session()->put('reset_code', $sanitizedCode);
+
         return redirect()->route('password.reset.form')
-                       ->with('email', $request->email)
-                       ->with('code', $request->code)
                        ->with('success', 'Code vérifié avec succès. Vous pouvez maintenant réinitialiser votre mot de passe.');
     }
 
@@ -117,7 +126,7 @@ class PasswordResetController extends Controller
      */
     public function showResetPasswordForm()
     {
-        if (!session('email') || !session('code')) {
+        if (!session('reset_email') || !session('reset_code')) {
             return redirect()->route('password.request')
                            ->with('error', 'Session expirée. Veuillez recommencer.');
         }
@@ -140,9 +149,10 @@ class PasswordResetController extends Controller
             'password.confirmed' => 'La confirmation du mot de passe ne correspond pas.'
         ]);
 
-        // Vérifier à nouveau le code
+        // Vérifier à nouveau le code (sanitisation)
+        $sanitizedCode = preg_replace('/\D/', '', $request->code ?? '');
         $passwordReset = PasswordReset::where('email', $request->email)
-                                    ->where('token', $request->code)
+                                    ->where('token', $sanitizedCode)
                                     ->first();
 
         if (!$passwordReset) {
@@ -151,7 +161,9 @@ class PasswordResetController extends Controller
 
         // Vérifier l'expiration
         if (Carbon::parse($passwordReset->created_at)->addMinutes(15)->isPast()) {
-            $passwordReset->delete();
+            PasswordReset::where('email', $request->email)
+                ->where('token', $sanitizedCode)
+                ->delete();
             return redirect()->route('password.request')
                            ->with('error', 'Le code de récupération a expiré. Veuillez recommencer.');
         }
@@ -161,8 +173,13 @@ class PasswordResetController extends Controller
         $user->password = Hash::make($request->password);
         $user->save();
 
-        // Supprimer le code utilisé
-        $passwordReset->delete();
+        // Supprimer le code utilisé (table sans colonne id)
+        PasswordReset::where('email', $request->email)
+            ->where('token', $sanitizedCode)
+            ->delete();
+
+        // Nettoyer la session du flux de reset
+        session()->forget(['reset_email', 'reset_code']);
 
         return redirect()->route('login')
                        ->with('success', 'Votre mot de passe a été réinitialisé avec succès. Vous pouvez maintenant vous connecter.');

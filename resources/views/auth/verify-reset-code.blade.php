@@ -98,7 +98,7 @@
                         <h3 class="text-muted mb-3">Vérification du code</h3>
                         <div class="code-info mb-3">
                             <i class="fas fa-info-circle me-2"></i>
-                            Un code de 6 chiffres a été envoyé à <strong>{{ session('email') }}</strong>
+                            Un code de 6 chiffres a été envoyé à <strong>{{ session('reset_email') }}</strong>
                         </div>
                     </div>
 
@@ -118,7 +118,7 @@
 
                     <form method="POST" action="{{ route('password.verify') }}">
                         @csrf
-                        <input type="hidden" name="email" value="{{ session('email') }}">
+                        <input type="hidden" name="email" value="{{ session('reset_email') }}">
                         
                         <div class="mb-4">
                             <label for="code" class="form-label">

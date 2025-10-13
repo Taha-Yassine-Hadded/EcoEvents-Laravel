@@ -131,8 +131,8 @@
 
                     <form method="POST" action="{{ route('password.update') }}">
                         @csrf
-                        <input type="hidden" name="email" value="{{ session('email') }}">
-                        <input type="hidden" name="code" value="{{ session('code') }}">
+                        <input type="hidden" name="email" value="{{ session('reset_email') }}">
+                        <input type="hidden" name="code" value="{{ session('reset_code') }}">
                         
                         <div class="mb-4">
                             <label for="password" class="form-label">

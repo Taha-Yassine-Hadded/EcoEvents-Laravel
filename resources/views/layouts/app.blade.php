@@ -6,6 +6,9 @@
     <title>@yield('title', 'Echofy')</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <!-- Support user for Messenger-like widget -->
+    <meta name="support-user-id" content="{{ env('SUPPORT_USER_ID', 1) }}">
 
     <!-- Favicon -->
     <link rel="icon" type="image/png" sizes="56x56" href="{{ asset('assets/images/fav-icon/icon.png') }}">
@@ -252,5 +255,8 @@
     </script>
 
     @stack('scripts')
+    
+    <!-- Messenger-like floating chat widget -->
+    <script src="/chat-widget.js" defer></script>
 </body>
 </html>

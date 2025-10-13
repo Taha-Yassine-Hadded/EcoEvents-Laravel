@@ -675,6 +675,8 @@
 
 @push('scripts')
     <script>
+        // IDs des campagnes likées par l'utilisateur connecté (injecté côté serveur)
+        const likedIds = @json(auth()->check() ? auth()->user()->likedCampaigns()->pluck('campaign_id') : []);
         // Afficher une notification temporaire
         function showNotification(message, type = 'success') {
             console.log(`Affichage de la notification: ${message} (${type})`);
@@ -756,7 +758,8 @@
             }
 
             campaigns.forEach(campaign => {
-                const isLiked = {{ auth()->check() ? '!!' . auth()->user()->likedCampaigns()->where('campaign_id', "' + campaign.id + '").exists() : 'false' }};
+                // Vérification côté client via la liste des IDs aimés
+                const isLiked = Array.isArray(likedIds) && likedIds.includes(campaign.id);
                 const campaignBox = document.createElement('div');
                 campaignBox.className = 'campaign-card single-campaign-box';
                 campaignBox.setAttribute('data-category', campaign.category);

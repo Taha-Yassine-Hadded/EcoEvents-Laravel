@@ -17,6 +17,20 @@
                         <p>Rejoignez notre communauté d'éco-citoyens engagés pour l'environnement</p>
                     </div>
 
+                    @if(session('success'))
+                        <div class="alert alert-success">{{ session('success') }}</div>
+                    @endif
+
+                    @if($errors->any())
+                        <div class="alert alert-danger">
+                            <ul class="mb-0">
+                                @foreach($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+
                     <form method="POST" action="{{ route('register') }}" enctype="multipart/form-data" class="registration-form">
                         @csrf
                         
