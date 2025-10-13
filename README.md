@@ -48,8 +48,8 @@ It allows users to **discover, create, and participate** in eco-friendly initiat
 
 ### 1️⃣ Clone the repository
 ```bash
-git clone https://github.com/<your-team>/ecoevents.git
-cd ecoevents
+git clone https://github.com/Taha-Yassine-Hadded/EcoEvents-Laravel.git
+cd EcoEvents-Laravel
 ```
 
 ### 2️⃣ Install dependencies
@@ -107,24 +107,6 @@ php artisan jwt:secret
 ```
 
 This command generates a secret key used for signing tokens — make sure it's included in your `.env`.
-
----
-
-## 👥 Team
-
-| Name | Role |
-|------|------|
-| **Taha Yessin Hadded** | Full Stack Developer |
-| *Member 2* | Frontend Developer |
-| *Member 3* | Backend Developer |
-| *Member 4* | QA / Documentation |
-
----
-
-## 🪪 License
-
-This project is licensed under the **MIT License**.  
-See the [LICENSE](LICENSE) file for more details.
 
 ---
 
