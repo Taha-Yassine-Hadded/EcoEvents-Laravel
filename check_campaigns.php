@@ -5,11 +5,11 @@ $app->make('Illuminate\Contracts\Console\Kernel')->bootstrap();
 
 echo "=== VÉRIFICATION DES CAMPAGNES ===\n\n";
 
-$count = \App\Models\Campaign::count();
+$count = \App\Models\EchofyCampaign::count();
 echo "Nombre de campagnes en base: {$count}\n\n";
 
 if ($count > 0) {
-    $campaigns = \App\Models\Campaign::all();
+    $campaigns = \App\Models\EchofyCampaign::all();
     foreach ($campaigns as $campaign) {
         echo "- {$campaign->title} (ID: {$campaign->id})\n";
         echo "  Description: " . substr($campaign->description, 0, 50) . "...\n";

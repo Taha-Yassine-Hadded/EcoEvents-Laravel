@@ -84,9 +84,9 @@ try {
     
     $createdCampaigns = 0;
     foreach ($campaigns as $campaignData) {
-        $existingCampaign = \App\Models\Campaign::where('title', $campaignData['title'])->first();
+        $existingCampaign = \App\Models\EchofyCampaign::where('title', $campaignData['title'])->first();
         if (!$existingCampaign) {
-            $campaign = \App\Models\Campaign::create($campaignData);
+            $campaign = \App\Models\EchofyCampaign::create($campaignData);
             echo "✅ Campagne créée: {$campaign->title}\n";
             $createdCampaigns++;
         } else {
@@ -98,7 +98,7 @@ try {
     echo "Utilisateur sponsor: sponsor@test.com\n";
     echo "Mot de passe: password123\n";
     echo "Campagnes créées: {$createdCampaigns}\n";
-    echo "Total campagnes disponibles: " . \App\Models\Campaign::count() . "\n\n";
+    echo "Total campagnes disponibles: " . \App\Models\EchofyCampaign::count() . "\n\n";
     
     echo "=== INSTRUCTIONS DE TEST ===\n";
     echo "1. Ouvrez votre navigateur sur: http://127.0.0.1:8000\n";

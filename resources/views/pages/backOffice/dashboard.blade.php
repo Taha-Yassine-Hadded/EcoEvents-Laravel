@@ -1482,9 +1482,158 @@ window.deleteCampaign = async function(id) {
     }
 };
 
+// ==================== Création d'une nouvelle campagne ====================
 window.createCampaign = function() {
-    alert('Créer une nouvelle campagne\n\nFonctionnalité à implémenter.');
+    // Créer/afficher la modal de création
+    let modal = document.getElementById('createCampaignModal');
+    if (!modal) {
+        modal = createCampaignModal();
+    }
+    // Reset du formulaire
+    const form = document.getElementById('createCampaignForm');
+    if (form) form.reset();
+    const bootstrapModal = new bootstrap.Modal(modal);
+    bootstrapModal.show();
 };
+
+function createCampaignModal() {
+    const modalHtml = `
+        <div class="modal fade" id="createCampaignModal" tabindex="-1" aria-labelledby="createCampaignModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header bg-success text-white">
+                        <h5 class="modal-title" id="createCampaignModalLabel">
+                            <i class="fas fa-plus"></i> Nouvelle Campagne
+                        </h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="createCampaignForm">
+                            <div class="mb-3">
+                                <label class="form-label">Titre <span class="text-danger">*</span></label>
+                                <input name="title" type="text" class="form-control" placeholder="Titre de la campagne" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Description</label>
+                                <textarea name="description" class="form-control" rows="3" placeholder="Décrivez brièvement la campagne"></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Type <span class="text-danger">*</span></label>
+                                <select name="type" class="form-control" required>
+                                    <option value="event">Événement</option>
+                                    <option value="festival">Festival</option>
+                                    <option value="conference">Conférence</option>
+                                    <option value="sport">Sport</option>
+                                    <option value="culture">Culture</option>
+                                </select>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Date début <span class="text-danger">*</span></label>
+                                    <input name="start_date" type="date" class="form-control" placeholder="AAAA-MM-JJ" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Date fin <span class="text-danger">*</span></label>
+                                    <input name="end_date" type="date" class="form-control" placeholder="AAAA-MM-JJ" required>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Budget (TND)</label>
+                                    <input name="budget" type="number" step="0.01" min="0" class="form-control" placeholder="ex: 10000">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Statut <span class="text-danger">*</span></label>
+                                    <select name="status" class="form-control" required>
+                                        <option value="draft">Brouillon</option>
+                                        <option value="active">Active</option>
+                                        <option value="paused">En pause</option>
+                                        <option value="completed">Terminée</option>
+                                        <option value="cancelled">Annulée</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Localisation</label>
+                                <input name="location" type="text" class="form-control" placeholder="Ville, lieu, adresse...">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Image</label>
+                                <input name="image" type="file" accept="image/*" class="form-control">
+                            </div>
+                        </form>
+                        <div id="createCampaignErrors" class="alert alert-danger d-none"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                        <button id="submitCreateCampaignBtn" type="button" class="btn btn-success">
+                            <i class="fas fa-save"></i> Créer
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>`;
+
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+
+    // Binder le submit
+    document.getElementById('submitCreateCampaignBtn').addEventListener('click', submitCreateCampaign);
+    return document.getElementById('createCampaignModal');
+}
+
+async function submitCreateCampaign() {
+    const form = document.getElementById('createCampaignForm');
+    const errorBox = document.getElementById('createCampaignErrors');
+    errorBox.classList.add('d-none');
+    errorBox.innerHTML = '';
+
+    const formData = new FormData(form);
+
+    try {
+        const token = localStorage.getItem('jwt_token');
+        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || 
+                         document.querySelector('input[name="_token"]')?.value ||
+                         '{{ csrf_token() }}';
+
+        const headers = {
+            'Accept': 'application/json',
+            'X-CSRF-TOKEN': csrfToken,
+            'X-Requested-With': 'XMLHttpRequest'
+        };
+        if (token) headers['Authorization'] = 'Bearer ' + token;
+
+        const response = await fetch('/admin/campaigns', {
+            method: 'POST',
+            headers,
+            body: formData
+        });
+
+        if (response.ok) {
+            // Succès
+            const modalEl = document.getElementById('createCampaignModal');
+            const modal = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
+            modal.hide();
+            alert('Campagne créée avec succès !');
+            window.loadCampaigns();
+        } else {
+            // Afficher erreurs
+            let message = 'Erreur lors de la création (' + response.status + ')';
+            try {
+                const data = await response.json();
+                if (data?.errors) {
+                    message = Object.values(data.errors).flat().join('<br>');
+                } else if (data?.message) {
+                    message = data.message;
+                }
+            } catch (e) {}
+            errorBox.innerHTML = message;
+            errorBox.classList.remove('d-none');
+        }
+    } catch (error) {
+        errorBox.innerHTML = 'Erreur de connexion: ' + error.message;
+        errorBox.classList.remove('d-none');
+    }
+}
 
 window.filterCampaigns = function() {
     const search = document.getElementById('searchCampaign').value;

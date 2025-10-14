@@ -7,7 +7,7 @@ use App\Models\Sponsor;
 use App\Models\Package;
 use App\Models\Sponsorship;
 use App\Models\SponsorshipTemp;
-use App\Models\Campaign;
+use App\Models\EchofyCampaign;
 use App\Models\User;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Hash;
@@ -333,7 +333,7 @@ class SponsorManagementController extends Controller
 
         try {
             // Récupérer toutes les campagnes (pas de filtre par date pour les tests)
-            $campaigns = Campaign::orderBy('created_at', 'desc')
+            $campaigns = EchofyCampaign::orderBy('created_at', 'desc')
                 ->paginate(12);
         } catch (\Exception $e) {
             \Illuminate\Support\Facades\Log::error('SponsorManagementController: Erreur showCampaigns', ['error' => $e->getMessage()]);
@@ -355,7 +355,7 @@ class SponsorManagementController extends Controller
             return redirect()->route('home')->with('error', 'Accès non autorisé.');
         }
 
-        $campaign = Campaign::findOrFail($id);
+        $campaign = EchofyCampaign::findOrFail($id);
         
         // Vérifier si l'utilisateur a déjà proposé un sponsorship pour cette campagne
         $existingSponsorship = null;

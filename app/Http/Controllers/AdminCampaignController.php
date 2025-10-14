@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Campaign;
+use App\Models\EchofyCampaign;
 use App\Models\SponsorshipTemp;
 use Illuminate\Support\Facades\Storage;
 
@@ -14,7 +14,7 @@ class AdminCampaignController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Campaign::query();
+        $query = EchofyCampaign::query();
 
         // Filtres
         if ($request->filled('status')) {
@@ -51,7 +51,7 @@ class AdminCampaignController extends Controller
      */
     public function getCampaignsData(Request $request)
     {
-        $query = Campaign::query();
+        $query = EchofyCampaign::query();
 
         // Filtres
         if ($request->filled('status')) {
@@ -88,7 +88,7 @@ class AdminCampaignController extends Controller
      */
     public function show(Request $request, $id)
     {
-        $campaign = Campaign::findOrFail($id);
+        $campaign = EchofyCampaign::findOrFail($id);
         
         // Si c'est une requête AJAX (pour la modal), retourner JSON
         if ($request->ajax() || $request->wantsJson()) {
@@ -137,7 +137,7 @@ class AdminCampaignController extends Controller
             $campaignData['image'] = $request->file('image')->store('campaigns', 'public');
         }
 
-        $campaign = Campaign::create($campaignData);
+        $campaign = EchofyCampaign::create($campaignData);
 
         return response()->json([
             'success' => true,
@@ -151,7 +151,7 @@ class AdminCampaignController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $campaign = Campaign::findOrFail($id);
+        $campaign = EchofyCampaign::findOrFail($id);
 
         $validated = $request->validate([
             'title' => 'required|string|max:255',
@@ -190,7 +190,7 @@ class AdminCampaignController extends Controller
      */
     public function toggleStatus($id)
     {
-        $campaign = Campaign::findOrFail($id);
+        $campaign = EchofyCampaign::findOrFail($id);
         
         $newStatus = $campaign->status === 'active' ? 'paused' : 'active';
         $campaign->update(['status' => $newStatus]);
@@ -207,7 +207,7 @@ class AdminCampaignController extends Controller
      */
     public function destroy($id)
     {
-        $campaign = Campaign::findOrFail($id);
+        $campaign = EchofyCampaign::findOrFail($id);
         
         // Supprimer les sponsorships associés
         SponsorshipTemp::where('campaign_id', $campaign->id)->delete();

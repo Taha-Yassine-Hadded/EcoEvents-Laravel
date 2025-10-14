@@ -4,7 +4,7 @@ namespace Database\Factories;
 
 use App\Models\Sponsorship;
 use App\Models\Sponsor;
-use App\Models\Campaign;
+use App\Models\EchofyCampaign;
 use App\Models\Package;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -29,7 +29,7 @@ class SponsorshipFactory extends Factory
     {
         return [
             'sponsor_id' => Sponsor::factory(),
-            'campaign_id' => Campaign::factory(),
+            'campaign_id' => EchofyCampaign::factory(),
             'package_id' => Package::factory(),
             'amount' => $this->faker->randomFloat(2, 100, 5000),
             'status' => $this->faker->randomElement(['pending', 'approved', 'rejected', 'cancelled', 'completed']),

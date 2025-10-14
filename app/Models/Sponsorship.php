@@ -36,7 +36,7 @@ class Sponsorship extends Model
     // Relation avec Campaign
     public function campaign()
     {
-        return $this->belongsTo(Campaign::class);
+        return $this->belongsTo(EchofyCampaign::class, 'campaign_id');
     }
 
     // Relation avec Package

@@ -3,7 +3,7 @@
 require_once 'vendor/autoload.php';
 
 use App\Models\User;
-use App\Models\Campaign;
+use App\Models\EchofyCampaign;
 
 // Bootstrap Laravel
 $app = require_once 'bootstrap/app.php';
@@ -65,7 +65,7 @@ $campaigns = [
 ];
 
 foreach ($campaigns as $campaignData) {
-    $campaign = Campaign::create($campaignData);
+    $campaign = EchofyCampaign::create($campaignData);
     echo "✅ Campagne créée: {$campaign->title}\n";
 }
 

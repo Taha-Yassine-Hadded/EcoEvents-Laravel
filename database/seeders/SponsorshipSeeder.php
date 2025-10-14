@@ -4,7 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Sponsorship;
 use App\Models\Sponsor;
-use App\Models\Campaign;
+use App\Models\EchofyCampaign;
 use App\Models\Package;
 use Illuminate\Database\Seeder;
 
@@ -17,7 +17,7 @@ class SponsorshipSeeder extends Seeder
     {
         // Créer quelques sponsorships de test
         $sponsors = Sponsor::all();
-        $campaigns = Campaign::all();
+        $campaigns = EchofyCampaign::all();
         $packages = Package::all();
 
         if ($sponsors->count() > 0 && $campaigns->count() > 0 && $packages->count() > 0) {

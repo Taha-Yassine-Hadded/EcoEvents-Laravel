@@ -19,7 +19,7 @@ if ($sponsor) {
     echo "=== TEST DE LA MÉTHODE showCampaigns ===\n";
     
     try {
-        $campaigns = \App\Models\Campaign::orderBy('created_at', 'desc')->paginate(12);
+        $campaigns = \App\Models\EchofyCampaign::orderBy('created_at', 'desc')->paginate(12);
         echo "✅ Campagnes récupérées: {$campaigns->count()} éléments\n";
         echo "✅ Total: {$campaigns->total()} campagnes\n\n";
         

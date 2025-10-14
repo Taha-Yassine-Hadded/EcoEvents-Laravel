@@ -39,7 +39,7 @@ class CampaignComment extends Model
      */
     public function campaign(): BelongsTo
     {
-        return $this->belongsTo(Campaign::class);
+        return $this->belongsTo(EchofyCampaign::class, 'campaign_id');
     }
 
     /**
