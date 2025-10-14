@@ -25,6 +25,7 @@ class Community extends Model
         'organizer_id',
         'is_active',
         'image',
+        'keywords',
     ];
 
     /**
@@ -35,6 +36,7 @@ class Community extends Model
     protected $casts = [
         'is_active' => 'boolean',
         'max_members' => 'integer',
+        'keywords' => 'array',
     ];
 
     /**
@@ -74,8 +76,8 @@ class Community extends Model
      */
     public function getImageUrlAttribute(): ?string
     {
-        return $this->image 
-            ? asset('storage/' . $this->image) 
+        return $this->image
+            ? asset('storage/' . $this->image)
             : asset('assets/images/default-community.jpg');
     }
 

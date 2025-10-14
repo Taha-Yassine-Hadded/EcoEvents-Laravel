@@ -47,6 +47,11 @@ Route::get('/about', function () {
     return view('pages.frontOffice.about');
 });
 
+// Recommendations page
+Route::get('/recommendations', function () {
+    return view('pages.frontOffice.recommendations');
+})->name('recommendations');
+
 // Blog 2 Column page
 Route::get('/blog-2column', function () {
     return view('pages.frontOffice.blog-2column');
@@ -207,6 +212,11 @@ Route::prefix('organizer')->name('organizer.')->middleware([\App\Http\Middleware
     // Gestion des demandes d'adhésion
     Route::post('communities/{community}/approve/{user}', [\App\Http\Controllers\CommunityMembershipController::class, 'approve'])->name('communities.approve');
     Route::post('communities/{community}/reject/{user}', [\App\Http\Controllers\CommunityMembershipController::class, 'reject'])->name('communities.reject');
+
+    // Recommandations de communautés
+    Route::get('communities/recommendations', [\App\Http\Controllers\CommunityController::class, 'getRecommendations'])->name('communities.recommendations');
+    Route::get('communities/popular', [\App\Http\Controllers\CommunityController::class, 'getPopular'])->name('communities.popular');
+    Route::get('communities/recent', [\App\Http\Controllers\CommunityController::class, 'getRecent'])->name('communities.recent');
 });
 
 // Route de test pour vérifier le rôle utilisateur

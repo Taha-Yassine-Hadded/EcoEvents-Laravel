@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Community;
 use App\Models\CommunityMember;
+use App\Services\CommunityRecommendationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -17,7 +18,7 @@ class CommunityController extends Controller
     public function index()
     {
         $user = Auth::user();
-        
+
         // Vérifier que l'utilisateur est un organisateur
         if (!$user->isOrganizer()) {
             return redirect()->route('home')->with('error', 'Accès non autorisé.');
@@ -39,13 +40,13 @@ class CommunityController extends Controller
     public function create()
     {
         $user = Auth::user();
-        
+
         if (!$user->isOrganizer()) {
             return redirect()->route('home')->with('error', 'Accès non autorisé.');
         }
 
         $categories = Community::getCategories();
-        
+
         return view('organizer.communities.create', compact('categories'));
     }
 
@@ -55,7 +56,7 @@ class CommunityController extends Controller
     public function store(Request $request)
     {
         $user = Auth::user();
-        
+
         if (!$user->isOrganizer()) {
             return redirect()->route('home')->with('error', 'Accès non autorisé.');
         }
@@ -88,14 +89,14 @@ class CommunityController extends Controller
     public function show(Community $community)
     {
         $user = Auth::user();
-        
+
         // Vérifier que l'utilisateur est le créateur de la communauté
         if (!$user->isOrganizer() || $community->organizer_id !== $user->id) {
             return redirect()->route('home')->with('error', 'Accès non autorisé.');
         }
 
         $community->load(['members.user', 'organizer']);
-        
+
         $stats = [
             'total_members' => $community->members()->active()->count(),
             'pending_requests' => $community->members()->pending()->count(),
@@ -111,13 +112,13 @@ class CommunityController extends Controller
     public function edit(Community $community)
     {
         $user = Auth::user();
-        
+
         if (!$user->isOrganizer() || $community->organizer_id !== $user->id) {
             return redirect()->route('home')->with('error', 'Accès non autorisé.');
         }
 
         $categories = Community::getCategories();
-        
+
         return view('organizer.communities.edit', compact('community', 'categories'));
     }
 
@@ -127,7 +128,7 @@ class CommunityController extends Controller
     public function update(Request $request, Community $community)
     {
         $user = Auth::user();
-        
+
         if (!$user->isOrganizer() || $community->organizer_id !== $user->id) {
             return redirect()->route('home')->with('error', 'Accès non autorisé.');
         }
@@ -163,7 +164,7 @@ class CommunityController extends Controller
     public function destroy(Community $community)
     {
         $user = Auth::user();
-        
+
         if (!$user->isOrganizer() || $community->organizer_id !== $user->id) {
             return redirect()->route('home')->with('error', 'Accès non autorisé.');
         }
@@ -191,15 +192,15 @@ class CommunityController extends Controller
     public function toggleStatus(Community $community)
     {
         $user = Auth::user();
-        
+
         if (!$user->isOrganizer() || $community->organizer_id !== $user->id) {
             return redirect()->route('home')->with('error', 'Accès non autorisé.');
         }
 
         $community->update(['is_active' => !$community->is_active]);
-        
+
         $status = $community->is_active ? 'activée' : 'désactivée';
-        
+
         return redirect()->back()
             ->with('success', "Communauté {$status} avec succès !");
     }
@@ -210,12 +211,12 @@ class CommunityController extends Controller
     public function membershipRequests()
     {
         $user = Auth::user();
-        
+
         // Vérifier que l'utilisateur est un organisateur
         if (!$user || $user->role !== 'organizer') {
             abort(403, 'Accès réservé aux organisateurs.');
         }
-        
+
         // Récupérer toutes les demandes en attente pour les communautés de cet organisateur
         $pendingRequests = CommunityMember::with(['user', 'community'])
             ->whereHas('community', function($query) use ($user) {
@@ -224,7 +225,7 @@ class CommunityController extends Controller
             ->where('status', 'pending')
             ->orderBy('created_at', 'desc')
             ->paginate(10);
-        
+
         return view('organizer.membership-requests.index', compact('pendingRequests'));
     }
 
@@ -234,25 +235,25 @@ class CommunityController extends Controller
     public function approveMembership(CommunityMember $membership)
     {
         $user = Auth::user();
-        
+
         // Vérifier que l'utilisateur est un organisateur
         if (!$user || $user->role !== 'organizer') {
             abort(403, 'Accès réservé aux organisateurs.');
         }
-        
+
         // Vérifier que l'organisateur possède bien cette communauté
         if ($membership->community->organizer_id !== $user->id) {
             abort(403, 'Vous n\'êtes pas autorisé à gérer cette demande.');
         }
-        
+
         // Vérifier que la communauté n'est pas pleine
         if ($membership->community->isFull()) {
             return redirect()->back()
                 ->with('error', 'La communauté a atteint sa capacité maximale.');
         }
-        
+
         $membership->update(['status' => 'approved']);
-        
+
         return redirect()->back()
             ->with('success', "Demande de {$membership->user->name} approuvée avec succès !");
     }
@@ -263,21 +264,65 @@ class CommunityController extends Controller
     public function rejectMembership(CommunityMember $membership)
     {
         $user = Auth::user();
-        
+
         // Vérifier que l'utilisateur est un organisateur
         if (!$user || $user->role !== 'organizer') {
             abort(403, 'Accès réservé aux organisateurs.');
         }
-        
+
         // Vérifier que l'organisateur possède bien cette communauté
         if ($membership->community->organizer_id !== $user->id) {
             abort(403, 'Vous n\'êtes pas autorisé à gérer cette demande.');
         }
-        
+
         $userName = $membership->user->name;
         $membership->delete();
-        
+
         return redirect()->back()
             ->with('success', "Demande de {$userName} rejetée.");
+    }
+
+    /**
+     * Get community recommendations for the authenticated user
+     */
+    public function getRecommendations(CommunityRecommendationService $recommendationService)
+    {
+        $user = Auth::user();
+
+        $recommendations = $recommendationService->getRecommendations($user, 5);
+
+        return response()->json([
+            'success' => true,
+            'recommendations' => $recommendations,
+            'message' => 'Recommandations générées avec succès'
+        ]);
+    }
+
+    /**
+     * Get popular communities
+     */
+    public function getPopular(CommunityRecommendationService $recommendationService)
+    {
+        $popularCommunities = $recommendationService->getPopularCommunities(5);
+
+        return response()->json([
+            'success' => true,
+            'communities' => $popularCommunities,
+            'message' => 'Communautés populaires récupérées'
+        ]);
+    }
+
+    /**
+     * Get recent communities
+     */
+    public function getRecent(CommunityRecommendationService $recommendationService)
+    {
+        $recentCommunities = $recommendationService->getRecentCommunities(5);
+
+        return response()->json([
+            'success' => true,
+            'communities' => $recentCommunities,
+            'message' => 'Communautés récentes récupérées'
+        ]);
     }
 }

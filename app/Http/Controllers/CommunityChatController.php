@@ -9,6 +9,10 @@ use App\Models\ChatRoomMember;
 use App\Models\Community;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Cache;
+use App\Services\EcoBotService;
+use App\Models\User;
 
 class CommunityChatController extends Controller
 {
@@ -83,7 +87,7 @@ class CommunityChatController extends Controller
         $user = Auth::user();
 
         // Debug: Afficher les données reçues
-        \Log::info('Message reçu:', [
+        Log::info('Message reçu:', [
             'content' => $request->content,
             'message_type' => $request->message_type,
             'has_voice_file' => $request->hasFile('voice_file'),
@@ -172,6 +176,47 @@ class CommunityChatController extends Controller
 
         // Diffuser le message en temps réel
         event(new MessageSent($message));
+
+        // EcoChatBot: réponse automatique (mention ou mots-clés) avec cooldown 5s/room
+        try {
+            /** @var EcoBotService $ecoBot */
+            Log::info('ECOBOT_DEBUG_START', [ 'type' => $messageType, 'content' => $content ]);
+            $ecoBot = app(EcoBotService::class);
+            if ($messageType === 'text' && $ecoBot->shouldRespond($content)) {
+                $cooldownKey = 'ecobot_cooldown_' . $chatRoom->id;
+                if (true) { // Temporairement désactivé pour test
+                    $bot = User::firstOrCreate(
+                        ['email' => 'ecochatbot@system.local'],
+                        [
+                            'name' => 'EcoChatBot',
+                            'password' => bcrypt(str()->random(32)),
+                            'role' => 'bot',
+                        ]
+                    );
+
+                    \App\Models\ChatRoomMember::firstOrCreate([
+                        'chat_room_id' => $chatRoom->id,
+                        'user_id' => $bot->id,
+                    ], [ 'status' => 'active', 'role' => 'member', 'joined_at' => now() ]);
+
+                    $reply = $ecoBot->generateReply($content);
+                    $botMessage = ChatMessage::create([
+                        'chat_room_id' => $chatRoom->id,
+                        'user_id' => $bot->id,
+                        'content' => $reply,
+                        'message_type' => 'text',
+                    ]);
+                    event(new MessageSent($botMessage->load('user:id,name')));
+                    Log::info('ECOBOT_SENT', [ 'reply_preview' => mb_substr($reply, 0, 120) ]);
+                } else {
+                    Log::info('ECOBOT_COOLDOWN_SKIP', [ 'room_id' => $chatRoom->id ]);
+                }
+            } else {
+                Log::info('ECOBOT_SKIP', [ 'reason' => 'no_match_or_non_text' ]);
+            }
+        } catch (\Throwable $e) {
+            Log::warning('EcoChatBot error: '.$e->getMessage());
+        }
 
         return response()->json([
             'success' => true,

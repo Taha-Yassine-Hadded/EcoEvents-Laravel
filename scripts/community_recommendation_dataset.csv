@@ -1,0 +1,1444 @@
+user_id,community_id,interaction_type,engagement_score,similarity_score,timestamp,user_age,user_location,user_activity_level,community_category,community_member_count,community_activity_score
+936,344,join,1,0,"2025-06-07 22:14:02",33,Angers,medium,"Éducation Environnementale",158,0.5
+1547,286,join,1,0.5,"2025-05-07 22:14:02",27,Grenoble,low,"Innovation Verte",130,0.22
+116,153,join,1,0.222,"2025-08-17 22:14:02",18,Nantes,high,"Innovation Verte",250,0.5
+634,29,join,1,0,"2025-01-10 21:14:02",27,Nantes,medium,"Énergies Renouvelables",123,0.45
+920,210,comment,2,0.2,"2025-08-19 22:14:02",30,Nice,high,"Innovation Verte",672,0.49
+1589,295,like,2,0.222,"2025-05-18 22:14:02",51,Dijon,medium,"Urbanisme Durable",755,0.49
+1021,412,like,1,0.167,"2025-01-28 21:14:02",60,Toulon,high,"Biodiversité & Nature",745,0.12
+461,123,comment,1,0.1,"2025-07-07 22:14:02",32,Dijon,low,"Protection Animale",137,0.87
+971,387,join,1,0,"2025-02-03 21:14:02",46,Nantes,medium,"Énergies Renouvelables",921,0.25
+1982,446,join,1,0.167,"2025-09-08 22:14:02",23,Villeurbanne,low,"Éducation Environnementale",323,0.5
+1809,109,share,2,0.2,"2025-04-29 22:14:02",23,Grenoble,low,"Urbanisme Durable",128,0.84
+1069,135,comment,1,0,"2024-12-20 21:14:02",59,Nantes,medium,"Énergies Renouvelables",519,0.74
+248,453,share,1,0,"2025-05-20 22:14:02",63,Lyon,low,"Énergies Renouvelables",224,0.36
+675,381,comment,1,0.111,"2025-07-11 22:14:02",54,Saint-Étienne,medium,"Consommation Responsable",778,0.43
+1454,234,like,1,0,"2024-10-16 22:14:02",62,Nantes,high,"Énergies Renouvelables",374,0.41
+1459,425,comment,1,0.125,"2024-11-19 21:14:02",54,Paris,high,"Éducation Environnementale",896,0.99
+436,76,post,1,0.125,"2025-08-20 22:14:02",44,Bordeaux,low,"Consommation Responsable",869,0.93
+1708,131,share,1,0,"2025-07-11 22:14:02",39,Rennes,low,"Économie Circulaire",106,0.69
+1952,373,join,1,0.1,"2025-04-25 22:14:02",57,Nantes,low,"Protection Animale",131,0.66
+1891,317,join,1,0,"2025-01-17 21:14:02",46,Dijon,high,"Énergies Renouvelables",874,0.43
+478,201,share,1,0,"2025-09-02 22:14:02",44,Dijon,medium,"Transport Durable",418,0.48
+75,98,post,1,0.111,"2025-04-26 22:14:02",39,Rennes,medium,"Agriculture Écologique",650,0.83
+544,203,share,1,0,"2025-08-04 22:14:02",64,Lille,low,"Innovation Verte",44,0.75
+1128,308,post,2,0.222,"2024-11-01 21:14:02",61,Montpellier,high,"Innovation Verte",428,0.67
+625,494,like,1,0,"2025-02-15 21:14:02",20,Nantes,medium,"Protection Animale",794,0.53
+739,62,post,1,0,"2025-06-08 22:14:02",21,Lille,medium,"Éducation Environnementale",954,0.75
+1324,452,comment,1,0,"2025-03-26 21:14:02",54,Nîmes,low,"Économie Circulaire",799,0.61
+1878,78,join,1,0,"2024-11-21 21:14:02",33,Paris,medium,"Consommation Responsable",544,0.3
+336,217,share,1,0,"2024-10-24 22:14:02",62,Strasbourg,high,"Transport Durable",50,0.34
+1683,78,comment,1,0,"2025-08-23 22:14:02",65,Toulon,low,"Consommation Responsable",544,0.3
+1186,367,like,1,0.222,"2024-12-26 21:14:02",58,Reims,medium,"Innovation Verte",847,0.31
+1025,409,comment,1,0.143,"2025-01-26 21:14:02",45,Nîmes,high,"Climat & Environnement",853,0.88
+801,169,post,1,0.1,"2024-10-27 21:14:02",48,Lille,medium,"Protection Animale",11,0.2
+269,125,comment,1,0,"2025-04-07 22:14:02",60,Nantes,medium,"Urbanisme Durable",778,0.95
+625,147,post,1,0.2,"2025-01-09 21:14:02",20,Nantes,medium,"Innovation Verte",803,1
+1515,281,join,1,0.2,"2025-07-15 22:14:02",27,Montpellier,medium,"Éducation Environnementale",210,0.12
+998,493,post,1,0.125,"2025-06-08 22:14:02",19,Villeurbanne,medium,"Éducation Environnementale",714,0.8
+194,62,post,2,0.4,"2024-10-26 22:14:02",42,Lille,high,"Éducation Environnementale",954,0.75
+852,301,join,1,0,"2024-11-06 21:14:02",30,Rennes,medium,"Économie Circulaire",528,0.26
+587,96,like,1,0,"2024-11-09 21:14:02",51,Strasbourg,medium,"Protection Animale",784,0.82
+259,212,share,1,0,"2024-11-22 21:14:02",44,Angers,high,"Éducation Environnementale",254,0.95
+1874,133,join,1,0,"2025-01-03 21:14:02",26,Reims,low,"Éducation Environnementale",823,0.4
+391,347,join,2,0.25,"2025-08-13 22:14:02",37,Strasbourg,low,"Économie Circulaire",582,0.27
+1620,146,join,1,0.143,"2025-04-04 22:14:02",46,Dijon,low,"Protection Animale",834,0.23
+529,345,post,1,0.111,"2025-06-05 22:14:02",36,Paris,high,"Innovation Verte",648,0.82
+236,407,share,1,0.125,"2024-11-30 21:14:02",51,Marseille,medium,"Protection Animale",186,0.1
+316,242,post,1,0.1,"2024-10-27 21:14:02",59,Nantes,high,"Consommation Responsable",610,0.33
+1881,185,join,1,0,"2024-10-28 21:14:02",63,Grenoble,low,"Climat & Environnement",722,0.65
+474,137,join,1,0.2,"2024-12-12 21:14:02",19,Bordeaux,low,"Économie Circulaire",434,0.7
+1041,463,comment,1,0.125,"2025-09-30 22:14:02",35,Saint-Étienne,medium,"Urbanisme Durable",621,0.49
+76,86,post,1,0.143,"2025-05-02 22:14:02",39,Strasbourg,high,"Agriculture Écologique",189,0.97
+1187,48,post,1,0,"2025-07-02 22:14:02",61,Saint-Étienne,high,"Biodiversité & Nature",608,0.78
+277,321,share,1,0.5,"2025-04-19 22:14:02",36,Grenoble,low,"Agriculture Écologique",720,0.3
+262,189,post,1,0.167,"2025-09-24 22:14:02",37,Montpellier,low,"Agriculture Écologique",400,0.51
+1689,80,post,1,0.4,"2024-11-20 21:14:02",53,Toulouse,medium,"Innovation Verte",635,0.55
+1523,86,comment,1,0.286,"2025-08-10 22:14:02",60,Rennes,low,"Agriculture Écologique",189,0.97
+206,478,comment,1,0.167,"2024-11-04 21:14:02",60,Saint-Étienne,low,"Consommation Responsable",417,0.41
+275,402,join,1,0,"2024-11-09 21:14:02",33,Montpellier,high,"Transport Durable",261,0.29
+117,383,share,1,0,"2025-04-14 22:14:02",39,Villeurbanne,medium,"Consommation Responsable",29,0.84
+1906,435,comment,3,0.429,"2024-11-26 21:14:02",43,Nantes,low,"Protection Animale",433,0.85
+1596,498,post,1,0,"2025-04-09 22:14:02",52,Toulouse,high,"Transport Durable",307,0.77
+1473,308,post,1,0.1,"2025-02-14 21:14:02",35,Montpellier,high,"Innovation Verte",428,0.67
+215,99,post,1,0.333,"2025-07-30 22:14:02",43,Reims,high,"Urbanisme Durable",828,0.25
+1344,242,comment,1,0.167,"2025-01-11 21:14:02",60,Nantes,high,"Consommation Responsable",610,0.33
+532,382,comment,1,0.111,"2025-06-14 22:14:02",52,Villeurbanne,medium,"Protection Animale",45,0.98
+1260,166,comment,1,0,"2025-06-02 22:14:02",34,Nantes,medium,"Biodiversité & Nature",181,0.85
+1247,444,share,1,0,"2025-07-14 22:14:02",55,Grenoble,low,"Éducation Environnementale",134,0.94
+1631,58,like,1,0.125,"2025-01-17 21:14:02",48,Nantes,medium,"Protection Animale",553,0.51
+1559,310,share,1,0.111,"2025-05-03 22:14:02",53,"Le Havre",medium,"Innovation Verte",696,0.28
+1868,8,comment,1,0,"2025-09-16 22:14:02",61,Paris,high,"Protection Animale",469,0.77
+782,443,comment,1,0.125,"2025-07-05 22:14:02",23,Saint-Étienne,low,"Urbanisme Durable",515,0.34
+1325,360,join,1,0,"2025-08-03 22:14:02",53,Paris,low,"Biodiversité & Nature",275,0.86
+412,96,join,1,0,"2025-06-07 22:14:02",51,Saint-Étienne,medium,"Protection Animale",784,0.82
+1402,192,join,1,0.125,"2025-09-03 22:14:02",39,Nice,high,"Énergies Renouvelables",889,0.94
+1422,343,post,1,0.167,"2025-07-30 22:14:02",58,Saint-Étienne,low,"Climat & Environnement",807,0.49
+901,415,comment,1,0,"2025-03-13 21:14:02",27,Montpellier,low,"Transport Durable",837,0.21
+1047,286,share,1,0.286,"2025-09-03 22:14:02",26,Villeurbanne,low,"Innovation Verte",130,0.22
+537,226,join,1,0.111,"2025-08-25 22:14:02",65,Nantes,high,"Protection Animale",87,0.54
+2000,21,comment,1,0.1,"2025-03-25 21:14:02",30,Toulouse,high,"Recyclage & Zéro Déchet",878,0.18
+1500,136,comment,1,0.167,"2024-11-21 21:14:02",62,Angers,high,"Protection Animale",400,0.98
+135,162,like,1,0.222,"2025-05-28 22:14:02",53,Paris,high,"Consommation Responsable",848,0.49
+1902,481,share,1,0.25,"2025-02-18 21:14:02",26,"Le Havre",low,"Consommation Responsable",958,0.19
+245,363,share,2,0.333,"2025-08-10 22:14:02",26,Angers,high,"Protection Animale",216,0.62
+1074,375,like,1,0,"2025-08-10 22:14:02",55,Dijon,medium,"Énergies Renouvelables",49,0.35
+498,269,like,1,0.167,"2025-06-13 22:14:02",52,Strasbourg,low,"Climat & Environnement",411,0.88
+1143,463,post,1,0.143,"2025-06-14 22:14:02",55,Nîmes,medium,"Urbanisme Durable",621,0.49
+1905,133,share,2,0.429,"2025-04-24 22:14:02",57,Lyon,medium,"Éducation Environnementale",823,0.4
+1475,314,join,1,0.143,"2025-07-06 22:14:02",18,Nantes,medium,"Consommation Responsable",753,0.4
+918,491,like,1,0.2,"2025-08-10 22:14:02",47,Toulon,medium,"Agriculture Écologique",92,0.88
+1686,274,share,1,0.125,"2025-04-20 22:14:02",25,Reims,high,"Consommation Responsable",196,0.34
+385,58,join,1,0.286,"2025-04-29 22:14:02",58,Dijon,medium,"Protection Animale",553,0.51
+1453,167,join,1,0.125,"2025-06-19 22:14:02",21,Rennes,medium,"Recyclage & Zéro Déchet",439,0.63
+1284,82,join,1,0.111,"2025-07-21 22:14:02",53,Angers,medium,"Économie Circulaire",798,0.39
+1466,309,share,1,0.143,"2025-01-04 21:14:02",57,Lille,high,"Innovation Verte",630,0.42
+937,391,like,1,0.1,"2025-06-25 22:14:02",64,Bordeaux,high,"Climat & Environnement",172,0.65
+1417,328,join,1,0,"2025-05-25 22:14:02",30,Marseille,medium,"Agriculture Écologique",709,0.83
+732,19,like,1,0,"2025-05-31 22:14:02",38,Lyon,medium,"Urbanisme Durable",253,0.63
+135,152,join,1,0,"2024-10-18 22:14:02",53,Paris,high,"Biodiversité & Nature",382,0.65
+1721,396,join,1,0.143,"2024-12-07 21:14:02",61,Dijon,medium,"Transport Durable",217,0.76
+1310,102,join,1,0,"2025-02-17 21:14:02",22,Angers,high,"Urbanisme Durable",15,0.34
+815,241,join,1,0.1,"2025-10-02 22:14:02",43,Dijon,low,"Climat & Environnement",357,0.2
+1624,313,join,1,0.111,"2025-05-17 22:14:02",47,Reims,high,"Urbanisme Durable",973,0.46
+1109,466,like,3,0.5,"2025-06-27 22:14:02",37,Grenoble,high,"Protection Animale",261,0.37
+1309,258,share,1,0,"2025-04-30 22:14:02",28,Marseille,medium,"Consommation Responsable",708,0.41
+1772,63,join,1,0,"2025-10-11 22:14:02",30,Toulouse,low,"Climat & Environnement",920,0.29
+1593,223,comment,1,0.1,"2025-05-27 22:14:02",41,Paris,medium,"Protection Animale",92,0.15
+1619,386,join,1,0.143,"2025-01-10 21:14:02",62,Toulon,medium,"Recyclage & Zéro Déchet",878,0.33
+1372,403,comment,1,0.143,"2025-07-08 22:14:02",52,Bordeaux,high,"Climat & Environnement",639,0.93
+1973,11,share,1,0,"2024-10-16 22:14:02",61,Lyon,low,"Urbanisme Durable",439,0.25
+1439,394,share,1,0,"2025-03-06 21:14:02",35,Villeurbanne,medium,"Urbanisme Durable",590,0.28
+311,128,like,1,0,"2024-10-16 22:14:02",23,Reims,high,"Transport Durable",985,0.79
+1526,349,like,1,0.111,"2025-07-19 22:14:02",40,Bordeaux,medium,"Consommation Responsable",564,0.98
+1496,355,post,1,0,"2025-09-17 22:14:02",26,Grenoble,low,"Éducation Environnementale",397,0.38
+597,151,like,1,0,"2024-11-08 21:14:02",54,Lyon,low,"Éducation Environnementale",29,0.94
+784,159,like,1,0,"2025-08-20 22:14:02",53,Montpellier,high,"Transport Durable",672,0.72
+170,321,like,1,0,"2025-05-24 22:14:02",33,Reims,low,"Agriculture Écologique",720,0.3
+1649,33,post,1,0.222,"2024-11-30 21:14:02",41,Toulouse,low,"Agriculture Écologique",165,0.7
+1624,283,like,1,0,"2025-01-18 21:14:02",47,Reims,high,"Recyclage & Zéro Déchet",947,0.31
+481,481,post,1,0,"2025-01-31 21:14:02",43,Paris,high,"Consommation Responsable",958,0.19
+1701,147,post,1,0.167,"2025-06-02 22:14:02",58,Nîmes,medium,"Innovation Verte",803,1
+1420,127,comment,1,0,"2025-06-21 22:14:02",54,Saint-Étienne,high,"Transport Durable",227,0.95
+299,142,post,1,0.167,"2025-05-23 22:14:02",40,Toulouse,high,"Protection Animale",237,0.61
+812,43,share,1,0,"2025-05-05 22:14:02",36,Angers,low,"Recyclage & Zéro Déchet",211,0.57
+1162,3,comment,1,0,"2025-08-09 22:14:02",28,Nîmes,low,"Biodiversité & Nature",582,0.32
+1203,55,comment,1,0,"2025-05-30 22:14:02",51,Nice,low,"Énergies Renouvelables",531,0.83
+1631,307,join,1,0,"2025-06-09 22:14:02",48,Nantes,medium,"Agriculture Écologique",482,0.37
+1876,42,like,1,0.167,"2025-01-20 21:14:02",47,Bordeaux,low,"Innovation Verte",355,0.1
+1852,79,join,1,0.143,"2025-08-09 22:14:02",40,Lyon,high,"Consommation Responsable",632,0.49
+1678,319,share,1,0,"2024-12-07 21:14:02",62,Nice,medium,"Énergies Renouvelables",173,0.3
+1976,66,join,1,0.143,"2024-12-22 21:14:02",50,Angers,medium,"Éducation Environnementale",553,0.71
+758,197,comment,1,0,"2024-12-16 21:14:02",50,Reims,high,"Biodiversité & Nature",941,0.42
+1437,329,post,1,0,"2024-11-14 21:14:02",50,Nîmes,high,"Transport Durable",660,0.37
+48,232,share,1,0,"2025-08-12 22:14:02",29,Bordeaux,high,"Économie Circulaire",403,0.83
+1744,11,join,1,0,"2025-09-03 22:14:02",38,Nice,low,"Urbanisme Durable",439,0.25
+951,214,share,1,0.167,"2025-04-29 22:14:02",53,"Le Havre",medium,"Économie Circulaire",146,0.66
+556,466,join,1,0,"2025-01-08 21:14:02",57,Nice,low,"Protection Animale",261,0.37
+659,435,join,2,0.429,"2025-01-17 21:14:02",57,Villeurbanne,low,"Protection Animale",433,0.85
+580,304,share,1,0.125,"2025-06-04 22:14:02",23,Nantes,medium,"Recyclage & Zéro Déchet",800,0.9
+48,108,share,1,0,"2025-01-30 21:14:02",29,Bordeaux,high,"Urbanisme Durable",921,0.34
+161,113,post,1,0.1,"2025-04-19 22:14:02",48,Villeurbanne,high,"Urbanisme Durable",493,0.33
+1678,248,comment,1,0,"2025-05-23 22:14:02",62,Nice,medium,"Économie Circulaire",202,0.13
+1668,50,join,1,0.167,"2025-02-07 21:14:02",51,Grenoble,medium,"Recyclage & Zéro Déchet",688,0.5
+588,300,share,1,0.125,"2024-10-19 22:14:02",24,Paris,low,"Énergies Renouvelables",72,0.42
+1126,187,share,1,0.111,"2025-10-12 22:14:02",36,Nantes,high,"Consommation Responsable",80,0.89
+594,446,join,1,0.143,"2025-06-12 22:14:02",18,Rennes,low,"Éducation Environnementale",323,0.5
+675,59,join,1,0,"2025-09-09 22:14:02",54,Saint-Étienne,medium,"Urbanisme Durable",388,0.7
+880,390,like,1,0,"2025-09-20 22:14:02",47,Nîmes,high,"Protection Animale",913,0.14
+144,383,post,1,0.111,"2025-07-04 22:14:02",27,Lyon,high,"Consommation Responsable",29,0.84
+213,390,like,1,0.111,"2024-11-26 21:14:02",49,"Le Havre",medium,"Protection Animale",913,0.14
+1401,469,comment,1,0,"2025-04-09 22:14:02",31,Marseille,medium,"Biodiversité & Nature",749,0.27
+618,371,like,1,0.167,"2025-03-04 21:14:02",28,Marseille,high,"Recyclage & Zéro Déchet",64,0.23
+1207,466,like,1,0.167,"2025-06-12 22:14:02",54,Lille,low,"Protection Animale",261,0.37
+588,207,like,1,0.125,"2025-06-27 22:14:02",24,Paris,low,"Énergies Renouvelables",162,0.82
+529,434,like,1,0.25,"2025-05-19 22:14:02",36,Paris,high,"Urbanisme Durable",903,0.43
+1007,285,join,1,0,"2025-09-12 22:14:02",38,Nantes,low,"Recyclage & Zéro Déchet",692,0.67
+1138,471,like,1,0,"2025-08-19 22:14:02",63,Montpellier,low,"Urbanisme Durable",855,0.89
+1155,298,post,1,0.143,"2025-01-17 21:14:02",35,Rennes,medium,"Climat & Environnement",66,0.28
+356,194,like,1,0,"2025-02-28 21:14:02",36,Strasbourg,low,"Climat & Environnement",691,0.11
+373,377,join,1,0,"2025-05-24 22:14:02",34,Reims,high,"Biodiversité & Nature",71,0.47
+547,462,like,1,0.1,"2025-04-02 22:14:02",23,Villeurbanne,high,"Économie Circulaire",379,0.81
+920,349,post,1,0,"2025-08-26 22:14:02",30,Nice,high,"Consommation Responsable",564,0.98
+1972,312,join,1,0,"2025-03-26 21:14:02",21,Rennes,high,"Transport Durable",783,0.62
+758,478,share,1,0.143,"2025-09-26 22:14:02",50,Reims,high,"Consommation Responsable",417,0.41
+1153,66,share,1,0,"2025-10-03 22:14:02",35,Marseille,low,"Éducation Environnementale",553,0.71
+1159,231,like,1,0.222,"2024-11-17 21:14:02",43,Saint-Étienne,low,"Innovation Verte",624,0.97
+222,82,post,1,0.111,"2025-01-16 21:14:02",25,Villeurbanne,low,"Économie Circulaire",798,0.39
+1383,463,share,1,0,"2025-04-05 22:14:02",21,Marseille,medium,"Urbanisme Durable",621,0.49
+530,45,join,1,0,"2024-11-13 21:14:02",56,Toulouse,low,"Recyclage & Zéro Déchet",36,0.33
+1730,275,join,1,0,"2025-04-02 22:14:02",33,Paris,low,"Recyclage & Zéro Déchet",921,0.95
+41,295,post,1,0.111,"2025-01-03 21:14:02",55,Saint-Étienne,high,"Urbanisme Durable",755,0.49
+350,317,like,1,0,"2025-05-16 22:14:02",59,Strasbourg,low,"Énergies Renouvelables",874,0.43
+5,57,comment,1,0.1,"2024-11-25 21:14:02",53,Strasbourg,medium,"Protection Animale",416,0.98
+1934,120,comment,1,0.125,"2024-11-20 21:14:02",23,Lille,high,"Biodiversité & Nature",525,0.49
+730,136,share,1,0.167,"2024-12-10 21:14:02",63,Rennes,high,"Protection Animale",400,0.98
+361,150,like,2,0.286,"2025-10-07 22:14:02",27,Montpellier,medium,"Protection Animale",609,0.13
+1737,66,join,1,0,"2025-02-09 21:14:02",26,Grenoble,low,"Éducation Environnementale",553,0.71
+178,354,like,1,0.125,"2024-11-25 21:14:02",28,Nîmes,high,"Climat & Environnement",631,0.29
+1651,88,share,1,0.111,"2025-01-04 21:14:02",29,Montpellier,medium,"Économie Circulaire",472,0.43
+1021,426,comment,1,0.167,"2025-08-30 22:14:02",60,Toulon,high,"Éducation Environnementale",390,0.24
+1580,69,share,1,0,"2025-03-29 21:14:02",60,Grenoble,low,"Transport Durable",511,0.53
+1041,102,join,1,0.286,"2025-07-20 22:14:02",35,Saint-Étienne,medium,"Urbanisme Durable",15,0.34
+1815,41,join,1,0.143,"2025-08-17 22:14:02",38,Paris,medium,"Recyclage & Zéro Déchet",970,0.42
+1535,123,share,1,0.143,"2024-12-27 21:14:02",62,Lyon,medium,"Protection Animale",137,0.87
+1804,97,join,1,0,"2025-04-27 22:14:02",33,Saint-Étienne,medium,"Climat & Environnement",28,0.99
+1072,169,join,1,0.167,"2025-06-10 22:14:02",23,Lyon,medium,"Protection Animale",11,0.2
+567,323,comment,1,0,"2025-04-23 22:14:02",36,Marseille,low,"Climat & Environnement",879,0.61
+1877,15,comment,1,0,"2025-06-02 22:14:02",23,"Le Havre",high,"Protection Animale",441,0.95
+1772,101,post,1,0,"2025-05-12 22:14:02",30,Toulouse,low,"Biodiversité & Nature",415,0.6
+1557,202,post,1,0.1,"2025-05-24 22:14:02",31,Grenoble,low,"Agriculture Écologique",271,0.15
+182,5,comment,1,0,"2024-10-16 22:14:02",19,Nîmes,medium,"Éducation Environnementale",117,0.36
+1615,40,join,1,0,"2025-02-11 21:14:02",37,Reims,high,"Consommation Responsable",562,0.34
+1918,160,comment,1,0,"2025-03-01 21:14:02",48,Saint-Étienne,low,"Transport Durable",758,1
+551,424,share,1,0.167,"2025-03-16 21:14:02",62,Marseille,high,"Consommation Responsable",823,0.27
+976,68,join,1,0.167,"2025-08-29 22:14:02",56,Lille,medium,"Urbanisme Durable",106,0.2
+356,409,comment,1,0,"2025-01-14 21:14:02",36,Strasbourg,low,"Climat & Environnement",853,0.88
+1544,453,share,1,0,"2025-03-31 22:14:02",26,Angers,low,"Énergies Renouvelables",224,0.36
+1516,24,comment,1,0.1,"2025-08-13 22:14:02",61,Villeurbanne,low,"Climat & Environnement",417,0.68
+1638,29,post,1,0.143,"2025-06-25 22:14:02",36,Angers,low,"Énergies Renouvelables",123,0.45
+1796,88,comment,1,0,"2025-06-14 22:14:02",60,Lyon,medium,"Économie Circulaire",472,0.43
+319,375,post,1,0,"2025-06-07 22:14:02",22,Angers,medium,"Énergies Renouvelables",49,0.35
+594,140,comment,1,0,"2025-08-28 22:14:02",18,Rennes,low,"Transport Durable",173,0.37
+530,163,join,1,0.167,"2025-02-02 21:14:02",56,Toulouse,low,"Énergies Renouvelables",856,0.9
+1313,247,join,1,0,"2024-11-29 21:14:02",39,Toulon,medium,"Consommation Responsable",128,0.58
+951,425,share,1,0,"2024-12-29 21:14:02",53,"Le Havre",medium,"Éducation Environnementale",896,0.99
+1456,189,like,1,0.111,"2025-07-02 22:14:02",45,Angers,medium,"Agriculture Écologique",400,0.51
+377,64,like,1,0,"2025-02-19 21:14:02",39,Marseille,medium,"Transport Durable",879,0.28
+841,15,share,1,0.125,"2025-01-11 21:14:02",65,Strasbourg,medium,"Protection Animale",441,0.95
+1153,172,like,1,0,"2025-05-29 22:14:02",35,Marseille,low,"Transport Durable",750,0.29
+1268,269,join,1,0.333,"2024-12-24 21:14:02",26,Saint-Étienne,low,"Climat & Environnement",411,0.88
+1954,430,post,1,0,"2024-10-15 22:14:02",25,Lyon,medium,"Recyclage & Zéro Déchet",89,0.32
+1338,230,like,1,0,"2025-07-19 22:14:02",21,"Le Havre",low,"Énergies Renouvelables",730,0.46
+1965,82,post,1,0.1,"2025-10-10 22:14:02",53,Nîmes,low,"Économie Circulaire",798,0.39
+1118,95,like,1,0,"2025-08-23 22:14:02",53,Villeurbanne,medium,"Consommation Responsable",101,0.34
+1488,353,comment,1,0.167,"2025-04-26 22:14:02",32,Dijon,high,"Innovation Verte",617,0.91
+1288,19,like,1,0.1,"2025-03-24 21:14:02",33,Toulouse,high,"Urbanisme Durable",253,0.63
+1176,136,comment,1,0.143,"2025-05-14 22:14:02",51,Marseille,medium,"Protection Animale",400,0.98
+1171,386,share,1,0.111,"2025-09-19 22:14:02",63,Lille,high,"Recyclage & Zéro Déchet",878,0.33
+48,247,share,1,0,"2025-08-18 22:14:02",29,Bordeaux,high,"Consommation Responsable",128,0.58
+1396,491,post,1,0,"2025-03-26 21:14:02",39,Grenoble,high,"Agriculture Écologique",92,0.88
+1693,324,post,1,0,"2025-09-29 22:14:02",57,Reims,high,"Consommation Responsable",335,0.25
+993,21,post,1,0.125,"2025-04-21 22:14:02",27,Lille,medium,"Recyclage & Zéro Déchet",878,0.18
+1524,453,post,1,0,"2025-09-21 22:14:02",56,Grenoble,medium,"Énergies Renouvelables",224,0.36
+978,175,join,2,0.25,"2025-01-18 21:14:02",36,Lille,low,"Consommation Responsable",315,0.19
+771,347,comment,1,0.25,"2024-10-23 22:14:02",18,Angers,low,"Économie Circulaire",582,0.27
+394,80,join,1,0,"2025-01-21 21:14:02",60,Lille,low,"Innovation Verte",635,0.55
+702,284,comment,1,0,"2025-01-03 21:14:02",60,Lyon,low,"Énergies Renouvelables",787,0.34
+1276,472,like,1,0,"2025-09-21 22:14:02",41,Montpellier,low,"Énergies Renouvelables",117,0.84
+1539,390,share,1,0,"2025-03-31 22:14:02",57,Villeurbanne,medium,"Protection Animale",913,0.14
+582,4,post,1,0,"2025-03-09 21:14:02",30,Villeurbanne,high,"Biodiversité & Nature",213,0.81
+1720,170,like,1,0,"2024-12-19 21:14:02",57,Nantes,medium,"Économie Circulaire",364,0.88
+145,28,join,1,0,"2025-02-10 21:14:02",61,"Le Havre",medium,"Agriculture Écologique",249,0.84
+485,484,post,1,0.125,"2025-09-10 22:14:02",52,Nantes,high,"Consommation Responsable",54,0.29
+488,252,share,1,0,"2024-12-13 21:14:02",65,Reims,medium,"Énergies Renouvelables",513,0.42
+1169,473,share,1,0,"2025-01-20 21:14:02",56,Reims,low,"Recyclage & Zéro Déchet",516,0.21
+16,323,share,1,0.2,"2025-06-04 22:14:02",31,"Le Havre",low,"Climat & Environnement",879,0.61
+1697,144,comment,1,0.125,"2025-03-07 21:14:02",63,Strasbourg,medium,"Éducation Environnementale",700,0.12
+733,170,join,1,0,"2025-09-04 22:14:02",52,Reims,medium,"Économie Circulaire",364,0.88
+1682,186,post,1,0.286,"2024-12-23 21:14:02",55,Toulon,low,"Innovation Verte",309,0.8
+702,156,post,1,0.1,"2025-10-07 22:14:02",60,Lyon,low,"Transport Durable",895,0.27
+918,221,share,1,0,"2025-09-28 22:14:02",47,Toulon,medium,"Transport Durable",134,0.32
+897,53,comment,1,0.111,"2025-01-09 21:14:02",22,Lille,low,"Consommation Responsable",10,0.26
+1543,332,share,1,0.333,"2025-05-09 22:14:02",39,"Le Havre",low,"Éducation Environnementale",641,0.47
+1273,422,comment,1,0.125,"2025-09-15 22:14:02",50,Montpellier,low,"Énergies Renouvelables",983,0.12
+718,468,join,1,0,"2025-05-17 22:14:02",36,Grenoble,low,"Agriculture Écologique",100,0.45
+1363,421,join,1,0.167,"2025-04-07 22:14:02",23,Dijon,medium,"Innovation Verte",380,0.99
+648,249,comment,1,0.25,"2025-04-29 22:14:02",44,Grenoble,low,"Innovation Verte",889,0.87
+1143,487,comment,1,0.333,"2024-10-31 21:14:02",55,Nîmes,medium,"Climat & Environnement",965,0.51
+1445,312,share,1,0,"2024-10-19 22:14:02",38,Toulouse,medium,"Transport Durable",783,0.62
+1096,328,post,1,0.125,"2025-09-19 22:14:02",37,Villeurbanne,high,"Agriculture Écologique",709,0.83
+1983,151,post,1,0.2,"2025-08-19 22:14:02",48,Nantes,medium,"Éducation Environnementale",29,0.94
+1369,454,post,1,0.1,"2025-01-27 21:14:02",51,Angers,medium,"Innovation Verte",138,0.68
+1694,494,share,1,0.375,"2025-09-06 22:14:02",47,Bordeaux,medium,"Protection Animale",794,0.53
+1611,362,post,1,0.125,"2024-11-23 21:14:02",40,Saint-Étienne,high,"Énergies Renouvelables",463,0.29
+719,281,comment,1,0,"2025-09-03 22:14:02",49,Saint-Étienne,medium,"Éducation Environnementale",210,0.12
+1583,484,comment,1,0.111,"2025-03-08 21:14:02",62,"Le Havre",low,"Consommation Responsable",54,0.29
+784,351,like,1,0,"2025-05-10 22:14:02",53,Montpellier,high,"Protection Animale",55,0.87
+1374,104,comment,2,0.222,"2025-05-16 22:14:02",47,Bordeaux,high,"Urbanisme Durable",827,0.86
+1762,448,share,1,0.111,"2024-12-01 21:14:02",58,Nantes,high,"Urbanisme Durable",504,0.81
+1969,452,join,1,0.167,"2025-04-19 22:14:02",51,Toulon,medium,"Économie Circulaire",799,0.61
+265,309,post,1,0,"2025-08-02 22:14:02",55,Paris,medium,"Innovation Verte",630,0.42
+1335,441,like,1,0.2,"2025-01-30 21:14:02",53,Grenoble,low,"Éducation Environnementale",720,0.63
+1214,109,comment,1,0.167,"2024-10-17 22:14:02",37,Montpellier,high,"Urbanisme Durable",128,0.84
+1205,162,share,1,0.1,"2025-07-25 22:14:02",37,Paris,low,"Consommation Responsable",848,0.49
+1400,250,post,1,0,"2025-09-17 22:14:02",21,Reims,high,"Consommation Responsable",248,0.71
+6,191,share,3,0.5,"2024-11-28 21:14:02",55,Grenoble,medium,"Agriculture Écologique",137,0.73
+1493,345,join,1,0.143,"2024-11-22 21:14:02",43,Marseille,high,"Innovation Verte",648,0.82
+1511,38,share,1,0.125,"2025-02-26 21:14:02",63,Nice,medium,"Protection Animale",475,0.68
+1385,298,like,1,0.222,"2025-04-09 22:14:02",51,Montpellier,medium,"Climat & Environnement",66,0.28
+19,455,share,1,0,"2025-05-22 22:14:02",24,Montpellier,low,"Éducation Environnementale",977,0.43
+418,83,join,1,0,"2025-09-01 22:14:02",38,Villeurbanne,medium,"Climat & Environnement",860,0.27
+1098,450,comment,1,0.125,"2024-12-20 21:14:02",38,Saint-Étienne,medium,"Climat & Environnement",230,0.46
+487,193,post,1,0.111,"2025-02-17 21:14:02",35,Grenoble,high,"Climat & Environnement",914,0.45
+119,228,comment,1,0,"2025-03-14 21:14:02",56,Strasbourg,low,"Recyclage & Zéro Déchet",122,0.68
+1221,8,like,1,0,"2025-01-29 21:14:02",37,Dijon,medium,"Protection Animale",469,0.77
+922,478,comment,1,0,"2025-08-24 22:14:02",29,Toulouse,medium,"Consommation Responsable",417,0.41
+284,462,join,1,0,"2025-09-22 22:14:02",21,Rennes,high,"Économie Circulaire",379,0.81
+1728,195,like,1,0.286,"2025-03-25 21:14:02",60,Angers,high,"Innovation Verte",744,0.23
+1899,192,comment,1,0,"2025-03-05 21:14:02",41,Lille,medium,"Énergies Renouvelables",889,0.94
+265,202,like,1,0,"2024-12-02 21:14:02",55,Paris,medium,"Agriculture Écologique",271,0.15
+1653,211,like,2,0.2,"2025-04-29 22:14:02",65,Nîmes,high,"Consommation Responsable",681,0.22
+184,190,post,1,0.125,"2025-08-04 22:14:02",20,Reims,high,"Protection Animale",808,0.54
+289,490,share,1,0,"2025-07-28 22:14:02",56,Nice,high,"Protection Animale",212,0.58
+1150,370,like,1,0,"2025-09-25 22:14:02",34,Lyon,medium,"Biodiversité & Nature",512,0.19
+1930,208,share,1,0.111,"2025-09-16 22:14:02",33,Bordeaux,medium,"Consommation Responsable",195,0.7
+1600,424,join,1,0,"2024-12-21 21:14:02",48,Nantes,low,"Consommation Responsable",823,0.27
+1915,354,share,1,0,"2025-09-19 22:14:02",31,Saint-Étienne,medium,"Climat & Environnement",631,0.29
+20,178,like,1,0,"2025-02-22 21:14:02",62,Lille,low,"Climat & Environnement",307,0.37
+46,359,comment,1,0.143,"2024-11-30 21:14:02",56,Bordeaux,low,"Protection Animale",801,0.16
+1336,292,join,1,0.143,"2024-11-27 21:14:02",26,Montpellier,high,"Économie Circulaire",725,0.35
+878,343,like,1,0,"2024-11-01 21:14:02",59,Montpellier,medium,"Climat & Environnement",807,0.49
+1443,163,join,1,0,"2024-12-26 21:14:02",41,Marseille,medium,"Énergies Renouvelables",856,0.9
+908,433,join,1,0,"2024-11-16 21:14:02",58,Nantes,high,"Transport Durable",233,0.99
+214,424,share,1,0,"2025-01-16 21:14:02",43,Villeurbanne,high,"Consommation Responsable",823,0.27
+1162,116,post,1,0,"2025-06-26 22:14:02",28,Nîmes,low,"Climat & Environnement",353,0.17
+976,429,share,1,0,"2025-06-10 22:14:02",56,Lille,medium,"Innovation Verte",664,0.4
+859,257,post,1,0,"2024-12-08 21:14:02",39,Nice,high,"Transport Durable",555,0.54
+1342,39,post,1,0.2,"2025-01-15 21:14:02",53,Paris,low,"Innovation Verte",482,0.88
+243,500,join,1,0.2,"2025-02-05 21:14:02",53,Toulouse,low,"Consommation Responsable",993,0.58
+1886,216,comment,1,0,"2025-08-22 22:14:02",36,"Le Havre",high,"Consommation Responsable",962,0.31
+1891,498,comment,1,0,"2024-12-25 21:14:02",46,Dijon,high,"Transport Durable",307,0.77
+705,130,comment,1,0.1,"2025-03-06 21:14:02",35,Villeurbanne,medium,"Agriculture Écologique",156,0.35
+156,383,comment,1,0,"2025-03-21 21:14:02",19,Dijon,medium,"Consommation Responsable",29,0.84
+1984,213,like,1,0,"2025-03-19 21:14:02",44,Saint-Étienne,low,"Économie Circulaire",847,0.5
+284,100,share,1,0,"2025-05-21 22:14:02",21,Rennes,high,"Éducation Environnementale",875,0.55
+871,316,join,1,0,"2024-10-23 22:14:02",32,Nice,medium,"Énergies Renouvelables",30,0.29
+1937,444,comment,2,0.2,"2024-11-14 21:14:02",19,Saint-Étienne,low,"Éducation Environnementale",134,0.94
+1390,412,comment,1,0,"2024-11-05 21:14:02",38,Villeurbanne,low,"Biodiversité & Nature",745,0.12
+126,191,comment,1,0.111,"2025-05-14 22:14:02",51,Marseille,medium,"Agriculture Écologique",137,0.73
+573,203,like,1,0.2,"2025-03-02 21:14:02",30,Lyon,medium,"Innovation Verte",44,0.75
+396,418,like,1,0,"2025-09-30 22:14:02",50,Toulon,medium,"Éducation Environnementale",292,0.61
+1010,194,share,1,0,"2025-08-18 22:14:02",27,Nîmes,high,"Climat & Environnement",691,0.11
+405,390,share,1,0.1,"2024-10-21 22:14:02",29,Rennes,high,"Protection Animale",913,0.14
+1866,86,post,1,0,"2025-05-18 22:14:02",35,Rennes,medium,"Agriculture Écologique",189,0.97
+716,18,post,1,0,"2025-06-13 22:14:02",57,Toulon,high,"Innovation Verte",921,0.53
+408,393,join,1,0.1,"2024-11-27 21:14:02",23,Reims,medium,"Climat & Environnement",522,0.74
+1247,397,share,1,0,"2025-04-10 22:14:02",55,Grenoble,low,"Recyclage & Zéro Déchet",158,0.25
+213,455,like,1,0.111,"2024-12-05 21:14:02",49,"Le Havre",medium,"Éducation Environnementale",977,0.43
+725,450,like,1,0.375,"2025-09-22 22:14:02",55,Nantes,medium,"Climat & Environnement",230,0.46
+247,101,post,1,0,"2025-07-19 22:14:02",42,Angers,medium,"Biodiversité & Nature",415,0.6
+1806,385,post,1,0.1,"2025-08-06 22:14:02",21,Lille,low,"Innovation Verte",19,0.8
+1662,446,like,1,0,"2025-02-04 21:14:02",61,Saint-Étienne,low,"Éducation Environnementale",323,0.5
+178,442,join,1,0,"2025-08-03 22:14:02",28,Nîmes,high,"Urbanisme Durable",321,0.24
+814,465,post,1,0.111,"2025-03-07 21:14:02",26,Toulouse,medium,"Innovation Verte",537,0.48
+1189,126,join,1,0,"2024-10-19 22:14:02",22,Paris,medium,"Protection Animale",379,0.25
+1611,422,comment,1,0.125,"2025-06-05 22:14:02",40,Saint-Étienne,high,"Énergies Renouvelables",983,0.12
+1036,94,join,1,0.143,"2024-10-28 21:14:02",22,Lille,high,"Protection Animale",142,0.89
+1826,419,join,1,0.1,"2025-04-03 22:14:02",36,Paris,high,"Protection Animale",55,0.85
+1519,447,like,1,0.222,"2025-03-31 22:14:02",35,Marseille,high,"Climat & Environnement",967,0.27
+447,201,share,1,0,"2024-12-08 21:14:02",33,Rennes,medium,"Transport Durable",418,0.48
+1261,278,post,2,0.25,"2025-05-27 22:14:02",19,Villeurbanne,low,"Innovation Verte",858,0.27
+1789,97,join,2,0.25,"2025-07-29 22:14:02",26,Montpellier,medium,"Climat & Environnement",28,0.99
+710,447,share,1,0,"2024-10-19 22:14:02",52,Grenoble,high,"Climat & Environnement",967,0.27
+1228,462,comment,1,0.333,"2024-10-23 22:14:02",35,Lille,medium,"Économie Circulaire",379,0.81
+222,244,share,1,0.111,"2025-06-17 22:14:02",25,Villeurbanne,low,"Éducation Environnementale",816,0.24
+797,43,comment,1,0.143,"2025-05-14 22:14:02",57,Nîmes,low,"Recyclage & Zéro Déchet",211,0.57
+1921,324,comment,1,0,"2025-09-13 22:14:02",43,Dijon,medium,"Consommation Responsable",335,0.25
+1625,117,comment,1,0.2,"2025-01-01 21:14:02",54,Dijon,low,"Innovation Verte",279,0.27
+1344,221,join,1,0,"2025-09-10 22:14:02",60,Nantes,high,"Transport Durable",134,0.32
+1961,280,comment,1,0.143,"2025-07-07 22:14:02",40,Lyon,high,"Recyclage & Zéro Déchet",177,0.45
+1045,279,join,1,0.111,"2025-06-22 22:14:02",39,Lille,low,"Agriculture Écologique",443,0.44
+756,476,comment,1,0,"2025-01-11 21:14:02",37,Dijon,low,"Consommation Responsable",184,0.63
+893,224,like,1,0,"2024-11-05 21:14:02",29,Dijon,high,"Recyclage & Zéro Déchet",289,0.77
+1570,386,post,1,0,"2025-05-02 22:14:02",58,Marseille,high,"Recyclage & Zéro Déchet",878,0.33
+1288,327,post,1,0,"2025-04-24 22:14:02",33,Toulouse,high,"Biodiversité & Nature",986,0.44
+971,435,like,1,0,"2025-07-16 22:14:02",46,Nantes,medium,"Protection Animale",433,0.85
+724,442,share,1,0.2,"2025-08-04 22:14:02",27,Rennes,high,"Urbanisme Durable",321,0.24
+1412,475,post,1,0.125,"2025-06-01 22:14:02",55,"Le Havre",high,"Urbanisme Durable",438,0.61
+1450,368,comment,1,0,"2025-04-29 22:14:02",29,Villeurbanne,high,"Énergies Renouvelables",916,0.95
+326,228,post,1,0,"2025-09-09 22:14:02",43,Villeurbanne,low,"Recyclage & Zéro Déchet",122,0.68
+1340,239,comment,1,0,"2025-01-17 21:14:02",55,"Le Havre",medium,"Transport Durable",375,0.11
+1327,484,share,1,0.143,"2025-07-22 22:14:02",19,"Le Havre",medium,"Consommation Responsable",54,0.29
+1946,407,post,1,0.333,"2025-02-02 21:14:02",18,Saint-Étienne,medium,"Protection Animale",186,0.1
+1338,38,like,1,0,"2025-02-25 21:14:02",21,"Le Havre",low,"Protection Animale",475,0.68
+1159,249,post,1,0.1,"2025-07-02 22:14:02",43,Saint-Étienne,low,"Innovation Verte",889,0.87
+1265,455,post,1,0.143,"2025-09-21 22:14:02",35,Paris,low,"Éducation Environnementale",977,0.43
+1030,229,share,1,0,"2025-01-15 21:14:02",25,Lille,high,"Énergies Renouvelables",217,0.82
+872,62,like,1,0,"2025-07-27 22:14:02",58,Angers,high,"Éducation Environnementale",954,0.75
+574,221,comment,1,0,"2025-08-01 22:14:02",57,Nantes,low,"Transport Durable",134,0.32
+1063,255,share,1,0.111,"2025-10-10 22:14:02",58,Bordeaux,low,"Consommation Responsable",739,0.85
+282,444,share,1,0.111,"2025-06-15 22:14:02",55,Dijon,medium,"Éducation Environnementale",134,0.94
+1145,35,comment,1,0.5,"2024-12-29 21:14:02",36,Marseille,low,"Protection Animale",708,0.84
+1450,291,like,1,0.25,"2025-06-10 22:14:02",29,Villeurbanne,high,"Climat & Environnement",953,0.48
+21,169,comment,1,0.2,"2025-06-13 22:14:02",41,Nantes,high,"Protection Animale",11,0.2
+595,409,post,1,0.143,"2025-03-24 21:14:02",30,Nîmes,high,"Climat & Environnement",853,0.88
+412,282,share,1,0,"2025-06-24 22:14:02",51,Saint-Étienne,medium,"Biodiversité & Nature",789,0.33
+1501,115,share,1,0,"2025-07-01 22:14:02",48,Grenoble,low,"Énergies Renouvelables",962,0.84
+1767,174,like,1,0,"2025-06-05 22:14:02",30,Grenoble,high,"Consommation Responsable",869,0.73
+348,463,comment,1,0.111,"2025-09-26 22:14:02",27,Toulouse,low,"Urbanisme Durable",621,0.49
+1948,401,share,1,0.143,"2025-06-24 22:14:02",55,Paris,medium,"Protection Animale",815,0.95
+880,248,join,1,0.4,"2025-01-29 21:14:02",47,Nîmes,high,"Économie Circulaire",202,0.13
+271,342,share,1,0.167,"2025-10-09 22:14:02",36,Nantes,high,"Économie Circulaire",909,0.67
+1954,249,like,1,0,"2025-04-07 22:14:02",25,Lyon,medium,"Innovation Verte",889,0.87
+1677,118,comment,1,0,"2025-07-15 22:14:02",50,Nice,high,"Agriculture Écologique",78,0.13
+1594,306,comment,1,0,"2025-02-27 21:14:02",38,Marseille,medium,"Biodiversité & Nature",975,0.14
+117,249,like,1,0.375,"2025-03-14 21:14:02",39,Villeurbanne,medium,"Innovation Verte",889,0.87
+563,174,join,1,0.143,"2024-12-20 21:14:02",50,Dijon,low,"Consommation Responsable",869,0.73
+1112,417,comment,1,0,"2025-04-01 22:14:02",58,Montpellier,low,"Biodiversité & Nature",78,0.6
+1672,62,join,1,0,"2025-02-07 21:14:02",20,"Le Havre",low,"Éducation Environnementale",954,0.75
+1819,367,share,1,0.1,"2024-10-30 21:14:02",25,Bordeaux,low,"Innovation Verte",847,0.31
+1442,144,comment,1,0.2,"2025-09-06 22:14:02",32,Lille,medium,"Éducation Environnementale",700,0.12
+11,29,like,1,0,"2025-06-17 22:14:02",37,Strasbourg,medium,"Énergies Renouvelables",123,0.45
+788,171,like,1,0,"2025-02-03 21:14:02",33,Lille,high,"Recyclage & Zéro Déchet",868,0.19
+1318,451,share,1,0,"2025-09-15 22:14:02",50,Toulouse,low,"Énergies Renouvelables",990,0.45
+550,69,comment,1,0,"2024-11-19 21:14:02",22,Grenoble,medium,"Transport Durable",511,0.53
+1661,471,comment,1,0,"2025-05-25 22:14:02",62,Marseille,medium,"Urbanisme Durable",855,0.89
+541,348,post,1,0,"2025-04-25 22:14:02",27,Nice,medium,"Énergies Renouvelables",570,0.1
+1936,147,join,1,0.111,"2025-04-05 22:14:02",50,Dijon,low,"Innovation Verte",803,1
+681,429,join,1,0,"2025-02-09 21:14:02",40,Villeurbanne,low,"Innovation Verte",664,0.4
+291,395,join,1,0.143,"2025-03-22 21:14:02",54,Villeurbanne,medium,"Climat & Environnement",646,0.26
+936,109,share,1,0.111,"2024-11-19 21:14:02",33,Angers,medium,"Urbanisme Durable",128,0.84
+226,447,like,1,0,"2025-07-12 22:14:02",50,Nice,medium,"Climat & Environnement",967,0.27
+1744,323,join,1,0,"2025-02-27 21:14:02",38,Nice,low,"Climat & Environnement",879,0.61
+1366,421,post,1,0.1,"2024-11-27 21:14:02",55,Villeurbanne,high,"Innovation Verte",380,0.99
+944,129,share,1,0,"2024-10-17 22:14:02",31,Nîmes,medium,"Éducation Environnementale",298,0.2
+1626,90,join,1,0.111,"2024-11-23 21:14:02",34,Toulouse,medium,"Consommation Responsable",930,0.7
+1822,316,share,1,0,"2025-01-29 21:14:02",56,Nice,low,"Énergies Renouvelables",30,0.29
+313,274,post,1,0.125,"2025-02-09 21:14:02",24,Toulon,high,"Consommation Responsable",196,0.34
+789,109,comment,1,0.1,"2025-01-19 21:14:02",22,Grenoble,low,"Urbanisme Durable",128,0.84
+853,459,share,1,0,"2025-03-12 21:14:02",41,Toulouse,medium,"Biodiversité & Nature",919,0.82
+1379,451,post,1,0,"2025-05-11 22:14:02",59,Nîmes,high,"Énergies Renouvelables",990,0.45
+883,45,comment,1,0.1,"2024-11-07 21:14:02",18,Reims,high,"Recyclage & Zéro Déchet",36,0.33
+1749,179,comment,1,0.111,"2025-08-13 22:14:02",33,Rennes,low,"Éducation Environnementale",850,0.29
+362,192,share,1,0,"2025-06-16 22:14:02",43,Nantes,low,"Énergies Renouvelables",889,0.94
+1097,373,comment,1,0.5,"2025-07-31 22:14:02",39,"Le Havre",medium,"Protection Animale",131,0.66
+824,206,comment,1,0.143,"2025-07-19 22:14:02",61,Reims,low,"Agriculture Écologique",125,0.89
+498,237,join,1,0,"2024-10-24 22:14:02",52,Strasbourg,low,"Énergies Renouvelables",331,0.44
+590,311,join,1,0.167,"2025-03-26 21:14:02",65,Reims,low,"Économie Circulaire",200,0.84
+1172,291,post,1,0,"2025-01-21 21:14:02",55,Angers,low,"Climat & Environnement",953,0.48
+138,359,post,1,0.167,"2025-01-30 21:14:02",41,"Le Havre",medium,"Protection Animale",801,0.16
+205,100,post,1,0.111,"2025-04-23 22:14:02",64,Reims,low,"Éducation Environnementale",875,0.55
+1108,302,post,1,0.25,"2025-02-12 21:14:02",55,Montpellier,medium,"Éducation Environnementale",851,0.1
+1263,176,like,1,0,"2025-07-23 22:14:02",44,Nîmes,low,"Innovation Verte",355,0.85
+276,71,join,1,0,"2025-02-26 21:14:02",40,Saint-Étienne,low,"Climat & Environnement",876,0.98
+1622,56,post,1,0,"2025-02-24 21:14:02",35,Montpellier,medium,"Consommation Responsable",432,0.69
+509,491,comment,1,0.125,"2025-09-11 22:14:02",25,Toulouse,low,"Agriculture Écologique",92,0.88
+1379,128,post,1,0,"2025-06-27 22:14:02",59,Nîmes,high,"Transport Durable",985,0.79
+1527,354,post,1,0.167,"2025-09-15 22:14:02",38,Toulouse,low,"Climat & Environnement",631,0.29
+1110,335,post,1,0.143,"2025-01-14 21:14:02",32,Paris,medium,"Protection Animale",556,0.15
+1466,444,comment,1,0.333,"2024-12-11 21:14:02",57,Lille,high,"Éducation Environnementale",134,0.94
+35,134,like,1,0.125,"2025-03-11 21:14:02",27,Villeurbanne,high,"Recyclage & Zéro Déchet",49,0.4
+1339,204,comment,1,0.111,"2025-03-25 21:14:02",46,Strasbourg,high,"Économie Circulaire",909,0.55
+701,2,post,1,0,"2025-10-05 22:14:02",54,"Le Havre",high,"Consommation Responsable",495,0.63
+1743,260,share,1,0,"2025-02-25 21:14:02",26,Reims,high,"Transport Durable",701,0.55
+421,281,join,1,0.1,"2025-04-27 22:14:02",29,Bordeaux,high,"Éducation Environnementale",210,0.12
+23,243,join,1,0.167,"2024-10-31 21:14:02",27,Paris,high,"Éducation Environnementale",688,0.32
+1421,155,join,1,0.167,"2025-09-29 22:14:02",22,Marseille,high,"Éducation Environnementale",992,1
+1374,452,share,1,0.222,"2025-03-29 21:14:02",47,Bordeaux,high,"Économie Circulaire",799,0.61
+868,109,comment,1,0,"2025-02-26 21:14:02",21,Angers,medium,"Urbanisme Durable",128,0.84
+1241,297,like,1,0.2,"2025-03-21 21:14:02",39,Lille,low,"Protection Animale",743,0.72
+568,77,comment,1,0.1,"2025-03-22 21:14:02",52,Dijon,low,"Innovation Verte",708,0.38
+235,248,share,1,0.143,"2025-05-17 22:14:02",37,Marseille,high,"Économie Circulaire",202,0.13
+1341,423,post,1,0,"2025-02-10 21:14:02",34,Montpellier,medium,"Consommation Responsable",671,0.92
+1575,441,share,1,0.429,"2025-02-02 21:14:02",25,Strasbourg,high,"Éducation Environnementale",720,0.63
+1348,449,like,1,0,"2025-10-09 22:14:02",61,Rennes,high,"Consommation Responsable",803,0.57
+1852,137,comment,1,0.143,"2025-02-25 21:14:02",40,Lyon,high,"Économie Circulaire",434,0.7
+1318,7,post,1,0,"2025-05-23 22:14:02",50,Toulouse,low,"Économie Circulaire",555,0.48
+1222,345,join,1,0,"2025-02-24 21:14:02",35,Toulon,low,"Innovation Verte",648,0.82
+811,195,like,1,0.167,"2025-03-20 21:14:02",24,Marseille,low,"Innovation Verte",744,0.23
+1706,172,post,1,0.143,"2025-09-05 22:14:02",51,Dijon,low,"Transport Durable",750,0.29
+56,218,join,1,0.111,"2025-07-22 22:14:02",24,Toulouse,low,"Énergies Renouvelables",59,0.39
+1643,143,join,1,0,"2025-07-19 22:14:02",40,Montpellier,high,"Protection Animale",971,0.6
+866,298,like,1,0.167,"2025-01-14 21:14:02",62,Paris,medium,"Climat & Environnement",66,0.28
+1161,486,like,1,0,"2025-07-03 22:14:02",19,Nice,high,"Éducation Environnementale",185,0.92
+365,392,like,1,0.125,"2025-04-28 22:14:02",59,Dijon,high,"Énergies Renouvelables",199,0.1
+1129,305,comment,1,0.111,"2025-07-04 22:14:02",62,Marseille,low,"Innovation Verte",485,0.56
+1736,35,join,1,0,"2024-10-16 22:14:02",31,Nantes,medium,"Protection Animale",708,0.84
+1012,243,post,1,0.111,"2025-10-12 22:14:02",41,Toulon,high,"Éducation Environnementale",688,0.32
+558,195,post,1,0,"2024-10-22 22:14:02",59,Strasbourg,high,"Innovation Verte",744,0.23
+1349,339,share,1,0.286,"2024-11-20 21:14:02",19,Montpellier,medium,"Éducation Environnementale",839,0.17
+1629,383,post,1,0,"2024-12-17 21:14:02",58,Nice,high,"Consommation Responsable",29,0.84
+1379,118,share,1,0.143,"2025-03-14 21:14:02",59,Nîmes,high,"Agriculture Écologique",78,0.13
+440,145,share,1,0.2,"2025-04-07 22:14:02",29,Bordeaux,medium,"Éducation Environnementale",245,0.38
+1355,312,like,1,0,"2025-01-06 21:14:02",26,Lille,high,"Transport Durable",783,0.62
+1163,42,comment,1,0,"2025-03-02 21:14:02",53,Bordeaux,low,"Innovation Verte",355,0.1
+1067,233,join,1,0,"2025-03-02 21:14:02",30,"Le Havre",low,"Consommation Responsable",559,0.18
+114,444,post,1,0,"2025-04-17 22:14:02",51,Grenoble,high,"Éducation Environnementale",134,0.94
+440,189,join,2,0.5,"2025-02-07 21:14:02",29,Bordeaux,medium,"Agriculture Écologique",400,0.51
+5,19,comment,1,0.1,"2024-10-21 22:14:02",53,Strasbourg,medium,"Urbanisme Durable",253,0.63
+1368,111,join,1,0,"2025-10-10 22:14:02",45,Paris,high,"Agriculture Écologique",244,0.86
+564,315,join,1,0,"2025-03-13 21:14:02",35,Villeurbanne,low,"Biodiversité & Nature",527,0.48
+1003,24,post,1,0,"2025-09-19 22:14:02",21,Nice,medium,"Climat & Environnement",417,0.68
+253,301,join,1,0,"2024-10-25 22:14:02",29,Villeurbanne,low,"Économie Circulaire",528,0.26
+701,447,share,1,0,"2025-02-11 21:14:02",54,"Le Havre",high,"Climat & Environnement",967,0.27
+1418,345,comment,1,0.125,"2025-06-22 22:14:02",40,Angers,high,"Innovation Verte",648,0.82
+513,222,post,1,0.167,"2025-02-23 21:14:02",37,Lyon,high,"Recyclage & Zéro Déchet",885,0.51
+1635,305,post,1,0.125,"2024-10-13 22:14:02",63,Nantes,medium,"Innovation Verte",485,0.56
+540,406,like,1,0.111,"2024-11-05 21:14:02",49,"Le Havre",low,"Innovation Verte",981,1
+582,160,share,1,0,"2024-11-01 21:14:02",30,Villeurbanne,high,"Transport Durable",758,1
+131,20,share,1,0,"2025-02-02 21:14:02",29,Dijon,medium,"Transport Durable",46,0.17
+133,258,post,1,0,"2025-09-25 22:14:02",33,Toulouse,high,"Consommation Responsable",708,0.41
+1610,276,comment,1,0,"2025-03-30 22:14:02",20,Dijon,medium,"Agriculture Écologique",144,0.23
+264,109,comment,1,0,"2025-10-08 22:14:02",49,Reims,medium,"Urbanisme Durable",128,0.84
+1095,69,like,1,0,"2024-11-18 21:14:02",30,Montpellier,medium,"Transport Durable",511,0.53
+1668,466,share,1,0,"2025-02-01 21:14:02",51,Grenoble,medium,"Protection Animale",261,0.37
+1089,397,post,1,0,"2025-04-11 22:14:02",63,Angers,low,"Recyclage & Zéro Déchet",158,0.25
+103,333,like,1,0,"2024-11-22 21:14:02",46,Nîmes,medium,"Innovation Verte",54,0.69
+1258,434,share,1,0,"2025-09-02 22:14:02",56,Villeurbanne,low,"Urbanisme Durable",903,0.43
+1053,497,post,1,0,"2025-06-30 22:14:02",33,Toulouse,high,"Transport Durable",357,0.59
+470,212,join,1,0.143,"2024-12-16 21:14:02",29,Saint-Étienne,medium,"Éducation Environnementale",254,0.95
+386,8,share,1,0.286,"2025-09-12 22:14:02",35,Grenoble,medium,"Protection Animale",469,0.77
+1114,346,comment,1,0.2,"2025-02-25 21:14:02",52,Bordeaux,medium,"Éducation Environnementale",337,0.43
+532,84,share,1,0.111,"2024-10-26 22:14:02",52,Villeurbanne,medium,"Innovation Verte",72,0.63
+1246,56,comment,1,0.286,"2025-10-12 22:14:02",42,"Le Havre",low,"Consommation Responsable",432,0.69
+941,394,join,1,0,"2025-06-18 22:14:02",29,Angers,medium,"Urbanisme Durable",590,0.28
+246,294,like,1,0,"2025-08-19 22:14:02",47,Toulon,low,"Consommation Responsable",711,0.51
+1474,344,share,1,0.125,"2025-07-13 22:14:02",38,Lyon,high,"Éducation Environnementale",158,0.5
+1179,368,comment,1,0,"2024-10-16 22:14:02",59,Grenoble,medium,"Énergies Renouvelables",916,0.95
+1690,442,join,2,0.333,"2025-05-18 22:14:02",48,Nîmes,low,"Urbanisme Durable",321,0.24
+446,233,join,1,0.25,"2025-06-22 22:14:02",51,Lyon,high,"Consommation Responsable",559,0.18
+132,159,like,1,0,"2025-09-15 22:14:02",55,Lille,high,"Transport Durable",672,0.72
+1035,104,post,1,0.222,"2025-03-03 21:14:02",35,Dijon,high,"Urbanisme Durable",827,0.86
+870,421,post,1,0.143,"2025-09-27 22:14:02",27,Lyon,high,"Innovation Verte",380,0.99
+380,304,share,1,0,"2025-07-06 22:14:02",58,Villeurbanne,high,"Recyclage & Zéro Déchet",800,0.9
+1595,109,comment,1,0.125,"2024-11-17 21:14:02",38,Strasbourg,medium,"Urbanisme Durable",128,0.84
+767,238,like,1,0,"2025-06-30 22:14:02",25,"Le Havre",high,"Transport Durable",216,0.9
+1966,394,like,1,0.125,"2024-10-26 22:14:02",56,Toulouse,high,"Urbanisme Durable",590,0.28
+1581,390,post,1,0,"2025-03-24 21:14:02",35,Lille,high,"Protection Animale",913,0.14
+210,8,join,1,0,"2025-07-22 22:14:02",50,Angers,medium,"Protection Animale",469,0.77
+146,459,comment,1,0,"2025-07-31 22:14:02",49,Villeurbanne,medium,"Biodiversité & Nature",919,0.82
+1116,311,share,1,0,"2024-11-15 21:14:02",65,Paris,low,"Économie Circulaire",200,0.84
+173,129,join,1,0,"2025-09-28 22:14:02",28,Lille,high,"Éducation Environnementale",298,0.2
+560,177,join,1,0.1,"2025-07-25 22:14:02",41,Lyon,medium,"Éducation Environnementale",689,0.48
+958,299,comment,1,0.143,"2025-04-13 22:14:02",61,Toulon,medium,"Climat & Environnement",251,0.8
+132,397,comment,1,0.125,"2024-10-29 21:14:02",55,Lille,high,"Recyclage & Zéro Déchet",158,0.25
+466,243,post,1,0,"2025-09-21 22:14:02",26,Nîmes,low,"Éducation Environnementale",688,0.32
+484,347,comment,1,0.125,"2025-08-04 22:14:02",34,Lille,low,"Économie Circulaire",582,0.27
+1253,393,post,3,0.5,"2025-07-17 22:14:02",45,Grenoble,medium,"Climat & Environnement",522,0.74
+1515,163,share,1,0,"2025-02-16 21:14:02",27,Montpellier,medium,"Énergies Renouvelables",856,0.9
+276,384,like,1,0.1,"2025-07-02 22:14:02",40,Saint-Étienne,low,"Biodiversité & Nature",10,0.16
+1558,82,share,1,0.125,"2025-04-28 22:14:02",34,Toulouse,low,"Économie Circulaire",798,0.39
+1401,446,share,1,0.111,"2025-05-03 22:14:02",31,Marseille,medium,"Éducation Environnementale",323,0.5
+1698,3,post,1,0,"2025-03-24 21:14:02",31,Nantes,low,"Biodiversité & Nature",582,0.32
+1740,447,join,1,0.143,"2025-02-22 21:14:02",20,Grenoble,low,"Climat & Environnement",967,0.27
+1573,189,share,1,0.222,"2025-05-11 22:14:02",40,Nice,medium,"Agriculture Écologique",400,0.51
+1126,118,share,1,0,"2024-11-16 21:14:02",36,Nantes,high,"Agriculture Écologique",78,0.13
+1460,147,comment,1,0,"2025-05-05 22:14:02",59,Nice,medium,"Innovation Verte",803,1
+1297,12,join,1,0,"2025-06-10 22:14:02",21,Marseille,low,"Énergies Renouvelables",585,0.76
+705,179,join,1,0.1,"2024-11-23 21:14:02",35,Villeurbanne,medium,"Éducation Environnementale",850,0.29
+134,229,comment,1,0.167,"2025-04-01 22:14:02",57,Villeurbanne,low,"Énergies Renouvelables",217,0.82
+543,147,post,1,0.167,"2024-12-26 21:14:02",18,Bordeaux,medium,"Innovation Verte",803,1
+1597,138,comment,1,0,"2025-03-14 21:14:02",34,Nice,low,"Urbanisme Durable",94,0.72
+1186,476,comment,1,0.1,"2024-12-13 21:14:02",58,Reims,medium,"Consommation Responsable",184,0.63
+3,45,post,1,0.125,"2024-11-13 21:14:02",24,Rennes,medium,"Recyclage & Zéro Déchet",36,0.33
+1340,476,comment,1,0.111,"2025-06-02 22:14:02",55,"Le Havre",medium,"Consommation Responsable",184,0.63
+725,121,share,1,0,"2025-10-11 22:14:02",55,Nantes,medium,"Biodiversité & Nature",660,0.85
+1758,167,share,1,0,"2024-12-29 21:14:02",31,Strasbourg,high,"Recyclage & Zéro Déchet",439,0.63
+1561,106,share,1,0.125,"2025-08-23 22:14:02",21,Nice,medium,"Recyclage & Zéro Déchet",976,0.39
+131,355,comment,2,0.286,"2025-08-16 22:14:02",29,Dijon,medium,"Éducation Environnementale",397,0.38
+1292,499,like,2,0.375,"2025-03-17 21:14:02",29,Dijon,medium,"Consommation Responsable",830,0.31
+1516,18,share,1,0,"2025-03-07 21:14:02",61,Villeurbanne,low,"Innovation Verte",921,0.53
+1343,259,comment,1,0.143,"2025-10-07 22:14:02",60,Grenoble,medium,"Innovation Verte",92,0.26
+654,487,join,1,0.222,"2025-01-28 21:14:02",27,Strasbourg,high,"Climat & Environnement",965,0.51
+845,272,join,1,0,"2025-07-27 22:14:02",64,Angers,high,"Recyclage & Zéro Déchet",429,0.38
+1440,139,comment,1,0.2,"2025-05-26 22:14:02",64,Saint-Étienne,high,"Économie Circulaire",243,0.48
+633,126,share,1,0,"2025-07-27 22:14:02",53,Saint-Étienne,high,"Protection Animale",379,0.25
+1159,241,comment,2,0.375,"2025-09-02 22:14:02",43,Saint-Étienne,low,"Climat & Environnement",357,0.2
+1659,456,share,1,0,"2025-01-11 21:14:02",45,Montpellier,medium,"Transport Durable",506,0.28
+533,327,like,1,0,"2025-09-23 22:14:02",54,Bordeaux,high,"Biodiversité & Nature",986,0.44
+1981,91,like,1,0,"2025-01-25 21:14:02",43,Dijon,low,"Économie Circulaire",411,0.94
+207,333,join,1,0,"2024-10-20 22:14:02",57,Nantes,medium,"Innovation Verte",54,0.69
+1678,132,comment,1,0.375,"2025-06-15 22:14:02",62,Nice,medium,"Urbanisme Durable",822,0.62
+101,381,post,1,0.111,"2025-01-23 21:14:02",22,Toulon,medium,"Consommation Responsable",778,0.43
+1997,400,join,1,0,"2025-03-09 21:14:02",55,Dijon,low,"Transport Durable",741,0.61
+1710,499,share,1,0,"2025-03-17 21:14:02",48,Toulon,high,"Consommation Responsable",830,0.31
+575,138,share,1,0.4,"2025-03-06 21:14:02",64,Lille,medium,"Urbanisme Durable",94,0.72
+1998,326,like,1,0.125,"2025-05-26 22:14:02",54,Nice,low,"Innovation Verte",352,0.37
+1594,8,comment,1,0.25,"2024-10-20 22:14:02",38,Marseille,medium,"Protection Animale",469,0.77
+1809,71,join,1,0,"2025-07-05 22:14:02",23,Grenoble,low,"Climat & Environnement",876,0.98
+1811,150,share,1,0.1,"2024-12-31 21:14:02",63,Toulon,low,"Protection Animale",609,0.13
+520,192,join,1,0,"2024-11-09 21:14:02",56,Dijon,high,"Énergies Renouvelables",889,0.94
+45,188,like,1,0.111,"2025-03-15 21:14:02",54,Nantes,low,"Recyclage & Zéro Déchet",485,0.49
+890,293,share,1,0,"2024-11-10 21:14:02",28,Marseille,low,"Transport Durable",558,0.89
+1303,38,like,1,0.1,"2025-09-14 22:14:02",50,Villeurbanne,high,"Protection Animale",475,0.68
+691,127,join,1,0.111,"2025-04-27 22:14:02",27,Angers,medium,"Transport Durable",227,0.95
+56,118,join,2,0.429,"2025-09-25 22:14:02",24,Toulouse,low,"Agriculture Écologique",78,0.13
+795,367,share,1,0.167,"2025-10-02 22:14:02",44,"Le Havre",medium,"Innovation Verte",847,0.31
+7,329,join,1,0.167,"2025-09-20 22:14:02",46,Lyon,low,"Transport Durable",660,0.37
+905,31,post,1,0,"2024-11-09 21:14:02",56,Marseille,medium,"Protection Animale",998,0.57
+1055,195,join,2,0.25,"2025-05-24 22:14:02",64,Nantes,medium,"Innovation Verte",744,0.23
+1617,93,comment,1,0.111,"2025-01-03 21:14:02",36,Grenoble,low,"Agriculture Écologique",332,0.54
+317,483,like,1,0,"2025-01-31 21:14:02",26,"Le Havre",low,"Biodiversité & Nature",826,0.43
+1628,311,post,1,0,"2025-08-27 22:14:02",45,Toulouse,low,"Économie Circulaire",200,0.84
+1823,393,join,1,0.111,"2025-07-27 22:14:02",61,Lille,high,"Climat & Environnement",522,0.74
+282,310,like,1,0,"2024-12-04 21:14:02",55,Dijon,medium,"Innovation Verte",696,0.28
+779,218,join,1,0.143,"2025-04-22 22:14:02",24,Villeurbanne,high,"Énergies Renouvelables",59,0.39
+103,297,post,1,0.125,"2025-01-19 21:14:02",46,Nîmes,medium,"Protection Animale",743,0.72
+1160,355,join,1,0,"2025-06-23 22:14:02",33,Reims,low,"Éducation Environnementale",397,0.38
+1770,40,join,1,0.286,"2025-10-06 22:14:02",45,Strasbourg,low,"Consommation Responsable",562,0.34
+764,16,like,1,0,"2025-03-30 22:14:02",54,Paris,low,"Transport Durable",20,0.64
+1344,48,share,1,0.167,"2025-07-15 22:14:02",60,Nantes,high,"Biodiversité & Nature",608,0.78
+1680,259,share,1,0,"2024-11-13 21:14:02",36,Toulouse,low,"Innovation Verte",92,0.26
+1422,464,join,1,0,"2025-09-09 22:14:02",58,Saint-Étienne,low,"Recyclage & Zéro Déchet",261,0.54
+959,484,share,1,0.2,"2025-09-07 22:14:02",53,Strasbourg,high,"Consommation Responsable",54,0.29
+1991,310,post,1,0,"2025-09-22 22:14:02",38,Angers,high,"Innovation Verte",696,0.28
+1245,2,join,2,0.222,"2025-03-09 21:14:02",45,Toulon,high,"Consommation Responsable",495,0.63
+1266,474,like,1,0.2,"2025-02-10 21:14:02",50,Lyon,high,"Agriculture Écologique",586,0.63
+878,129,post,2,0.222,"2025-01-26 21:14:02",59,Montpellier,medium,"Éducation Environnementale",298,0.2
+164,147,like,1,0.1,"2025-09-28 22:14:02",59,Marseille,high,"Innovation Verte",803,1
+1136,97,join,1,0.125,"2025-05-24 22:14:02",31,Nîmes,low,"Climat & Environnement",28,0.99
+190,258,comment,1,0.143,"2024-12-28 21:14:02",54,Lyon,high,"Consommation Responsable",708,0.41
+687,292,share,1,0,"2025-07-19 22:14:02",46,Nantes,low,"Économie Circulaire",725,0.35
+128,54,share,1,0,"2025-09-12 22:14:02",65,Saint-Étienne,high,"Climat & Environnement",267,0.55
+1262,488,join,1,0,"2025-04-25 22:14:02",53,Reims,high,"Énergies Renouvelables",791,0.92
+365,241,comment,1,0.125,"2024-12-02 21:14:02",59,Dijon,high,"Climat & Environnement",357,0.2
+1336,430,join,1,0.143,"2025-03-05 21:14:02",26,Montpellier,high,"Recyclage & Zéro Déchet",89,0.32
+1514,157,like,1,0,"2025-07-30 22:14:02",31,Nantes,medium,"Énergies Renouvelables",347,0.85
+524,282,like,1,0,"2025-03-26 21:14:02",36,Montpellier,high,"Biodiversité & Nature",789,0.33
+689,120,share,1,0.111,"2025-02-02 21:14:02",41,Lille,high,"Biodiversité & Nature",525,0.49
+1321,300,post,1,0,"2024-10-29 21:14:02",43,Nice,high,"Énergies Renouvelables",72,0.42
+1904,211,share,1,0.111,"2024-10-17 22:14:02",38,Strasbourg,high,"Consommation Responsable",681,0.22
+155,144,comment,1,0.143,"2024-12-11 21:14:02",51,Nice,low,"Éducation Environnementale",700,0.12
+423,117,like,1,0.111,"2025-05-23 22:14:02",65,Saint-Étienne,high,"Innovation Verte",279,0.27
+786,256,post,1,0.143,"2025-07-22 22:14:02",44,Grenoble,medium,"Économie Circulaire",296,0.57
+781,490,join,2,0.222,"2025-04-16 22:14:02",63,Nantes,medium,"Protection Animale",212,0.58
+1326,499,post,1,0.222,"2024-11-08 21:14:02",30,Toulon,low,"Consommation Responsable",830,0.31
+1590,285,post,1,0,"2025-06-07 22:14:02",54,Rennes,medium,"Recyclage & Zéro Déchet",692,0.67
+1677,197,join,1,0,"2025-03-29 21:14:02",50,Nice,high,"Biodiversité & Nature",941,0.42
+1409,206,comment,1,0,"2025-09-20 22:14:02",47,Grenoble,low,"Agriculture Écologique",125,0.89
+1757,320,join,1,0.111,"2025-03-14 21:14:02",61,Villeurbanne,medium,"Innovation Verte",975,0.6
+475,373,share,1,0.111,"2025-04-18 22:14:02",27,Grenoble,medium,"Protection Animale",131,0.66
+1801,326,post,1,0.286,"2025-05-14 22:14:02",32,Grenoble,high,"Innovation Verte",352,0.37
+1576,449,comment,1,0.167,"2025-04-21 22:14:02",23,Marseille,low,"Consommation Responsable",803,0.57
+1225,331,join,1,0,"2025-03-26 21:14:02",27,Paris,medium,"Biodiversité & Nature",357,0.27
+570,207,comment,1,0.125,"2025-02-11 21:14:02",43,Bordeaux,high,"Énergies Renouvelables",162,0.82
+1135,125,join,1,0,"2025-05-21 22:14:02",22,Paris,medium,"Urbanisme Durable",778,0.95
+587,336,comment,1,0.111,"2025-07-15 22:14:02",51,Strasbourg,medium,"Recyclage & Zéro Déchet",451,0.64
+1198,393,like,1,0,"2024-10-31 21:14:02",27,Bordeaux,low,"Climat & Environnement",522,0.74
+1997,7,join,1,0.125,"2025-03-18 21:14:02",55,Dijon,low,"Économie Circulaire",555,0.48
+1230,215,share,1,0,"2024-12-08 21:14:02",52,Nîmes,medium,"Transport Durable",504,0.55
+731,31,share,1,0,"2025-01-24 21:14:02",19,Rennes,high,"Protection Animale",998,0.57
+824,175,like,1,0,"2025-02-27 21:14:02",61,Reims,low,"Consommation Responsable",315,0.19
+819,98,join,1,0.167,"2025-06-18 22:14:02",60,Reims,medium,"Agriculture Écologique",650,0.83
+1049,237,share,1,0,"2025-01-02 21:14:02",31,Nantes,high,"Énergies Renouvelables",331,0.44
+1693,485,comment,2,0.5,"2025-07-04 22:14:02",57,Reims,high,"Éducation Environnementale",669,0.92
+1569,31,post,1,0.125,"2025-01-22 21:14:02",32,Bordeaux,low,"Protection Animale",998,0.57
+1170,256,comment,1,0,"2025-06-13 22:14:02",52,Toulon,medium,"Économie Circulaire",296,0.57
+1395,390,join,1,0,"2025-10-08 22:14:02",48,Lille,low,"Protection Animale",913,0.14
+1974,46,comment,1,0.222,"2025-08-05 22:14:02",22,Reims,low,"Climat & Environnement",876,0.42
+1619,393,post,2,0.333,"2025-01-01 21:14:02",62,Toulon,medium,"Climat & Environnement",522,0.74
+580,195,like,1,0.125,"2025-01-21 21:14:02",23,Nantes,medium,"Innovation Verte",744,0.23
+1725,128,like,1,0,"2025-08-03 22:14:02",19,Marseille,high,"Transport Durable",985,0.79
+1262,281,like,1,0.2,"2025-07-03 22:14:02",53,Reims,high,"Éducation Environnementale",210,0.12
+1792,179,share,1,0.125,"2025-04-29 22:14:02",59,Saint-Étienne,medium,"Éducation Environnementale",850,0.29
+866,236,share,1,0,"2025-04-02 22:14:02",62,Paris,medium,"Biodiversité & Nature",725,0.58
+107,245,post,1,0.125,"2025-01-19 21:14:02",34,Villeurbanne,low,"Consommation Responsable",716,0.53
+697,29,like,1,0,"2024-11-26 21:14:02",57,Marseille,high,"Énergies Renouvelables",123,0.45
+823,230,post,1,0,"2025-05-02 22:14:02",42,Paris,high,"Énergies Renouvelables",730,0.46
+176,385,share,1,0.167,"2025-07-23 22:14:02",37,Rennes,low,"Innovation Verte",19,0.8
+70,274,join,1,0.143,"2025-01-02 21:14:02",19,Toulouse,medium,"Consommation Responsable",196,0.34
+531,162,comment,1,0,"2025-09-20 22:14:02",20,Grenoble,low,"Consommation Responsable",848,0.49
+1226,61,comment,1,0,"2025-10-09 22:14:02",64,Lyon,low,"Protection Animale",160,0.68
+113,304,comment,1,0,"2025-07-10 22:14:02",61,Nantes,high,"Recyclage & Zéro Déchet",800,0.9
+534,417,comment,1,0,"2025-06-15 22:14:02",33,Marseille,high,"Biodiversité & Nature",78,0.6
+1245,12,join,1,0.1,"2025-04-22 22:14:02",45,Toulon,high,"Énergies Renouvelables",585,0.76
+18,68,like,1,0.167,"2025-09-13 22:14:02",49,"Le Havre",medium,"Urbanisme Durable",106,0.2
+333,241,comment,1,0,"2025-03-07 21:14:02",62,Lyon,medium,"Climat & Environnement",357,0.2
+1750,211,comment,1,0.111,"2025-08-24 22:14:02",25,Strasbourg,high,"Consommation Responsable",681,0.22
+325,410,like,1,0.143,"2024-11-10 21:14:02",25,Bordeaux,medium,"Recyclage & Zéro Déchet",869,0.4
+233,60,share,1,0.143,"2025-04-22 22:14:02",62,Saint-Étienne,low,"Protection Animale",509,0.35
+1613,407,like,1,0.143,"2024-12-18 21:14:02",45,"Le Havre",low,"Protection Animale",186,0.1
+590,105,comment,1,0,"2025-06-04 22:14:02",65,Reims,low,"Climat & Environnement",662,0.91
+333,426,share,1,0,"2024-12-07 21:14:02",62,Lyon,medium,"Éducation Environnementale",390,0.24
+964,280,comment,1,0,"2025-03-27 21:14:02",57,Bordeaux,medium,"Recyclage & Zéro Déchet",177,0.45
+108,482,comment,1,0.143,"2025-04-08 22:14:02",56,Saint-Étienne,high,"Agriculture Écologique",762,0.11
+853,416,comment,1,0,"2025-05-28 22:14:02",41,Toulouse,medium,"Protection Animale",359,0.57
+651,282,share,1,0,"2025-08-08 22:14:02",55,Toulon,low,"Biodiversité & Nature",789,0.33
+1781,471,share,1,0,"2025-07-16 22:14:02",57,Dijon,high,"Urbanisme Durable",855,0.89
+1801,311,share,1,0,"2025-07-19 22:14:02",32,Grenoble,high,"Économie Circulaire",200,0.84
+1467,185,join,2,0.333,"2025-10-03 22:14:02",51,Lille,high,"Climat & Environnement",722,0.65
+679,351,like,1,0.167,"2024-10-13 22:14:02",60,Lyon,high,"Protection Animale",55,0.87
+504,33,share,1,0,"2025-01-28 21:14:02",60,Toulon,low,"Agriculture Écologique",165,0.7
+493,353,join,1,0.333,"2025-03-19 21:14:02",26,Grenoble,medium,"Innovation Verte",617,0.91
+1008,324,post,1,0,"2025-08-06 22:14:02",32,Toulon,medium,"Consommation Responsable",335,0.25
+1688,251,share,1,0,"2024-11-17 21:14:02",61,Villeurbanne,low,"Urbanisme Durable",415,1
+1497,234,like,1,0,"2025-01-28 21:14:02",24,Villeurbanne,low,"Énergies Renouvelables",374,0.41
+856,143,post,1,0.143,"2024-11-01 21:14:02",24,Nantes,medium,"Protection Animale",971,0.6
+49,66,like,1,0,"2024-11-14 21:14:02",41,Lille,medium,"Éducation Environnementale",553,0.71
+27,120,join,1,0.111,"2025-08-24 22:14:02",27,Marseille,high,"Biodiversité & Nature",525,0.49
+1005,259,like,1,0.1,"2025-10-05 22:14:02",18,Lille,low,"Innovation Verte",92,0.26
+1501,423,post,1,0.167,"2025-03-12 21:14:02",48,Grenoble,low,"Consommation Responsable",671,0.92
+855,34,share,1,0,"2025-05-26 22:14:02",45,Lyon,medium,"Agriculture Écologique",717,0.79
+514,86,like,1,0.333,"2025-03-23 21:14:02",47,Toulouse,high,"Agriculture Écologique",189,0.97
+1992,159,post,1,0,"2025-04-26 22:14:02",35,Toulouse,medium,"Transport Durable",672,0.72
+259,128,share,1,0,"2024-11-03 21:14:02",44,Angers,high,"Transport Durable",985,0.79
+130,401,post,1,0,"2025-07-08 22:14:02",63,Toulon,low,"Protection Animale",815,0.95
+1784,422,join,1,0,"2025-03-17 21:14:02",18,Nantes,low,"Énergies Renouvelables",983,0.12
+1022,145,comment,1,0,"2025-07-13 22:14:02",51,Nice,low,"Éducation Environnementale",245,0.38
+4,434,share,1,0.111,"2025-07-13 22:14:02",28,Saint-Étienne,high,"Urbanisme Durable",903,0.43
+1111,150,comment,1,0,"2025-09-01 22:14:02",29,Lyon,high,"Protection Animale",609,0.13
+1312,428,like,1,0,"2025-10-07 22:14:02",63,"Le Havre",high,"Biodiversité & Nature",138,0.71
+1367,154,like,1,0.143,"2024-10-16 22:14:02",51,Angers,low,"Consommation Responsable",561,0.77
+422,6,join,1,0.1,"2025-07-27 22:14:02",45,Lyon,low,"Climat & Environnement",890,0.59
+1034,307,comment,1,0,"2024-12-03 21:14:02",35,Nantes,medium,"Agriculture Écologique",482,0.37
+1187,245,like,1,0.143,"2025-09-03 22:14:02",61,Saint-Étienne,high,"Consommation Responsable",716,0.53
+823,241,like,1,0,"2025-09-21 22:14:02",42,Paris,high,"Climat & Environnement",357,0.2
+1654,89,comment,1,0.111,"2025-05-06 22:14:02",58,Montpellier,low,"Urbanisme Durable",507,0.74
+554,158,like,1,0.143,"2024-12-15 21:14:02",47,Strasbourg,medium,"Consommation Responsable",108,0.37
+1126,21,post,1,0,"2025-04-12 22:14:02",36,Nantes,high,"Recyclage & Zéro Déchet",878,0.18
+839,172,post,1,0.143,"2025-05-07 22:14:02",40,Toulouse,low,"Transport Durable",750,0.29
+960,54,join,1,0,"2025-10-01 22:14:02",33,Marseille,medium,"Climat & Environnement",267,0.55
+794,378,like,1,0.222,"2025-10-03 22:14:02",18,Dijon,low,"Recyclage & Zéro Déchet",241,0.97
+924,442,like,1,0.125,"2025-09-04 22:14:02",47,Saint-Étienne,medium,"Urbanisme Durable",321,0.24
+1977,410,join,1,0.1,"2025-03-28 21:14:02",43,Strasbourg,high,"Recyclage & Zéro Déchet",869,0.4
+1937,418,join,1,0,"2025-04-29 22:14:02",19,Saint-Étienne,low,"Éducation Environnementale",292,0.61
+457,119,comment,1,0.143,"2024-12-07 21:14:02",42,Angers,low,"Éducation Environnementale",223,0.35
+1910,399,comment,1,0.333,"2024-10-21 22:14:02",65,Paris,medium,"Protection Animale",276,0.29
+1025,387,comment,1,0,"2025-10-12 22:14:02",45,Nîmes,high,"Énergies Renouvelables",921,0.25
+1671,304,post,1,0,"2024-12-03 21:14:02",37,Toulouse,medium,"Recyclage & Zéro Déchet",800,0.9
+692,27,join,1,0,"2024-11-14 21:14:02",57,Strasbourg,high,"Recyclage & Zéro Déchet",300,0.92
+527,119,comment,1,0.222,"2025-02-11 21:14:02",44,Paris,low,"Éducation Environnementale",223,0.35
+1998,27,post,1,0.125,"2025-09-11 22:14:02",54,Nice,low,"Recyclage & Zéro Déchet",300,0.92
+1038,422,like,1,0,"2025-03-06 21:14:02",63,Nantes,high,"Énergies Renouvelables",983,0.12
+229,274,like,1,0,"2025-03-11 21:14:02",59,Grenoble,medium,"Consommation Responsable",196,0.34
+246,270,join,1,0.167,"2024-12-27 21:14:02",47,Toulon,low,"Économie Circulaire",58,0.34
+1287,20,share,1,0,"2025-03-19 21:14:02",52,Toulouse,high,"Transport Durable",46,0.17
+1623,295,join,1,0.111,"2025-01-19 21:14:02",35,Dijon,medium,"Urbanisme Durable",755,0.49
+1345,67,like,1,0.111,"2025-02-03 21:14:02",55,Rennes,medium,"Protection Animale",19,0.57
+563,103,post,1,0,"2025-08-16 22:14:02",50,Dijon,low,"Énergies Renouvelables",333,0.4
+904,356,join,1,0,"2025-08-12 22:14:02",35,"Le Havre",medium,"Éducation Environnementale",117,0.13
+578,27,post,1,0.125,"2025-09-19 22:14:02",20,Rennes,low,"Recyclage & Zéro Déchet",300,0.92
+519,216,like,1,0,"2025-06-11 22:14:02",52,Rennes,low,"Consommation Responsable",962,0.31
+384,156,join,1,0.111,"2024-11-23 21:14:02",18,Strasbourg,high,"Transport Durable",895,0.27
+1968,278,share,1,0,"2024-12-10 21:14:02",26,Rennes,low,"Innovation Verte",858,0.27
+473,405,post,1,0,"2024-12-25 21:14:02",62,Lyon,low,"Énergies Renouvelables",950,0.5
+301,117,like,2,0.286,"2025-09-06 22:14:02",32,Marseille,medium,"Innovation Verte",279,0.27
+1726,363,share,1,0,"2025-05-04 22:14:02",52,Toulon,low,"Protection Animale",216,0.62
+482,372,comment,1,0.111,"2024-11-01 21:14:02",32,Dijon,high,"Recyclage & Zéro Déchet",523,0.84
+1732,229,join,1,0,"2025-05-09 22:14:02",32,Villeurbanne,low,"Énergies Renouvelables",217,0.82
+509,1,share,1,0.286,"2024-11-08 21:14:02",25,Toulouse,low,"Protection Animale",482,0.91
+1434,107,like,1,0,"2025-03-21 21:14:02",34,Marseille,low,"Biodiversité & Nature",211,0.69
+1909,386,post,1,0.111,"2025-04-25 22:14:02",40,Reims,low,"Recyclage & Zéro Déchet",878,0.33
+1200,286,like,1,0,"2025-04-12 22:14:02",19,Paris,low,"Innovation Verte",130,0.22
+1856,385,share,1,0.286,"2025-03-08 21:14:02",44,Paris,high,"Innovation Verte",19,0.8
+458,399,post,1,0.222,"2025-01-24 21:14:02",30,Nîmes,high,"Protection Animale",276,0.29
+1414,129,comment,1,0.167,"2025-01-31 21:14:02",48,Dijon,low,"Éducation Environnementale",298,0.2
+1738,448,comment,1,0.111,"2025-01-05 21:14:02",36,Lyon,low,"Urbanisme Durable",504,0.81
+941,357,like,1,0,"2024-11-08 21:14:02",29,Angers,medium,"Énergies Renouvelables",515,0.55
+710,328,share,1,0.125,"2024-12-02 21:14:02",52,Grenoble,high,"Agriculture Écologique",709,0.83
+1830,376,post,1,0,"2025-03-05 21:14:02",41,Toulon,high,"Économie Circulaire",972,0.83
+529,478,like,1,0.111,"2025-05-02 22:14:02",36,Paris,high,"Consommation Responsable",417,0.41
+1503,314,join,2,0.25,"2025-03-08 21:14:02",19,Lyon,low,"Consommation Responsable",753,0.4
+337,457,share,1,0,"2025-05-17 22:14:02",33,Nantes,medium,"Consommation Responsable",930,0.33
+1165,145,post,1,0.125,"2024-11-27 21:14:02",28,"Le Havre",low,"Éducation Environnementale",245,0.38
+158,79,join,1,0.1,"2025-02-18 21:14:02",63,Saint-Étienne,low,"Consommation Responsable",632,0.49
+659,12,post,1,0,"2024-11-09 21:14:02",57,Villeurbanne,low,"Énergies Renouvelables",585,0.76
+1191,438,join,1,0.143,"2025-05-13 22:14:02",38,Saint-Étienne,high,"Transport Durable",253,0.66
+1554,394,share,1,0.2,"2025-03-18 21:14:02",54,Toulon,medium,"Urbanisme Durable",590,0.28
+742,199,join,2,0.333,"2025-09-20 22:14:02",57,Paris,low,"Agriculture Écologique",567,0.69
+1452,487,like,1,0.1,"2025-08-25 22:14:02",27,Rennes,low,"Climat & Environnement",965,0.51
+799,496,like,1,0.111,"2025-02-27 21:14:02",65,Toulouse,low,"Climat & Environnement",737,0.14
+781,352,post,1,0,"2024-12-24 21:14:02",63,Nantes,medium,"Énergies Renouvelables",79,0.79
+1270,448,share,1,0.125,"2025-04-18 22:14:02",21,Paris,medium,"Urbanisme Durable",504,0.81
+1446,263,like,1,0.125,"2024-10-27 21:14:02",28,"Le Havre",medium,"Urbanisme Durable",81,0.48
+1882,265,comment,1,0,"2025-09-04 22:14:02",64,Bordeaux,low,"Transport Durable",374,0.71
+31,29,comment,1,0,"2025-01-24 21:14:02",22,Villeurbanne,medium,"Énergies Renouvelables",123,0.45
+14,480,comment,1,0,"2025-04-07 22:14:02",28,Grenoble,medium,"Éducation Environnementale",835,0.13
+654,364,post,1,0.1,"2025-06-06 22:14:02",27,Strasbourg,high,"Protection Animale",801,0.82
+1641,354,like,1,0.125,"2024-11-30 21:14:02",30,Lille,medium,"Climat & Environnement",631,0.29
+366,373,post,1,0.143,"2025-08-18 22:14:02",59,Rennes,low,"Protection Animale",131,0.66
+411,37,like,1,0.167,"2025-03-28 21:14:02",30,Lille,medium,"Éducation Environnementale",659,0.63
+1373,87,like,1,0.111,"2025-06-26 22:14:02",53,Toulouse,low,"Agriculture Écologique",625,0.53
+1565,82,comment,1,0,"2025-08-10 22:14:02",62,Toulouse,low,"Économie Circulaire",798,0.39
+1852,93,like,1,0.143,"2025-07-28 22:14:02",40,Lyon,high,"Agriculture Écologique",332,0.54
+923,173,post,2,0.222,"2025-03-03 21:14:02",58,Dijon,low,"Recyclage & Zéro Déchet",862,0.8
+1886,221,join,1,0.2,"2025-04-02 22:14:02",36,"Le Havre",high,"Transport Durable",134,0.32
+1150,417,post,1,0.125,"2025-06-03 22:14:02",34,Lyon,medium,"Biodiversité & Nature",78,0.6
+316,256,post,1,0.1,"2024-10-23 22:14:02",59,Nantes,high,"Économie Circulaire",296,0.57
+1844,461,share,2,0.375,"2025-04-25 22:14:02",55,Lyon,medium,"Économie Circulaire",47,0.73
+1346,324,join,1,0.111,"2025-05-19 22:14:02",49,Lyon,medium,"Consommation Responsable",335,0.25
+412,13,share,1,0,"2025-10-05 22:14:02",51,Saint-Étienne,medium,"Consommation Responsable",35,0.33
+488,437,like,1,0,"2024-11-17 21:14:02",65,Reims,medium,"Transport Durable",450,0.86
+646,30,like,1,0.111,"2024-12-16 21:14:02",57,Marseille,medium,"Protection Animale",603,1
+1662,63,share,1,0.111,"2024-10-30 21:14:02",61,Saint-Étienne,low,"Climat & Environnement",920,0.29
+436,95,join,1,0.125,"2025-07-23 22:14:02",44,Bordeaux,low,"Consommation Responsable",101,0.34
+1188,35,join,1,0,"2025-09-24 22:14:02",43,Grenoble,high,"Protection Animale",708,0.84
+140,336,like,2,0.2,"2025-09-24 22:14:02",55,Grenoble,low,"Recyclage & Zéro Déchet",451,0.64
+1109,442,like,1,0.2,"2024-12-31 21:14:02",37,Grenoble,high,"Urbanisme Durable",321,0.24
+1255,429,share,1,0.125,"2025-06-03 22:14:02",65,Marseille,high,"Innovation Verte",664,0.4
+1105,209,like,1,0,"2025-10-05 22:14:02",60,Rennes,high,"Énergies Renouvelables",886,0.85
+481,199,join,1,0,"2025-03-12 21:14:02",43,Paris,high,"Agriculture Écologique",567,0.69
+523,478,comment,2,0.5,"2025-02-14 21:14:02",46,Nantes,medium,"Consommation Responsable",417,0.41
+1907,402,join,1,0,"2024-11-14 21:14:02",19,Lyon,low,"Transport Durable",261,0.29
+1359,422,like,1,0.143,"2025-05-29 22:14:02",65,Toulon,low,"Énergies Renouvelables",983,0.12
+1178,133,post,1,0,"2025-07-01 22:14:02",65,Angers,medium,"Éducation Environnementale",823,0.4
+159,79,share,1,0.25,"2025-01-31 21:14:02",41,Rennes,high,"Consommation Responsable",632,0.49
+408,45,share,1,0,"2025-01-21 21:14:02",23,Reims,medium,"Recyclage & Zéro Déchet",36,0.33
+841,102,join,1,0.125,"2025-05-22 22:14:02",65,Strasbourg,medium,"Urbanisme Durable",15,0.34
+1109,170,comment,1,0,"2025-09-03 22:14:02",37,Grenoble,high,"Économie Circulaire",364,0.88
+99,13,share,1,0.1,"2025-10-03 22:14:02",24,Nice,high,"Consommation Responsable",35,0.33
+4,22,share,2,0.25,"2025-07-15 22:14:02",28,Saint-Étienne,high,"Éducation Environnementale",333,0.36
+1942,76,like,1,0.1,"2025-10-10 22:14:02",63,Lille,high,"Consommation Responsable",869,0.93
+1236,141,like,1,0,"2024-11-06 21:14:02",41,Grenoble,high,"Recyclage & Zéro Déchet",673,0.29
+340,363,post,1,0.125,"2025-08-06 22:14:02",59,Saint-Étienne,medium,"Protection Animale",216,0.62
+592,418,share,1,0,"2025-02-22 21:14:02",53,Villeurbanne,medium,"Éducation Environnementale",292,0.61
+56,127,share,1,0,"2025-01-26 21:14:02",24,Toulouse,low,"Transport Durable",227,0.95
+1392,348,comment,1,0,"2024-11-24 21:14:02",62,Toulon,medium,"Énergies Renouvelables",570,0.1
+538,102,join,1,0.143,"2025-08-14 22:14:02",32,Strasbourg,medium,"Urbanisme Durable",15,0.34
+1474,18,comment,1,0.286,"2025-03-19 21:14:02",38,Lyon,high,"Innovation Verte",921,0.53
+1458,333,join,1,0.111,"2025-03-01 21:14:02",62,Angers,high,"Innovation Verte",54,0.69
+463,29,comment,1,0.1,"2025-04-28 22:14:02",41,Rennes,low,"Énergies Renouvelables",123,0.45
+151,420,join,1,0,"2024-10-23 22:14:02",27,Bordeaux,high,"Recyclage & Zéro Déchet",425,0.87
+111,147,like,1,0.167,"2025-03-11 21:14:02",28,Nice,low,"Innovation Verte",803,1
+193,302,post,1,0.143,"2024-12-17 21:14:02",30,Angers,high,"Éducation Environnementale",851,0.1
+1560,352,join,1,0,"2025-06-15 22:14:02",42,Strasbourg,medium,"Énergies Renouvelables",79,0.79
+1462,369,join,1,0.25,"2025-08-24 22:14:02",32,Reims,medium,"Protection Animale",522,0.96
+1779,368,share,1,0,"2025-03-12 21:14:02",43,Nantes,low,"Énergies Renouvelables",916,0.95
+724,1,like,1,0,"2025-07-14 22:14:02",27,Rennes,high,"Protection Animale",482,0.91
+1047,276,comment,1,0.125,"2025-04-19 22:14:02",26,Villeurbanne,low,"Agriculture Écologique",144,0.23
+1310,227,post,1,0.143,"2025-01-29 21:14:02",22,Angers,high,"Recyclage & Zéro Déchet",174,0.94
+610,341,share,1,0,"2025-05-01 22:14:02",48,Reims,medium,"Biodiversité & Nature",455,0.36
+1927,489,share,1,0,"2025-06-09 22:14:02",58,Toulouse,low,"Innovation Verte",275,0.68
+1021,25,share,1,0,"2025-05-03 22:14:02",60,Toulon,high,"Agriculture Écologique",126,0.73
+1175,293,post,1,0,"2025-05-30 22:14:02",19,Lille,high,"Transport Durable",558,0.89
+681,278,like,1,0,"2025-07-13 22:14:02",40,Villeurbanne,low,"Innovation Verte",858,0.27
+1343,447,like,1,0.143,"2025-02-09 21:14:02",60,Grenoble,medium,"Climat & Environnement",967,0.27
+62,343,post,1,0,"2025-03-24 21:14:02",54,Villeurbanne,high,"Climat & Environnement",807,0.49
+1538,251,post,1,0.167,"2025-03-06 21:14:02",43,Grenoble,medium,"Urbanisme Durable",415,1
+837,369,join,1,0,"2025-09-24 22:14:02",56,Toulouse,medium,"Protection Animale",522,0.96
+1425,40,post,1,0.1,"2025-04-22 22:14:02",37,Bordeaux,medium,"Consommation Responsable",562,0.34
+132,400,comment,1,0,"2025-07-05 22:14:02",55,Lille,high,"Transport Durable",741,0.61
+1346,75,comment,1,0.25,"2025-07-25 22:14:02",49,Lyon,medium,"Protection Animale",360,0.88
+357,237,post,1,0,"2024-11-10 21:14:02",19,Nantes,medium,"Énergies Renouvelables",331,0.44
+570,130,like,1,0.125,"2024-12-24 21:14:02",43,Bordeaux,high,"Agriculture Écologique",156,0.35
+1398,131,like,1,0,"2024-12-08 21:14:02",36,Nantes,high,"Économie Circulaire",106,0.69
+1297,497,comment,1,0,"2024-12-14 21:14:02",21,Marseille,low,"Transport Durable",357,0.59
+466,246,share,1,0,"2025-07-10 22:14:02",26,Nîmes,low,"Recyclage & Zéro Déchet",775,0.36
+808,210,comment,1,0,"2025-08-26 22:14:02",53,Reims,high,"Innovation Verte",672,0.49
+1750,234,like,1,0,"2025-08-01 22:14:02",25,Strasbourg,high,"Énergies Renouvelables",374,0.41
+578,489,share,1,0.125,"2024-12-19 21:14:02",20,Rennes,low,"Innovation Verte",275,0.68
+482,1,like,1,0,"2025-05-04 22:14:02",32,Dijon,high,"Protection Animale",482,0.91
+937,370,like,1,0,"2025-08-14 22:14:02",64,Bordeaux,high,"Biodiversité & Nature",512,0.19
+779,91,post,1,0.143,"2025-07-18 22:14:02",24,Villeurbanne,high,"Économie Circulaire",411,0.94
+712,285,share,1,0.286,"2025-04-11 22:14:02",55,Angers,high,"Recyclage & Zéro Déchet",692,0.67
+1982,416,join,3,0.4,"2025-05-09 22:14:02",23,Villeurbanne,low,"Protection Animale",359,0.57
+955,277,share,1,0,"2024-11-08 21:14:02",46,Nîmes,medium,"Recyclage & Zéro Déchet",84,0.54
+150,197,join,1,0,"2025-09-27 22:14:02",54,Marseille,high,"Biodiversité & Nature",941,0.42
+940,386,comment,1,0.167,"2025-03-21 21:14:02",35,Reims,high,"Recyclage & Zéro Déchet",878,0.33
+614,471,join,1,0.222,"2025-02-21 21:14:02",50,Grenoble,high,"Urbanisme Durable",855,0.89
+1752,166,share,1,0,"2025-05-03 22:14:02",31,Lille,low,"Biodiversité & Nature",181,0.85
+1175,184,join,1,0.167,"2025-05-26 22:14:02",19,Lille,high,"Consommation Responsable",911,0.38
+1842,301,like,1,0.111,"2025-09-30 22:14:02",42,Lille,low,"Économie Circulaire",528,0.26
+1012,185,like,1,0,"2024-11-30 21:14:02",41,Toulon,high,"Climat & Environnement",722,0.65
+922,317,share,1,0,"2024-11-06 21:14:02",29,Toulouse,medium,"Énergies Renouvelables",874,0.43
+1029,280,join,1,0,"2024-11-10 21:14:02",40,Nice,high,"Recyclage & Zéro Déchet",177,0.45
+609,123,post,1,0,"2025-03-31 22:14:02",63,Grenoble,medium,"Protection Animale",137,0.87
+1799,449,comment,1,0,"2025-09-23 22:14:02",48,Reims,medium,"Consommation Responsable",803,0.57
+77,313,comment,1,0.125,"2024-11-28 21:14:02",36,Grenoble,medium,"Urbanisme Durable",973,0.46
+1963,370,share,1,0,"2024-12-02 21:14:02",32,Villeurbanne,medium,"Biodiversité & Nature",512,0.19
+1261,119,join,1,0.25,"2025-05-13 22:14:02",19,Villeurbanne,low,"Éducation Environnementale",223,0.35
+1806,152,join,1,0,"2025-05-08 22:14:02",21,Lille,low,"Biodiversité & Nature",382,0.65
+127,357,comment,1,0,"2024-11-25 21:14:02",51,Bordeaux,medium,"Énergies Renouvelables",515,0.55
+1994,245,comment,1,0.125,"2025-03-12 21:14:02",56,Grenoble,medium,"Consommation Responsable",716,0.53
+1437,423,join,1,0.167,"2025-03-04 21:14:02",50,Nîmes,high,"Consommation Responsable",671,0.92
+505,297,join,1,0,"2024-12-24 21:14:02",61,Marseille,medium,"Protection Animale",743,0.72
+1541,430,share,1,0,"2025-02-16 21:14:02",37,Lille,low,"Recyclage & Zéro Déchet",89,0.32
+1855,308,post,1,0.125,"2025-05-19 22:14:02",46,Bordeaux,medium,"Innovation Verte",428,0.67
+314,364,like,1,0.143,"2025-03-22 21:14:02",41,Montpellier,high,"Protection Animale",801,0.82
+153,108,post,1,0,"2024-10-21 22:14:02",65,Dijon,low,"Urbanisme Durable",921,0.34
+833,442,share,1,0.125,"2025-01-06 21:14:02",30,Saint-Étienne,high,"Urbanisme Durable",321,0.24
+29,276,join,1,0.125,"2025-02-03 21:14:02",63,Nîmes,medium,"Agriculture Écologique",144,0.23
+1881,115,comment,1,0,"2025-01-17 21:14:02",63,Grenoble,low,"Énergies Renouvelables",962,0.84
+1053,496,share,1,0,"2025-06-21 22:14:02",33,Toulouse,high,"Climat & Environnement",737,0.14
+695,254,comment,1,0,"2025-03-25 21:14:02",35,Lille,high,"Transport Durable",814,0.86
+460,442,comment,1,0,"2025-01-24 21:14:02",30,Montpellier,low,"Urbanisme Durable",321,0.24
+193,340,join,1,0.143,"2025-03-05 21:14:02",30,Angers,high,"Agriculture Écologique",180,0.8
+1812,325,join,1,0,"2025-05-29 22:14:02",40,Angers,low,"Recyclage & Zéro Déchet",257,0.66
+461,467,share,1,0,"2024-12-23 21:14:02",32,Dijon,low,"Urbanisme Durable",504,0.81
+879,97,post,1,0,"2025-10-11 22:14:02",55,Reims,low,"Climat & Environnement",28,0.99
+1231,414,like,1,0.1,"2025-08-09 22:14:02",40,Nantes,medium,"Protection Animale",471,0.89
+1772,233,comment,1,0.167,"2025-01-14 21:14:02",30,Toulouse,low,"Consommation Responsable",559,0.18
+894,67,join,1,0.1,"2025-08-22 22:14:02",26,Grenoble,low,"Protection Animale",19,0.57
+1448,9,post,1,0,"2025-07-16 22:14:02",38,Bordeaux,medium,"Biodiversité & Nature",554,0.67
+135,442,comment,1,0.1,"2024-10-19 22:14:02",53,Paris,high,"Urbanisme Durable",321,0.24
+1165,487,join,1,0.125,"2025-06-16 22:14:02",28,"Le Havre",low,"Climat & Environnement",965,0.51
+599,15,like,1,0.111,"2025-05-02 22:14:02",22,Toulouse,high,"Protection Animale",441,0.95
+1491,332,post,1,0.167,"2024-11-28 21:14:02",27,Lyon,medium,"Éducation Environnementale",641,0.47
+564,411,like,1,0.143,"2025-04-27 22:14:02",35,Villeurbanne,low,"Innovation Verte",307,0.57
+13,208,comment,1,0.125,"2025-07-31 22:14:02",22,Rennes,low,"Consommation Responsable",195,0.7
+1909,436,comment,1,0,"2024-10-16 22:14:02",40,Reims,low,"Protection Animale",691,0.25
+1557,317,like,1,0,"2024-12-12 21:14:02",31,Grenoble,low,"Énergies Renouvelables",874,0.43
+924,241,comment,1,0,"2025-08-27 22:14:02",47,Saint-Étienne,medium,"Climat & Environnement",357,0.2
+246,270,post,1,0.167,"2025-06-28 22:14:02",47,Toulon,low,"Économie Circulaire",58,0.34
+1753,378,comment,2,0.4,"2024-12-15 21:14:02",36,Angers,low,"Recyclage & Zéro Déchet",241,0.97
+971,245,share,1,0.167,"2025-06-20 22:14:02",46,Nantes,medium,"Consommation Responsable",716,0.53
+1895,403,join,1,0,"2025-08-31 22:14:02",40,Lyon,medium,"Climat & Environnement",639,0.93
+1117,219,join,2,0.2,"2025-04-21 22:14:02",24,Toulon,medium,"Climat & Environnement",762,0.59
+1992,173,share,1,0.143,"2025-03-24 21:14:02",35,Toulouse,medium,"Recyclage & Zéro Déchet",862,0.8
+1142,28,share,1,0.125,"2025-05-27 22:14:02",54,Lyon,low,"Agriculture Écologique",249,0.84
+1644,499,like,2,0.222,"2024-11-18 21:14:02",37,Dijon,medium,"Consommation Responsable",830,0.31
+385,223,like,1,0,"2025-03-05 21:14:02",58,Dijon,medium,"Protection Animale",92,0.15
+128,257,comment,1,0,"2025-03-31 22:14:02",65,Saint-Étienne,high,"Transport Durable",555,0.54
+1187,416,share,1,0.143,"2024-10-24 22:14:02",61,Saint-Étienne,high,"Protection Animale",359,0.57
+493,487,like,3,0.6,"2024-12-17 21:14:02",26,Grenoble,medium,"Climat & Environnement",965,0.51
+1528,349,like,1,0.1,"2025-02-04 21:14:02",64,Bordeaux,medium,"Consommation Responsable",564,0.98
+1620,451,join,1,0,"2025-05-02 22:14:02",46,Dijon,low,"Énergies Renouvelables",990,0.45
+344,65,share,1,0,"2025-06-26 22:14:02",26,"Le Havre",medium,"Économie Circulaire",458,0.16
+751,325,share,1,0,"2025-09-03 22:14:02",27,"Le Havre",low,"Recyclage & Zéro Déchet",257,0.66
+468,126,post,1,0.111,"2025-01-06 21:14:02",46,Marseille,high,"Protection Animale",379,0.25
+1833,224,join,1,0.125,"2025-08-14 22:14:02",21,"Le Havre",low,"Recyclage & Zéro Déchet",289,0.77
+601,493,comment,2,0.222,"2025-02-27 21:14:02",25,Lille,medium,"Éducation Environnementale",714,0.8
+1723,315,comment,1,0.111,"2025-04-17 22:14:02",60,Marseille,medium,"Biodiversité & Nature",527,0.48
+502,457,like,1,0.167,"2024-12-30 21:14:02",34,Grenoble,low,"Consommation Responsable",930,0.33
+191,476,like,1,0,"2025-02-25 21:14:02",35,Strasbourg,low,"Consommation Responsable",184,0.63
+1484,5,join,1,0.1,"2025-05-07 22:14:02",35,Lille,high,"Éducation Environnementale",117,0.36
+1351,396,post,1,0,"2025-06-03 22:14:02",62,Lille,high,"Transport Durable",217,0.76
+912,165,share,1,0,"2024-12-27 21:14:02",37,Marseille,low,"Énergies Renouvelables",204,0.63
+299,1,share,1,0.167,"2025-07-10 22:14:02",40,Toulouse,high,"Protection Animale",482,0.91
+277,254,comment,1,0.2,"2025-10-08 22:14:02",36,Grenoble,low,"Transport Durable",814,0.86
+714,328,like,1,0,"2025-05-13 22:14:02",43,Grenoble,medium,"Agriculture Écologique",709,0.83
+1651,212,like,1,0,"2025-03-11 21:14:02",29,Montpellier,medium,"Éducation Environnementale",254,0.95
+972,39,comment,1,0.111,"2025-04-12 22:14:02",58,Marseille,low,"Innovation Verte",482,0.88
+1043,375,like,1,0,"2025-03-18 21:14:02",57,Grenoble,low,"Énergies Renouvelables",49,0.35
+581,391,share,2,0.222,"2025-04-24 22:14:02",54,Rennes,medium,"Climat & Environnement",172,0.65
+1161,224,post,1,0.143,"2024-11-14 21:14:02",19,Nice,high,"Recyclage & Zéro Déchet",289,0.77
+1998,73,share,1,0.125,"2025-05-26 22:14:02",54,Nice,low,"Climat & Environnement",939,0.47
+965,118,like,2,0.25,"2024-12-09 21:14:02",39,Toulon,medium,"Agriculture Écologique",78,0.13
+1808,304,comment,2,0.2,"2025-02-25 21:14:02",60,Villeurbanne,medium,"Recyclage & Zéro Déchet",800,0.9
+1234,187,like,1,0,"2025-05-24 22:14:02",48,Grenoble,medium,"Consommation Responsable",80,0.89
+420,202,post,1,0,"2024-11-24 21:14:02",65,Villeurbanne,low,"Agriculture Écologique",271,0.15
+317,122,join,2,0.333,"2024-11-08 21:14:02",26,"Le Havre",low,"Urbanisme Durable",513,0.2
+666,484,comment,1,0.222,"2024-11-19 21:14:02",31,Grenoble,medium,"Consommation Responsable",54,0.29
+480,262,comment,1,0,"2025-06-18 22:14:02",64,Rennes,medium,"Biodiversité & Nature",151,0.19
+1391,99,join,1,0.1,"2025-09-16 22:14:02",54,Nice,low,"Urbanisme Durable",828,0.25
+165,327,post,1,0,"2025-03-10 21:14:02",44,Marseille,high,"Biodiversité & Nature",986,0.44
+1676,213,share,1,0.143,"2025-04-21 22:14:02",29,Nîmes,medium,"Économie Circulaire",847,0.5
+1184,473,post,1,0.222,"2024-10-15 22:14:02",50,"Le Havre",medium,"Recyclage & Zéro Déchet",516,0.21
+209,379,comment,1,0.167,"2025-08-19 22:14:02",61,Lille,medium,"Protection Animale",85,0.32
+7,125,comment,1,0.167,"2025-01-26 21:14:02",46,Lyon,low,"Urbanisme Durable",778,0.95
+1999,474,join,1,0,"2025-08-16 22:14:02",53,Nice,high,"Agriculture Écologique",586,0.63
+105,460,like,1,0,"2025-08-30 22:14:02",45,Toulon,medium,"Transport Durable",391,0.91
+1694,382,post,1,0.1,"2025-07-12 22:14:02",47,Bordeaux,medium,"Protection Animale",45,0.98
+1366,340,like,1,0,"2024-11-14 21:14:02",55,Villeurbanne,high,"Agriculture Écologique",180,0.8
+1237,53,post,1,0.125,"2024-10-16 22:14:02",50,Paris,low,"Consommation Responsable",10,0.26
+473,365,post,1,0,"2025-02-28 21:14:02",62,Lyon,low,"Recyclage & Zéro Déchet",349,0.21
+1193,406,post,1,0,"2025-01-16 21:14:02",56,Toulon,high,"Innovation Verte",981,1
+1653,264,share,2,0.2,"2024-11-03 21:14:02",65,Nîmes,high,"Recyclage & Zéro Déchet",86,0.31
+1386,250,share,2,0.4,"2025-06-07 22:14:02",21,"Le Havre",high,"Consommation Responsable",248,0.71
+1684,56,join,1,0.143,"2025-06-17 22:14:02",19,Bordeaux,high,"Consommation Responsable",432,0.69
+1309,23,share,1,0.125,"2024-12-11 21:14:02",28,Marseille,medium,"Consommation Responsable",503,0.21
+580,162,like,1,0,"2025-05-31 22:14:02",23,Nantes,medium,"Consommation Responsable",848,0.49
+1398,75,join,1,0.167,"2025-09-22 22:14:02",36,Nantes,high,"Protection Animale",360,0.88
+717,308,post,1,0,"2024-11-02 21:14:02",41,Marseille,high,"Innovation Verte",428,0.67
+297,249,comment,1,0.222,"2025-06-07 22:14:02",32,Nantes,high,"Innovation Verte",889,0.87
+119,312,like,1,0,"2025-02-07 21:14:02",56,Strasbourg,low,"Transport Durable",783,0.62
+1488,99,join,1,0,"2025-06-20 22:14:02",32,Dijon,high,"Urbanisme Durable",828,0.25
+382,182,comment,1,0,"2025-05-05 22:14:02",33,Lyon,high,"Innovation Verte",372,0.57
+360,439,like,1,0.125,"2024-11-23 21:14:02",26,Saint-Étienne,high,"Climat & Environnement",970,0.17
+1336,26,comment,1,0,"2024-11-11 21:14:02",26,Montpellier,high,"Biodiversité & Nature",230,0.99
+91,332,like,1,0,"2025-10-03 22:14:02",31,Reims,high,"Éducation Environnementale",641,0.47
+383,229,share,1,0.143,"2025-02-20 21:14:02",26,Marseille,low,"Énergies Renouvelables",217,0.82
+638,128,comment,1,0,"2025-02-01 21:14:02",19,Strasbourg,medium,"Transport Durable",985,0.79
+1897,177,comment,1,0.167,"2025-03-20 21:14:02",59,Angers,high,"Éducation Environnementale",689,0.48
+1566,305,join,1,0,"2025-06-13 22:14:02",60,Strasbourg,low,"Innovation Verte",485,0.56
+1815,497,post,1,0,"2025-01-07 21:14:02",38,Paris,medium,"Transport Durable",357,0.59
+1983,87,comment,1,0,"2024-10-15 22:14:02",48,Nantes,medium,"Agriculture Écologique",625,0.53
+742,294,share,1,0.143,"2025-05-27 22:14:02",57,Paris,low,"Consommation Responsable",711,0.51
+359,171,join,1,0.125,"2025-04-16 22:14:02",32,Saint-Étienne,low,"Recyclage & Zéro Déchet",868,0.19
+1594,38,share,1,0.25,"2025-04-06 22:14:02",38,Marseille,medium,"Protection Animale",475,0.68
+685,218,post,1,0,"2025-07-08 22:14:02",51,Grenoble,medium,"Énergies Renouvelables",59,0.39
+1232,86,share,1,0,"2025-09-07 22:14:02",63,Grenoble,low,"Agriculture Écologique",189,0.97
+412,30,post,1,0.125,"2024-10-20 22:14:02",51,Saint-Étienne,medium,"Protection Animale",603,1
+1326,366,join,1,0,"2025-06-20 22:14:02",30,Toulon,low,"Consommation Responsable",668,0.32
+122,68,join,1,0.167,"2025-08-10 22:14:02",48,Villeurbanne,high,"Urbanisme Durable",106,0.2
+902,365,comment,1,0,"2025-08-30 22:14:02",63,Nîmes,low,"Recyclage & Zéro Déchet",349,0.21
+317,310,post,1,0,"2025-08-21 22:14:02",26,"Le Havre",low,"Innovation Verte",696,0.28
+1332,356,like,1,0.1,"2025-09-29 22:14:02",54,Lyon,low,"Éducation Environnementale",117,0.13
+1385,216,like,1,0.1,"2025-07-21 22:14:02",51,Montpellier,medium,"Consommation Responsable",962,0.31
+1491,61,comment,1,0.167,"2025-09-25 22:14:02",27,Lyon,medium,"Protection Animale",160,0.68
+789,276,comment,1,0,"2025-03-07 21:14:02",22,Grenoble,low,"Agriculture Écologique",144,0.23
+504,91,comment,1,0,"2025-05-11 22:14:02",60,Toulon,low,"Économie Circulaire",411,0.94
+1231,446,join,1,0.222,"2025-05-06 22:14:02",40,Nantes,medium,"Éducation Environnementale",323,0.5
+1838,69,join,1,0,"2025-05-07 22:14:02",62,Paris,low,"Transport Durable",511,0.53
+223,366,join,2,0.2,"2025-09-16 22:14:02",56,Nantes,high,"Consommation Responsable",668,0.32
+1434,313,comment,1,0,"2024-12-29 21:14:02",34,Marseille,low,"Urbanisme Durable",973,0.46
+20,166,post,1,0,"2025-02-08 21:14:02",62,Lille,low,"Biodiversité & Nature",181,0.85
+37,82,join,2,0.25,"2025-01-13 21:14:02",39,Bordeaux,high,"Économie Circulaire",798,0.39
+1463,368,like,1,0,"2025-06-14 22:14:02",24,Bordeaux,low,"Énergies Renouvelables",916,0.95
+97,118,post,2,0.2,"2024-12-06 21:14:02",26,Lyon,medium,"Agriculture Écologique",78,0.13
+756,337,like,1,0,"2025-09-11 22:14:02",37,Dijon,low,"Transport Durable",685,0.32
+64,125,like,3,0.5,"2025-07-27 22:14:02",42,Nîmes,medium,"Urbanisme Durable",778,0.95
+369,27,post,1,0.143,"2025-06-20 22:14:02",59,Lille,low,"Recyclage & Zéro Déchet",300,0.92
+151,328,like,1,0.111,"2025-04-04 22:14:02",27,Bordeaux,high,"Agriculture Écologique",709,0.83
+1724,211,share,1,0.1,"2025-09-30 22:14:02",63,Nîmes,medium,"Consommation Responsable",681,0.22
+1036,247,post,1,0.143,"2025-09-30 22:14:02",22,Lille,high,"Consommation Responsable",128,0.58
+787,84,like,1,0.167,"2025-02-02 21:14:02",27,Saint-Étienne,high,"Innovation Verte",72,0.63
+1253,372,post,2,0.2,"2024-11-03 21:14:02",45,Grenoble,medium,"Recyclage & Zéro Déchet",523,0.84
+856,42,join,1,0,"2025-05-20 22:14:02",24,Nantes,medium,"Innovation Verte",355,0.1
+431,436,join,1,0.111,"2025-07-21 22:14:02",57,Bordeaux,low,"Protection Animale",691,0.25
+274,203,comment,1,0.333,"2025-03-26 21:14:02",30,Rennes,high,"Innovation Verte",44,0.75
+712,45,comment,1,0.125,"2025-05-11 22:14:02",55,Angers,high,"Recyclage & Zéro Déchet",36,0.33
+366,21,join,1,0.143,"2025-05-02 22:14:02",59,Rennes,low,"Recyclage & Zéro Déchet",878,0.18
+1079,424,post,1,0,"2025-07-12 22:14:02",37,Lille,high,"Consommation Responsable",823,0.27
+3,167,like,1,0.125,"2025-05-01 22:14:02",24,Rennes,medium,"Recyclage & Zéro Déchet",439,0.63
+1290,481,post,1,0.125,"2024-12-18 21:14:02",52,Lille,low,"Consommation Responsable",958,0.19
+1330,219,like,1,0.143,"2025-04-14 22:14:02",46,Toulouse,medium,"Climat & Environnement",762,0.59
+26,336,post,1,0.167,"2025-04-15 22:14:02",46,Nîmes,high,"Recyclage & Zéro Déchet",451,0.64
+1025,25,like,1,0.143,"2024-11-25 21:14:02",45,Nîmes,high,"Agriculture Écologique",126,0.73
+569,488,comment,1,0,"2024-11-27 21:14:02",45,Dijon,high,"Énergies Renouvelables",791,0.92
+523,329,join,1,0,"2024-10-14 22:14:02",46,Nantes,medium,"Transport Durable",660,0.37
+788,281,like,1,0,"2025-04-30 22:14:02",33,Lille,high,"Éducation Environnementale",210,0.12
+1623,114,like,1,0,"2025-02-14 21:14:02",35,Dijon,medium,"Urbanisme Durable",736,0.16
+414,273,like,1,0,"2025-06-20 22:14:02",36,"Le Havre",high,"Transport Durable",495,0.83
+313,80,comment,1,0.125,"2025-06-11 22:14:02",24,Toulon,high,"Innovation Verte",635,0.55
+1236,180,comment,1,0.2,"2024-10-24 22:14:02",41,Grenoble,high,"Éducation Environnementale",19,0.23
+1830,486,comment,1,0,"2025-07-27 22:14:02",41,Toulon,high,"Éducation Environnementale",185,0.92
+280,336,post,1,0,"2025-08-16 22:14:02",62,Lyon,medium,"Recyclage & Zéro Déchet",451,0.64
+5,310,comment,1,0,"2025-08-21 22:14:02",53,Strasbourg,medium,"Innovation Verte",696,0.28
+1611,110,post,1,0.125,"2024-12-26 21:14:02",40,Saint-Étienne,high,"Économie Circulaire",338,0.67
+126,178,share,1,0,"2025-04-24 22:14:02",51,Marseille,medium,"Climat & Environnement",307,0.37
+1357,394,comment,1,0.222,"2025-06-23 22:14:02",32,Nice,high,"Urbanisme Durable",590,0.28
+1430,358,like,2,0.2,"2025-01-28 21:14:02",29,Marseille,low,"Protection Animale",280,0.74
+1760,379,comment,1,0.167,"2024-10-18 22:14:02",37,"Le Havre",low,"Protection Animale",85,0.32
+860,315,share,1,0,"2025-08-08 22:14:02",31,Villeurbanne,low,"Biodiversité & Nature",527,0.48
+1915,439,join,1,0,"2025-08-19 22:14:02",31,Saint-Étienne,medium,"Climat & Environnement",970,0.17
+328,387,post,1,0,"2025-05-17 22:14:02",38,Lille,low,"Énergies Renouvelables",921,0.25
+1790,137,comment,1,0,"2024-11-19 21:14:02",52,Saint-Étienne,medium,"Économie Circulaire",434,0.7
+1320,426,share,1,0.143,"2025-05-14 22:14:02",60,Toulon,low,"Éducation Environnementale",390,0.24
+664,263,post,1,0.167,"2025-04-02 22:14:02",47,Toulouse,medium,"Urbanisme Durable",81,0.48
+12,436,join,1,0.125,"2025-08-07 22:14:02",49,Lyon,medium,"Protection Animale",691,0.25
+1732,282,join,1,0,"2024-11-19 21:14:02",32,Villeurbanne,low,"Biodiversité & Nature",789,0.33
+63,243,share,1,0.125,"2025-03-26 21:14:02",64,Marseille,low,"Éducation Environnementale",688,0.32
+1696,385,like,1,0.1,"2025-03-27 21:14:02",31,Villeurbanne,medium,"Innovation Verte",19,0.8
+1750,143,like,1,0,"2025-04-29 22:14:02",25,Strasbourg,high,"Protection Animale",971,0.6
+660,463,like,1,0.111,"2025-10-08 22:14:02",59,Dijon,low,"Urbanisme Durable",621,0.49
+5,120,join,1,0.1,"2024-12-21 21:14:02",53,Strasbourg,medium,"Biodiversité & Nature",525,0.49
+1201,114,join,1,0.125,"2025-03-06 21:14:02",35,Grenoble,medium,"Urbanisme Durable",736,0.16
+854,437,join,1,0,"2025-09-19 22:14:02",23,Toulouse,low,"Transport Durable",450,0.86
+1033,375,join,1,0.111,"2025-01-20 21:14:02",53,"Le Havre",high,"Énergies Renouvelables",49,0.35
+166,249,join,1,0,"2025-09-20 22:14:02",48,Montpellier,high,"Innovation Verte",889,0.87
+1956,79,join,1,0,"2025-07-13 22:14:02",25,Villeurbanne,high,"Consommation Responsable",632,0.49
+394,497,share,1,0,"2025-04-06 22:14:02",60,Lille,low,"Transport Durable",357,0.59
+1493,103,like,1,0,"2025-05-05 22:14:02",43,Marseille,high,"Énergies Renouvelables",333,0.4
+1778,185,comment,1,0,"2025-07-03 22:14:02",40,Toulon,medium,"Climat & Environnement",722,0.65
+1492,253,share,1,0,"2025-03-22 21:14:02",48,Nantes,high,"Protection Animale",40,0.16
+1400,183,join,1,0.111,"2025-05-02 22:14:02",21,Reims,high,"Recyclage & Zéro Déchet",385,0.47
+880,144,share,1,0.167,"2024-10-18 22:14:02",47,Nîmes,high,"Éducation Environnementale",700,0.12
+869,91,post,1,0.125,"2024-11-26 21:14:02",62,Villeurbanne,medium,"Économie Circulaire",411,0.94
+1438,306,post,2,0.2,"2025-01-21 21:14:02",32,Lyon,low,"Biodiversité & Nature",975,0.14
+16,293,join,1,0,"2025-07-11 22:14:02",31,"Le Havre",low,"Transport Durable",558,0.89
+1496,48,post,1,0,"2025-04-07 22:14:02",26,Grenoble,low,"Biodiversité & Nature",608,0.78
+329,317,post,1,0,"2025-07-04 22:14:02",29,Nantes,low,"Énergies Renouvelables",874,0.43
+201,455,join,1,0,"2025-03-31 22:14:02",38,Nantes,low,"Éducation Environnementale",977,0.43
+1942,78,like,1,0.1,"2025-08-18 22:14:02",63,Lille,high,"Consommation Responsable",544,0.3
+369,221,join,1,0.143,"2025-09-23 22:14:02",59,Lille,low,"Transport Durable",134,0.32
+174,38,share,1,0.333,"2025-09-27 22:14:02",23,Bordeaux,medium,"Protection Animale",475,0.68
+832,405,like,1,0.111,"2025-01-12 21:14:02",64,Saint-Étienne,medium,"Énergies Renouvelables",950,0.5
+738,16,like,1,0,"2025-02-15 21:14:02",32,Nantes,high,"Transport Durable",20,0.64
+1906,465,post,1,0,"2025-01-30 21:14:02",43,Nantes,low,"Innovation Verte",537,0.48
+1486,170,post,1,0,"2025-05-19 22:14:02",37,Nîmes,low,"Économie Circulaire",364,0.88
+1181,400,like,1,0,"2025-09-07 22:14:02",57,Nîmes,low,"Transport Durable",741,0.61
+85,94,like,1,0.111,"2025-01-18 21:14:02",23,Strasbourg,low,"Protection Animale",142,0.89
+188,243,comment,1,0.125,"2025-04-09 22:14:02",36,Lyon,medium,"Éducation Environnementale",688,0.32
+1998,187,comment,1,0.125,"2025-06-25 22:14:02",54,Nice,low,"Consommation Responsable",80,0.89
+1159,476,share,1,0.222,"2024-11-02 21:14:02",43,Saint-Étienne,low,"Consommation Responsable",184,0.63
+380,376,like,1,0,"2025-07-16 22:14:02",58,Villeurbanne,high,"Économie Circulaire",972,0.83
+1007,273,post,1,0,"2024-12-12 21:14:02",38,Nantes,low,"Transport Durable",495,0.83
+1546,89,like,1,0.1,"2025-04-26 22:14:02",18,Nice,high,"Urbanisme Durable",507,0.74
+1494,11,join,1,0,"2025-05-03 22:14:02",27,Saint-Étienne,medium,"Urbanisme Durable",439,0.25
+1804,259,post,2,0.2,"2024-11-16 21:14:02",33,Saint-Étienne,medium,"Innovation Verte",92,0.26
+93,453,post,1,0,"2025-03-14 21:14:02",42,Lille,medium,"Énergies Renouvelables",224,0.36
+1883,267,like,1,0,"2024-11-11 21:14:02",37,Toulon,high,"Agriculture Écologique",369,0.46
+1261,482,like,1,0,"2025-06-08 22:14:02",19,Villeurbanne,low,"Agriculture Écologique",762,0.11
+1423,102,comment,1,0.125,"2024-11-12 21:14:02",25,Bordeaux,medium,"Urbanisme Durable",15,0.34
+779,196,like,1,0,"2024-12-01 21:14:02",24,Villeurbanne,high,"Recyclage & Zéro Déchet",617,1
+564,492,like,1,0.143,"2025-01-01 21:14:02",35,Villeurbanne,low,"Énergies Renouvelables",754,0.47
+1748,402,share,1,0,"2025-08-24 22:14:02",46,Villeurbanne,low,"Transport Durable",261,0.29
+163,90,post,1,0,"2025-05-25 22:14:02",40,Toulon,high,"Consommation Responsable",930,0.7
+119,330,like,1,0,"2025-01-13 21:14:02",56,Strasbourg,low,"Transport Durable",287,0.28
+1900,45,like,1,0.5,"2025-07-30 22:14:02",35,Paris,high,"Recyclage & Zéro Déchet",36,0.33
+1700,342,comment,1,0.143,"2025-05-08 22:14:02",20,Lyon,medium,"Économie Circulaire",909,0.67
+76,98,post,1,0.143,"2025-09-11 22:14:02",39,Strasbourg,high,"Agriculture Écologique",650,0.83
+1835,365,join,1,0,"2025-09-30 22:14:02",31,Nantes,low,"Recyclage & Zéro Déchet",349,0.21
+1777,2,post,1,0.111,"2024-10-24 22:14:02",47,Lille,high,"Consommation Responsable",495,0.63
+1616,230,post,1,0,"2025-04-02 22:14:02",32,Nîmes,medium,"Énergies Renouvelables",730,0.46
+590,463,comment,1,0.167,"2025-01-27 21:14:02",65,Reims,low,"Urbanisme Durable",621,0.49
+1093,321,like,1,0,"2025-03-05 21:14:02",21,Toulouse,low,"Agriculture Écologique",720,0.3
+537,213,join,1,0.111,"2025-02-04 21:14:02",65,Nantes,high,"Économie Circulaire",847,0.5
+1888,414,like,2,0.222,"2025-08-20 22:14:02",58,Saint-Étienne,high,"Protection Animale",471,0.89
+1193,229,join,1,0,"2025-01-26 21:14:02",56,Toulon,high,"Énergies Renouvelables",217,0.82
+1573,174,join,1,0.1,"2025-02-25 21:14:02",40,Nice,medium,"Consommation Responsable",869,0.73
+374,47,post,1,0,"2025-07-02 22:14:02",46,Montpellier,low,"Climat & Environnement",654,0.62
+1244,2,join,1,0,"2024-10-26 22:14:02",65,Toulouse,high,"Consommation Responsable",495,0.63
+41,314,comment,1,0.111,"2025-05-08 22:14:02",55,Saint-Étienne,high,"Consommation Responsable",753,0.4
+905,94,join,1,0.143,"2025-09-21 22:14:02",56,Marseille,medium,"Protection Animale",142,0.89
+775,429,post,1,0.143,"2025-09-10 22:14:02",63,"Le Havre",low,"Innovation Verte",664,0.4
+1263,125,join,1,0.111,"2025-07-09 22:14:02",44,Nîmes,low,"Urbanisme Durable",778,0.95
+1165,386,comment,1,0,"2025-06-02 22:14:02",28,"Le Havre",low,"Recyclage & Zéro Déchet",878,0.33
+1902,380,post,1,0.111,"2024-11-15 21:14:02",26,"Le Havre",low,"Climat & Environnement",998,0.35
+1162,291,share,1,0,"2025-09-01 22:14:02",28,Nîmes,low,"Climat & Environnement",953,0.48
+431,372,comment,1,0.111,"2025-05-27 22:14:02",57,Bordeaux,low,"Recyclage & Zéro Déchet",523,0.84
+604,21,share,1,0,"2025-07-07 22:14:02",22,Nantes,low,"Recyclage & Zéro Déchet",878,0.18
+1055,200,post,1,0,"2025-02-04 21:14:02",64,Nantes,medium,"Biodiversité & Nature",563,0.81
+342,478,like,1,0.125,"2025-02-27 21:14:02",20,Bordeaux,low,"Consommation Responsable",417,0.41
+563,436,comment,1,0.143,"2024-12-02 21:14:02",50,Dijon,low,"Protection Animale",691,0.25
+296,428,post,1,0.143,"2025-07-11 22:14:02",20,Lyon,low,"Biodiversité & Nature",138,0.71
+456,254,share,1,0,"2025-08-12 22:14:02",29,Reims,medium,"Transport Durable",814,0.86
+1203,177,comment,1,0.1,"2025-03-30 22:14:02",51,Nice,low,"Éducation Environnementale",689,0.48
+1081,222,like,1,0.167,"2025-01-13 21:14:02",27,Nîmes,low,"Recyclage & Zéro Déchet",885,0.51
+614,286,comment,1,0,"2025-02-04 21:14:02",50,Grenoble,high,"Innovation Verte",130,0.22
+1595,160,comment,1,0,"2025-09-05 22:14:02",38,Strasbourg,medium,"Transport Durable",758,1
+1102,482,share,1,0,"2025-07-03 22:14:02",54,Paris,medium,"Agriculture Écologique",762,0.11
+312,331,comment,1,0,"2024-12-29 21:14:02",28,Lyon,low,"Biodiversité & Nature",357,0.27
+1663,168,join,1,0,"2025-04-22 22:14:02",62,Montpellier,medium,"Protection Animale",357,0.25
+936,100,post,1,0,"2025-01-06 21:14:02",33,Angers,medium,"Éducation Environnementale",875,0.55
+1727,182,comment,1,0,"2025-06-26 22:14:02",59,Nice,medium,"Innovation Verte",372,0.57
+1645,497,post,1,0,"2025-04-05 22:14:02",35,Strasbourg,low,"Transport Durable",357,0.59
+1216,311,comment,1,0.5,"2025-05-12 22:14:02",31,Angers,high,"Économie Circulaire",200,0.84
+1063,68,share,1,0,"2024-12-16 21:14:02",58,Bordeaux,low,"Urbanisme Durable",106,0.2
+945,103,like,1,0,"2025-07-07 22:14:02",57,Saint-Étienne,low,"Énergies Renouvelables",333,0.4
+1201,466,post,1,0,"2025-06-06 22:14:02",35,Grenoble,medium,"Protection Animale",261,0.37
+1787,142,join,1,0.111,"2025-06-27 22:14:02",47,Saint-Étienne,medium,"Protection Animale",237,0.61
+1296,475,like,1,0,"2025-04-16 22:14:02",22,Toulon,high,"Urbanisme Durable",438,0.61
+1762,191,like,1,0.111,"2025-04-24 22:14:02",58,Nantes,high,"Agriculture Écologique",137,0.73
+1397,139,share,1,0.333,"2024-12-25 21:14:02",65,Toulon,medium,"Économie Circulaire",243,0.48
+1787,170,share,1,0,"2024-12-01 21:14:02",47,Saint-Étienne,medium,"Économie Circulaire",364,0.88
+359,138,join,1,0.286,"2025-01-29 21:14:02",32,Saint-Étienne,low,"Urbanisme Durable",94,0.72
+1457,97,share,1,0.1,"2024-11-21 21:14:02",38,Montpellier,medium,"Climat & Environnement",28,0.99
+1290,476,post,1,0.286,"2025-07-13 22:14:02",52,Lille,low,"Consommation Responsable",184,0.63
+518,283,comment,1,0.125,"2025-01-19 21:14:02",24,Lille,medium,"Recyclage & Zéro Déchet",947,0.31
+187,232,like,1,0.143,"2025-07-28 22:14:02",18,Lyon,medium,"Économie Circulaire",403,0.83
+663,131,like,1,0,"2024-11-30 21:14:02",60,Montpellier,high,"Économie Circulaire",106,0.69
+1870,307,comment,1,0.111,"2024-11-06 21:14:02",54,Angers,low,"Agriculture Écologique",482,0.37
+657,432,like,1,0.1,"2025-01-14 21:14:02",31,Nice,high,"Énergies Renouvelables",238,0.98
+961,76,comment,1,0,"2025-10-12 22:14:02",55,Toulouse,medium,"Consommation Responsable",869,0.93
+1470,332,share,1,0.143,"2025-03-01 21:14:02",52,Bordeaux,medium,"Éducation Environnementale",641,0.47
+1149,295,join,1,0.1,"2025-02-28 21:14:02",39,Paris,low,"Urbanisme Durable",755,0.49
+837,44,comment,1,0.25,"2024-11-25 21:14:02",56,Toulouse,medium,"Éducation Environnementale",405,0.42
+343,77,comment,1,0.111,"2025-02-23 21:14:02",61,Villeurbanne,medium,"Innovation Verte",708,0.38
+1678,404,share,1,0.1,"2025-06-18 22:14:02",62,Nice,medium,"Protection Animale",549,0.35
+1331,98,join,1,0.167,"2025-03-05 21:14:02",19,"Le Havre",high,"Agriculture Écologique",650,0.83
+718,496,post,1,0.1,"2025-06-15 22:14:02",36,Grenoble,low,"Climat & Environnement",737,0.14
+1655,347,comment,1,0.25,"2025-04-25 22:14:02",49,Toulouse,low,"Économie Circulaire",582,0.27
+561,131,comment,1,0,"2025-07-25 22:14:02",54,Nîmes,high,"Économie Circulaire",106,0.69
+1470,190,comment,1,0,"2025-06-29 22:14:02",52,Bordeaux,medium,"Protection Animale",808,0.54
+1042,124,post,1,0,"2025-04-23 22:14:02",46,Dijon,low,"Recyclage & Zéro Déchet",832,0.59
+1069,291,join,1,0.4,"2025-06-15 22:14:02",59,Nantes,medium,"Climat & Environnement",953,0.48
+1082,5,join,1,0.1,"2024-11-12 21:14:02",28,Nîmes,low,"Éducation Environnementale",117,0.36
+903,487,join,1,0,"2025-01-08 21:14:02",53,Nîmes,medium,"Climat & Environnement",965,0.51
+440,157,like,1,0,"2025-01-11 21:14:02",29,Bordeaux,medium,"Énergies Renouvelables",347,0.85
+1243,11,post,1,0,"2025-07-29 22:14:02",38,Paris,medium,"Urbanisme Durable",439,0.25
+1002,354,like,1,0,"2024-12-12 21:14:02",33,Lyon,low,"Climat & Environnement",631,0.29
+1586,214,post,1,0,"2024-12-20 21:14:02",32,Nice,medium,"Économie Circulaire",146,0.66
+1374,350,join,1,0.1,"2025-10-07 22:14:02",47,Bordeaux,high,"Urbanisme Durable",406,0.23
+975,390,share,1,0.143,"2025-05-25 22:14:02",27,Villeurbanne,high,"Protection Animale",913,0.14
+1213,3,comment,1,0,"2025-02-24 21:14:02",28,Montpellier,low,"Biodiversité & Nature",582,0.32
+1332,87,post,1,0.1,"2025-08-13 22:14:02",54,Lyon,low,"Agriculture Écologique",625,0.53
+1287,451,comment,1,0,"2025-06-11 22:14:02",52,Toulouse,high,"Énergies Renouvelables",990,0.45
+1297,292,like,1,0,"2025-07-17 22:14:02",21,Marseille,low,"Économie Circulaire",725,0.35
+65,463,post,1,0,"2025-10-09 22:14:02",54,Saint-Étienne,low,"Urbanisme Durable",621,0.49
+1111,281,share,1,0,"2025-06-21 22:14:02",29,Lyon,high,"Éducation Environnementale",210,0.12
+303,497,like,1,0,"2025-02-06 21:14:02",46,Saint-Étienne,high,"Transport Durable",357,0.59
+41,275,comment,1,0,"2025-01-17 21:14:02",55,Saint-Étienne,high,"Recyclage & Zéro Déchet",921,0.95
+34,176,share,1,0.167,"2024-11-01 21:14:02",35,"Le Havre",medium,"Innovation Verte",355,0.85
+1636,235,share,1,0.222,"2025-09-19 22:14:02",61,"Le Havre",medium,"Consommation Responsable",274,0.28
+1074,157,like,1,0,"2025-08-18 22:14:02",55,Dijon,medium,"Énergies Renouvelables",347,0.85
+388,340,like,1,0,"2024-11-03 21:14:02",35,Strasbourg,medium,"Agriculture Écologique",180,0.8
+1866,242,share,1,0.167,"2025-02-09 21:14:02",35,Rennes,medium,"Consommation Responsable",610,0.33
+1194,189,like,1,0,"2025-03-27 21:14:02",63,Villeurbanne,medium,"Agriculture Écologique",400,0.51
+51,190,post,1,0.25,"2025-05-27 22:14:02",33,Angers,medium,"Protection Animale",808,0.54
+1864,293,join,1,0,"2025-05-07 22:14:02",41,Lyon,medium,"Transport Durable",558,0.89
+776,266,share,1,0,"2024-11-09 21:14:02",53,Saint-Étienne,high,"Transport Durable",471,0.47
+405,145,post,1,0.1,"2025-01-11 21:14:02",29,Rennes,high,"Éducation Environnementale",245,0.38
+4,184,like,1,0.111,"2025-05-26 22:14:02",28,Saint-Étienne,high,"Consommation Responsable",911,0.38
+345,206,post,1,0.125,"2024-12-13 21:14:02",45,Toulon,medium,"Agriculture Écologique",125,0.89
+1307,171,share,1,0,"2025-04-12 22:14:02",34,Nîmes,high,"Recyclage & Zéro Déchet",868,0.19
+165,7,like,1,0.1,"2025-04-11 22:14:02",44,Marseille,high,"Économie Circulaire",555,0.48
+31,499,like,1,0,"2025-08-21 22:14:02",22,Villeurbanne,medium,"Consommation Responsable",830,0.31
+1864,416,join,1,0,"2025-09-28 22:14:02",41,Lyon,medium,"Protection Animale",359,0.57
+577,46,comment,1,0,"2025-09-18 22:14:02",39,"Le Havre",medium,"Climat & Environnement",876,0.42
+1382,174,post,1,0,"2025-09-01 22:14:02",30,Nice,high,"Consommation Responsable",869,0.73
+803,311,post,1,0,"2025-09-24 22:14:02",32,Montpellier,medium,"Économie Circulaire",200,0.84
+361,22,comment,1,0.125,"2025-07-28 22:14:02",27,Montpellier,medium,"Éducation Environnementale",333,0.36
+1899,242,post,1,0,"2024-11-17 21:14:02",41,Lille,medium,"Consommation Responsable",610,0.33
+622,213,join,1,0.167,"2025-06-02 22:14:02",31,Nice,low,"Économie Circulaire",847,0.5
+1217,195,share,1,0.111,"2025-01-04 21:14:02",55,Paris,low,"Innovation Verte",744,0.23
+1410,292,share,1,0.125,"2025-01-04 21:14:02",60,Rennes,high,"Économie Circulaire",725,0.35
+1119,277,comment,1,0,"2025-03-19 21:14:02",18,Toulon,low,"Recyclage & Zéro Déchet",84,0.54
+1003,6,share,1,0,"2025-04-29 22:14:02",21,Nice,medium,"Climat & Environnement",890,0.59
+1696,264,post,1,0.222,"2024-11-29 21:14:02",31,Villeurbanne,medium,"Recyclage & Zéro Déchet",86,0.31
+195,459,comment,1,0,"2025-02-05 21:14:02",33,Dijon,high,"Biodiversité & Nature",919,0.82
+1753,429,comment,1,0.167,"2024-12-01 21:14:02",36,Angers,low,"Innovation Verte",664,0.4
+718,455,post,2,0.222,"2025-07-19 22:14:02",36,Grenoble,low,"Éducation Environnementale",977,0.43
+1073,33,share,1,0.111,"2025-08-27 22:14:02",42,Saint-Étienne,medium,"Agriculture Écologique",165,0.7
+48,51,join,1,0.2,"2024-10-22 22:14:02",29,Bordeaux,high,"Protection Animale",524,0.43
+1146,110,join,2,0.2,"2025-03-15 21:14:02",40,Toulon,low,"Économie Circulaire",338,0.67
+98,411,join,1,0,"2025-05-09 22:14:02",60,Marseille,low,"Innovation Verte",307,0.57
+1679,206,join,1,0,"2025-01-01 21:14:02",27,Lille,medium,"Agriculture Écologique",125,0.89
+915,201,share,1,0,"2025-07-16 22:14:02",44,Nantes,low,"Transport Durable",418,0.48
+1462,7,comment,1,0,"2025-01-15 21:14:02",32,Reims,medium,"Économie Circulaire",555,0.48
+1790,194,share,1,0,"2025-01-31 21:14:02",52,Saint-Étienne,medium,"Climat & Environnement",691,0.11
+761,333,post,1,0.1,"2025-03-10 21:14:02",25,Rennes,medium,"Innovation Verte",54,0.69
+657,334,like,1,0,"2025-07-21 22:14:02",31,Nice,high,"Énergies Renouvelables",944,0.67
+482,3,like,1,0,"2025-07-31 22:14:02",32,Dijon,high,"Biodiversité & Nature",582,0.32
+1554,144,join,1,0,"2025-03-29 21:14:02",54,Toulon,medium,"Éducation Environnementale",700,0.12
+687,289,share,1,0.286,"2025-06-29 22:14:02",46,Nantes,low,"Économie Circulaire",63,0.45
+1286,324,join,1,0.1,"2024-12-25 21:14:02",36,Marseille,high,"Consommation Responsable",335,0.25
+508,323,like,1,0.2,"2025-10-04 22:14:02",53,Toulouse,high,"Climat & Environnement",879,0.61
+1507,83,share,1,0.111,"2024-12-24 21:14:02",49,Villeurbanne,high,"Climat & Environnement",860,0.27
+113,298,comment,1,0,"2025-09-17 22:14:02",61,Nantes,high,"Climat & Environnement",66,0.28
+663,164,share,1,0.1,"2025-03-26 21:14:02",60,Montpellier,high,"Consommation Responsable",611,0.73
+1561,222,comment,1,0.286,"2025-04-08 22:14:02",21,Nice,medium,"Recyclage & Zéro Déchet",885,0.51
+1982,195,like,1,0.167,"2025-02-18 21:14:02",23,Villeurbanne,low,"Innovation Verte",744,0.23
+1350,15,join,1,0,"2024-12-08 21:14:02",56,Lille,high,"Protection Animale",441,0.95
+1936,478,post,2,0.25,"2025-08-07 22:14:02",50,Dijon,low,"Consommation Responsable",417,0.41
+1690,54,post,1,0.143,"2025-09-27 22:14:02",48,Nîmes,low,"Climat & Environnement",267,0.55
+1211,277,like,1,0.125,"2025-05-19 22:14:02",29,Marseille,high,"Recyclage & Zéro Déchet",84,0.54
+1886,349,like,1,0.2,"2024-12-23 21:14:02",36,"Le Havre",high,"Consommation Responsable",564,0.98
+284,211,comment,1,0.125,"2025-01-24 21:14:02",21,Rennes,high,"Consommation Responsable",681,0.22
+1184,45,comment,1,0.1,"2025-09-28 22:14:02",50,"Le Havre",medium,"Recyclage & Zéro Déchet",36,0.33
+362,319,comment,1,0,"2025-05-30 22:14:02",43,Nantes,low,"Énergies Renouvelables",173,0.3
+73,24,join,1,0.143,"2025-03-13 21:14:02",45,"Le Havre",high,"Climat & Environnement",417,0.68
+1303,157,post,1,0,"2024-12-12 21:14:02",50,Villeurbanne,high,"Énergies Renouvelables",347,0.85
+1236,193,comment,2,0.2,"2025-09-20 22:14:02",41,Grenoble,high,"Climat & Environnement",914,0.45
+1146,309,share,1,0,"2025-05-10 22:14:02",40,Toulon,low,"Innovation Verte",630,0.42
+1747,353,join,1,0.111,"2025-01-27 21:14:02",62,Nantes,low,"Innovation Verte",617,0.91
+1373,79,join,1,0.111,"2025-07-31 22:14:02",53,Toulouse,low,"Consommation Responsable",632,0.49
+1208,346,join,1,0.111,"2025-07-20 22:14:02",43,Reims,medium,"Éducation Environnementale",337,0.43
+1690,149,share,1,0,"2025-01-01 21:14:02",48,Nîmes,low,"Protection Animale",593,0.77
+1117,132,post,1,0.2,"2025-09-16 22:14:02",24,Toulon,medium,"Urbanisme Durable",822,0.62
+1797,334,post,1,0,"2025-05-03 22:14:02",48,Lille,high,"Énergies Renouvelables",944,0.67
+1139,105,join,1,0.1,"2025-06-09 22:14:02",52,Angers,high,"Climat & Environnement",662,0.91
+1971,392,comment,1,0,"2025-04-20 22:14:02",33,Toulouse,high,"Énergies Renouvelables",199,0.1
+1283,118,comment,2,0.429,"2025-10-05 22:14:02",64,Dijon,low,"Agriculture Écologique",78,0.13
+574,376,post,1,0,"2025-02-08 21:14:02",57,Nantes,low,"Économie Circulaire",972,0.83
+693,62,join,1,0.125,"2025-01-04 21:14:02",46,Toulon,low,"Éducation Environnementale",954,0.75
+844,24,share,1,0.2,"2025-07-30 22:14:02",28,Nantes,high,"Climat & Environnement",417,0.68
+1879,449,join,1,0.167,"2025-02-01 21:14:02",61,Lille,low,"Consommation Responsable",803,0.57
+1823,43,comment,1,0.111,"2025-03-03 21:14:02",61,Lille,high,"Recyclage & Zéro Déchet",211,0.57
+816,445,comment,1,0,"2025-08-25 22:14:02",42,Dijon,high,"Énergies Renouvelables",593,0.52
+685,194,comment,1,0,"2025-03-27 21:14:02",51,Grenoble,medium,"Climat & Environnement",691,0.11
+828,186,comment,1,0.111,"2024-12-12 21:14:02",24,Marseille,medium,"Innovation Verte",309,0.8
+1961,84,post,1,0.333,"2024-12-07 21:14:02",40,Lyon,high,"Innovation Verte",72,0.63
+267,164,comment,2,0.2,"2025-07-27 22:14:02",58,Toulon,high,"Consommation Responsable",611,0.73
+256,432,share,1,0,"2025-03-14 21:14:02",53,Reims,high,"Énergies Renouvelables",238,0.98
+299,116,share,1,0.167,"2025-06-14 22:14:02",40,Toulouse,high,"Climat & Environnement",353,0.17
+1154,423,like,1,0,"2025-03-22 21:14:02",58,Paris,medium,"Consommation Responsable",671,0.92
+171,192,post,1,0.1,"2025-03-26 21:14:02",57,Toulouse,medium,"Énergies Renouvelables",889,0.94
+1198,53,share,1,0.375,"2024-12-26 21:14:02",27,Bordeaux,low,"Consommation Responsable",10,0.26
+707,276,like,1,0.111,"2025-10-05 22:14:02",31,"Le Havre",low,"Agriculture Écologique",144,0.23
+1766,3,comment,1,0,"2024-11-11 21:14:02",60,Lyon,low,"Biodiversité & Nature",582,0.32
+584,289,join,1,0.125,"2025-01-02 21:14:02",55,Lyon,medium,"Économie Circulaire",63,0.45
+344,108,like,1,0,"2025-07-22 22:14:02",26,"Le Havre",medium,"Urbanisme Durable",921,0.34
+259,210,join,1,0,"2025-03-20 21:14:02",44,Angers,high,"Innovation Verte",672,0.49
+1678,274,join,1,0,"2025-03-10 21:14:02",62,Nice,medium,"Consommation Responsable",196,0.34
+995,260,join,1,0,"2025-03-31 22:14:02",57,Saint-Étienne,low,"Transport Durable",701,0.55
+661,328,comment,2,0.286,"2025-01-25 21:14:02",22,Montpellier,medium,"Agriculture Écologique",709,0.83
+84,336,share,1,0,"2025-05-26 22:14:02",28,Rennes,high,"Recyclage & Zéro Déchet",451,0.64
+30,485,share,1,0.143,"2025-06-24 22:14:02",49,Rennes,high,"Éducation Environnementale",669,0.92
+1611,192,comment,1,0.125,"2025-09-29 22:14:02",40,Saint-Étienne,high,"Énergies Renouvelables",889,0.94
+204,186,post,1,0.1,"2025-03-02 21:14:02",24,Toulon,low,"Innovation Verte",309,0.8
+826,354,join,1,0,"2024-12-09 21:14:02",19,Lyon,high,"Climat & Environnement",631,0.29
+1351,21,like,1,0.143,"2025-06-26 22:14:02",62,Lille,high,"Recyclage & Zéro Déchet",878,0.18
+1363,462,join,1,0,"2025-03-22 21:14:02",23,Dijon,medium,"Économie Circulaire",379,0.81
+1913,191,like,1,0.111,"2025-02-04 21:14:02",44,Saint-Étienne,low,"Agriculture Écologique",137,0.73
+740,366,join,1,0.111,"2025-06-28 22:14:02",31,Nice,low,"Consommation Responsable",668,0.32
+1020,263,join,1,0.286,"2024-12-11 21:14:02",32,Reims,medium,"Urbanisme Durable",81,0.48
+918,484,comment,1,0,"2024-12-31 21:14:02",47,Toulon,medium,"Consommation Responsable",54,0.29
+988,96,join,1,0,"2025-04-17 22:14:02",64,Marseille,low,"Protection Animale",784,0.82
+655,464,like,1,0,"2025-05-14 22:14:02",38,Montpellier,low,"Recyclage & Zéro Déchet",261,0.54
+1128,366,share,1,0,"2025-10-01 22:14:02",61,Montpellier,high,"Consommation Responsable",668,0.32
+417,190,share,1,0,"2025-04-24 22:14:02",28,Reims,medium,"Protection Animale",808,0.54
+1299,411,share,1,0.111,"2025-01-29 21:14:02",26,Strasbourg,high,"Innovation Verte",307,0.57
+586,340,post,2,0.4,"2025-05-09 22:14:02",61,Nice,high,"Agriculture Écologique",180,0.8
+1128,257,join,1,0,"2024-12-20 21:14:02",61,Montpellier,high,"Transport Durable",555,0.54
+443,276,join,3,0.4,"2025-07-18 22:14:02",58,Toulon,high,"Agriculture Écologique",144,0.23
+576,86,like,2,0.5,"2025-04-04 22:14:02",39,Dijon,medium,"Agriculture Écologique",189,0.97
+708,57,share,1,0.167,"2025-09-14 22:14:02",40,Villeurbanne,low,"Protection Animale",416,0.98
+794,364,like,1,0,"2025-05-22 22:14:02",18,Dijon,low,"Protection Animale",801,0.82
+304,102,share,1,0,"2025-08-16 22:14:02",41,Strasbourg,high,"Urbanisme Durable",15,0.34
+118,376,share,1,0,"2025-01-31 21:14:02",38,Bordeaux,high,"Économie Circulaire",972,0.83
+993,231,post,1,0.125,"2024-10-14 22:14:02",27,Lille,medium,"Innovation Verte",624,0.97
+1669,102,like,1,0,"2024-11-27 21:14:02",24,"Le Havre",low,"Urbanisme Durable",15,0.34
+534,245,like,1,0.167,"2024-11-26 21:14:02",33,Marseille,high,"Consommation Responsable",716,0.53
+1464,185,like,1,0.2,"2025-05-23 22:14:02",57,Dijon,high,"Climat & Environnement",722,0.65
+621,142,comment,1,0,"2025-04-25 22:14:02",50,"Le Havre",low,"Protection Animale",237,0.61
+1930,312,comment,1,0,"2025-07-13 22:14:02",33,Bordeaux,medium,"Transport Durable",783,0.62
+332,76,post,1,0,"2024-10-15 22:14:02",19,Strasbourg,high,"Consommation Responsable",869,0.93
+1994,142,comment,1,0,"2025-03-22 21:14:02",56,Grenoble,medium,"Protection Animale",237,0.61
+9,421,share,1,0,"2025-05-09 22:14:02",27,Nantes,medium,"Innovation Verte",380,0.99
+1014,150,comment,1,0,"2025-07-25 22:14:02",65,Nîmes,high,"Protection Animale",609,0.13
+1075,421,join,1,0,"2025-01-31 21:14:02",28,Toulon,high,"Innovation Verte",380,0.99
+114,308,share,1,0.286,"2025-06-25 22:14:02",51,Grenoble,high,"Innovation Verte",428,0.67
+1088,279,post,1,0.111,"2025-03-07 21:14:02",44,Nîmes,low,"Agriculture Écologique",443,0.44
+1537,457,post,1,0.2,"2025-02-17 21:14:02",58,Nice,high,"Consommation Responsable",930,0.33
+590,185,like,1,0.167,"2025-01-09 21:14:02",65,Reims,low,"Climat & Environnement",722,0.65
+1847,277,comment,1,0.2,"2025-06-10 22:14:02",44,Strasbourg,medium,"Recyclage & Zéro Déchet",84,0.54
+978,58,join,2,0.429,"2025-03-07 21:14:02",36,Lille,low,"Protection Animale",553,0.51
+1947,8,post,1,0.2,"2025-08-15 22:14:02",19,Marseille,high,"Protection Animale",469,0.77
+1444,152,post,1,0,"2025-10-05 22:14:02",62,Paris,medium,"Biodiversité & Nature",382,0.65
+504,202,comment,1,0,"2025-07-24 22:14:02",60,Toulon,low,"Agriculture Écologique",271,0.15
+1131,473,share,1,0.143,"2024-10-18 22:14:02",65,Nantes,high,"Recyclage & Zéro Déchet",516,0.21
+601,114,post,1,0,"2025-03-12 21:14:02",25,Lille,medium,"Urbanisme Durable",736,0.16
+1830,478,post,1,0.167,"2025-08-17 22:14:02",41,Toulon,high,"Consommation Responsable",417,0.41
+915,481,like,1,0,"2025-10-06 22:14:02",44,Nantes,low,"Consommation Responsable",958,0.19
+1087,267,join,1,0,"2024-11-04 21:14:02",36,Nantes,low,"Agriculture Écologique",369,0.46
+542,268,share,1,0.1,"2025-07-16 22:14:02",61,Lille,high,"Consommation Responsable",813,0.22
+835,23,post,1,0,"2024-12-12 21:14:02",56,Reims,high,"Consommation Responsable",503,0.21
+1279,355,share,1,0.1,"2025-04-26 22:14:02",59,Montpellier,high,"Éducation Environnementale",397,0.38
+1784,450,join,1,0,"2025-05-09 22:14:02",18,Nantes,low,"Climat & Environnement",230,0.46
+1172,298,join,1,0.143,"2025-06-22 22:14:02",55,Angers,low,"Climat & Environnement",66,0.28
+1473,232,post,1,0.222,"2024-12-28 21:14:02",35,Montpellier,high,"Économie Circulaire",403,0.83
+96,231,join,1,0.1,"2025-06-23 22:14:02",52,Lyon,medium,"Innovation Verte",624,0.97
+1098,199,like,1,0,"2025-02-15 21:14:02",38,Saint-Étienne,medium,"Agriculture Écologique",567,0.69
+1863,258,like,1,0.111,"2025-03-31 22:14:02",33,Montpellier,high,"Consommation Responsable",708,0.41
+867,212,comment,1,0,"2025-07-24 22:14:02",48,Grenoble,medium,"Éducation Environnementale",254,0.95
+90,70,join,1,0,"2025-01-29 21:14:02",41,Rennes,low,"Consommation Responsable",815,0.58
+633,372,comment,1,0,"2025-02-17 21:14:02",53,Saint-Étienne,high,"Recyclage & Zéro Déchet",523,0.84
+137,375,share,1,0,"2025-07-11 22:14:02",35,Saint-Étienne,low,"Énergies Renouvelables",49,0.35
+1921,497,post,1,0,"2025-09-03 22:14:02",43,Dijon,medium,"Transport Durable",357,0.59
+443,421,post,1,0.167,"2025-09-27 22:14:02",58,Toulon,high,"Innovation Verte",380,0.99
+721,274,comment,1,0.143,"2025-05-07 22:14:02",51,Villeurbanne,medium,"Consommation Responsable",196,0.34
+359,190,comment,1,0,"2025-03-02 21:14:02",32,Saint-Étienne,low,"Protection Animale",808,0.54
+1006,437,join,1,0,"2025-09-08 22:14:02",56,Nîmes,medium,"Transport Durable",450,0.86
+1590,298,post,1,0,"2025-08-27 22:14:02",54,Rennes,medium,"Climat & Environnement",66,0.28
+1627,463,post,1,0.111,"2024-12-01 21:14:02",33,Bordeaux,low,"Urbanisme Durable",621,0.49
+221,248,post,2,0.2,"2025-10-11 22:14:02",64,Nice,low,"Économie Circulaire",202,0.13
+517,328,post,1,0.167,"2025-07-06 22:14:02",23,Lyon,low,"Agriculture Écologique",709,0.83
+1186,337,share,1,0,"2025-05-17 22:14:02",58,Reims,medium,"Transport Durable",685,0.32
+276,235,post,2,0.375,"2025-01-26 21:14:02",40,Saint-Étienne,low,"Consommation Responsable",274,0.28
+1097,218,post,1,0,"2025-08-17 22:14:02",39,"Le Havre",medium,"Énergies Renouvelables",59,0.39
+771,361,like,1,0,"2025-01-09 21:14:02",18,Angers,low,"Biodiversité & Nature",927,0.92
+1367,337,join,1,0,"2024-11-16 21:14:02",51,Angers,low,"Transport Durable",685,0.32
+1854,24,join,1,0.125,"2025-06-23 22:14:02",40,Villeurbanne,high,"Climat & Environnement",417,0.68
+115,409,share,1,0.167,"2024-10-21 22:14:02",33,Saint-Étienne,high,"Climat & Environnement",853,0.88
+587,150,join,1,0,"2025-10-03 22:14:02",51,Strasbourg,medium,"Protection Animale",609,0.13
+1067,304,post,1,0,"2025-06-27 22:14:02",30,"Le Havre",low,"Recyclage & Zéro Déchet",800,0.9
+1453,450,comment,1,0.125,"2025-02-17 21:14:02",21,Rennes,medium,"Climat & Environnement",230,0.46
+1401,253,share,2,0.25,"2025-07-22 22:14:02",31,Marseille,medium,"Protection Animale",40,0.16
+365,218,join,1,0.125,"2024-10-16 22:14:02",59,Dijon,high,"Énergies Renouvelables",59,0.39
+268,201,join,1,0,"2024-12-16 21:14:02",24,Montpellier,medium,"Transport Durable",418,0.48
+425,12,share,1,0.125,"2025-05-31 22:14:02",32,Montpellier,low,"Énergies Renouvelables",585,0.76
+897,471,comment,2,0.25,"2024-12-19 21:14:02",22,Lille,low,"Urbanisme Durable",855,0.89
+829,54,like,1,0.143,"2025-02-22 21:14:02",18,Saint-Étienne,high,"Climat & Environnement",267,0.55
+1816,486,like,2,0.286,"2025-06-12 22:14:02",47,Paris,medium,"Éducation Environnementale",185,0.92
+600,475,comment,1,0.222,"2025-04-08 22:14:02",65,Toulon,medium,"Urbanisme Durable",438,0.61
+1482,54,post,1,0,"2025-03-07 21:14:02",26,Nantes,low,"Climat & Environnement",267,0.55
+1670,379,comment,1,0.2,"2025-05-23 22:14:02",49,Bordeaux,medium,"Protection Animale",85,0.32
+516,32,join,1,0.125,"2025-09-24 22:14:02",58,Villeurbanne,low,"Protection Animale",787,0.11
+1769,240,join,1,0.125,"2025-02-20 21:14:02",50,Saint-Étienne,medium,"Agriculture Écologique",480,0.61
+1465,188,post,1,0,"2025-03-05 21:14:02",36,Strasbourg,low,"Recyclage & Zéro Déchet",485,0.49
+1161,406,like,1,0.143,"2025-05-01 22:14:02",19,Nice,high,"Innovation Verte",981,1
+803,449,comment,2,0.222,"2025-06-18 22:14:02",32,Montpellier,medium,"Consommation Responsable",803,0.57
+1967,435,share,1,0.1,"2025-09-15 22:14:02",49,Marseille,high,"Protection Animale",433,0.85
+777,75,post,3,0.5,"2025-06-22 22:14:02",36,Lyon,medium,"Protection Animale",360,0.88
+482,332,comment,1,0,"2024-10-28 21:14:02",32,Dijon,high,"Éducation Environnementale",641,0.47
+197,467,comment,1,0.25,"2025-02-27 21:14:02",25,Toulon,medium,"Urbanisme Durable",504,0.81
+576,458,join,1,0,"2025-07-24 22:14:02",39,Dijon,medium,"Climat & Environnement",99,0.66
+1670,51,share,1,0.2,"2025-03-07 21:14:02",49,Bordeaux,medium,"Protection Animale",524,0.43
+1794,96,like,1,0,"2025-09-05 22:14:02",51,Nîmes,low,"Protection Animale",784,0.82
+934,480,share,1,0.1,"2025-09-17 22:14:02",48,Lille,high,"Éducation Environnementale",835,0.13
+1901,456,join,1,0,"2025-02-16 21:14:02",19,Dijon,low,"Transport Durable",506,0.28
+275,398,comment,1,0,"2025-09-08 22:14:02",33,Montpellier,high,"Biodiversité & Nature",714,0.12
+1509,244,join,1,0,"2024-12-16 21:14:02",29,"Le Havre",medium,"Éducation Environnementale",816,0.24
+1211,116,join,1,0.125,"2025-05-08 22:14:02",29,Marseille,high,"Climat & Environnement",353,0.17
+200,239,comment,1,0,"2025-03-19 21:14:02",37,Villeurbanne,low,"Transport Durable",375,0.11
+108,35,join,1,0.143,"2025-10-03 22:14:02",56,Saint-Étienne,high,"Protection Animale",708,0.84
+386,263,comment,2,0.5,"2024-12-17 21:14:02",35,Grenoble,medium,"Urbanisme Durable",81,0.48
+48,146,post,1,0.2,"2025-05-27 22:14:02",29,Bordeaux,high,"Protection Animale",834,0.23
+168,196,comment,1,0.1,"2025-08-22 22:14:02",21,Grenoble,high,"Recyclage & Zéro Déchet",617,1
+888,289,join,1,0.125,"2025-07-03 22:14:02",28,Montpellier,high,"Économie Circulaire",63,0.45
+1418,178,like,1,0.125,"2025-05-22 22:14:02",40,Angers,high,"Climat & Environnement",307,0.37
+1498,481,comment,1,0.25,"2024-11-26 21:14:02",50,Marseille,high,"Consommation Responsable",958,0.19
+1023,408,like,1,0.286,"2024-11-22 21:14:02",32,Saint-Étienne,high,"Agriculture Écologique",623,0.44
+1390,420,comment,1,0.143,"2025-03-13 21:14:02",38,Villeurbanne,low,"Recyclage & Zéro Déchet",425,0.87
+1794,257,comment,1,0,"2025-01-02 21:14:02",51,Nîmes,low,"Transport Durable",555,0.54
+754,158,post,2,0.2,"2024-12-13 21:14:02",31,Lille,low,"Consommation Responsable",108,0.37
+402,352,like,1,0.111,"2025-06-11 22:14:02",27,Nîmes,high,"Énergies Renouvelables",79,0.79
+1946,8,comment,1,0,"2025-08-16 22:14:02",18,Saint-Étienne,medium,"Protection Animale",469,0.77
+1231,458,share,1,0,"2024-11-21 21:14:02",40,Nantes,medium,"Climat & Environnement",99,0.66
+1181,246,comment,1,0,"2025-06-20 22:14:02",57,Nîmes,low,"Recyclage & Zéro Déchet",775,0.36
+331,292,post,1,0.111,"2025-02-03 21:14:02",19,Lyon,medium,"Économie Circulaire",725,0.35
+156,478,share,1,0.125,"2024-12-21 21:14:02",19,Dijon,medium,"Consommation Responsable",417,0.41
+1968,340,post,1,0.125,"2025-10-07 22:14:02",26,Rennes,low,"Agriculture Écologique",180,0.8
+95,398,comment,1,0,"2025-04-13 22:14:02",28,Nîmes,low,"Biodiversité & Nature",714,0.12
+1340,378,like,2,0.25,"2025-07-14 22:14:02",55,"Le Havre",medium,"Recyclage & Zéro Déchet",241,0.97
+444,50,join,1,0.1,"2025-07-18 22:14:02",34,Nice,medium,"Recyclage & Zéro Déchet",688,0.5
+936,422,join,1,0,"2025-03-09 21:14:02",33,Angers,medium,"Énergies Renouvelables",983,0.12
+138,269,share,1,0,"2024-10-17 22:14:02",41,"Le Havre",medium,"Climat & Environnement",411,0.88
+115,187,post,1,0,"2024-10-22 22:14:02",33,Saint-Étienne,high,"Consommation Responsable",80,0.89
+170,458,post,1,0.333,"2024-12-30 21:14:02",33,Reims,low,"Climat & Environnement",99,0.66
+285,278,comment,1,0,"2024-11-29 21:14:02",25,"Le Havre",low,"Innovation Verte",858,0.27
+438,396,join,1,0,"2025-05-10 22:14:02",53,Lille,low,"Transport Durable",217,0.76
+1632,412,post,1,0.1,"2025-08-11 22:14:02",42,Toulon,low,"Biodiversité & Nature",745,0.12
+1251,402,share,1,0,"2025-07-24 22:14:02",43,Nantes,low,"Transport Durable",261,0.29
+898,208,like,2,0.2,"2025-02-26 21:14:02",56,Dijon,high,"Consommation Responsable",195,0.7
+1762,32,comment,1,0.111,"2025-06-22 22:14:02",58,Nantes,high,"Protection Animale",787,0.11
+1577,8,comment,1,0,"2024-11-29 21:14:02",20,Angers,low,"Protection Animale",469,0.77
+954,98,comment,1,0.143,"2024-11-15 21:14:02",62,Angers,medium,"Agriculture Écologique",650,0.83
+177,27,comment,1,0,"2025-03-08 21:14:02",62,Grenoble,high,"Recyclage & Zéro Déchet",300,0.92
+1210,484,comment,1,0.25,"2024-11-23 21:14:02",57,Reims,low,"Consommation Responsable",54,0.29
+48,132,join,1,0.2,"2025-10-01 22:14:02",29,Bordeaux,high,"Urbanisme Durable",822,0.62
+1934,59,share,1,0.125,"2025-05-26 22:14:02",23,Lille,high,"Urbanisme Durable",388,0.7
+1617,431,comment,2,0.25,"2025-07-24 22:14:02",36,Grenoble,low,"Urbanisme Durable",398,0.32
+1835,486,like,1,0.1,"2025-08-19 22:14:02",31,Nantes,low,"Éducation Environnementale",185,0.92
+1227,437,join,1,0,"2025-06-26 22:14:02",65,Lille,low,"Transport Durable",450,0.86
+1382,117,post,1,0.25,"2025-09-04 22:14:02",30,Nice,high,"Innovation Verte",279,0.27
+975,479,like,1,0,"2025-08-30 22:14:02",27,Villeurbanne,high,"Énergies Renouvelables",152,0.77
+869,261,post,1,0,"2025-03-24 21:14:02",62,Villeurbanne,medium,"Consommation Responsable",552,0.17
+278,159,like,1,0.1,"2025-03-07 21:14:02",40,Angers,low,"Transport Durable",672,0.72
+271,92,like,1,0,"2025-04-25 22:14:02",36,Nantes,high,"Énergies Renouvelables",953,0.79
+1001,441,like,1,0.143,"2024-11-24 21:14:02",38,"Le Havre",high,"Éducation Environnementale",720,0.63
+1946,302,share,1,0.333,"2025-04-26 22:14:02",18,Saint-Étienne,medium,"Éducation Environnementale",851,0.1
+196,27,share,1,0,"2025-01-31 21:14:02",26,Nîmes,high,"Recyclage & Zéro Déchet",300,0.92
+88,428,join,1,0,"2025-04-03 22:14:02",45,Villeurbanne,high,"Biodiversité & Nature",138,0.71
+853,362,post,1,0,"2024-11-30 21:14:02",41,Toulouse,medium,"Énergies Renouvelables",463,0.29
+134,218,comment,1,0.167,"2025-04-25 22:14:02",57,Villeurbanne,low,"Énergies Renouvelables",59,0.39
+1503,87,join,1,0,"2024-10-22 22:14:02",19,Lyon,low,"Agriculture Écologique",625,0.53
+1193,432,like,1,0,"2025-01-26 21:14:02",56,Toulon,high,"Énergies Renouvelables",238,0.98
+1276,277,comment,1,0.143,"2025-09-11 22:14:02",41,Montpellier,low,"Recyclage & Zéro Déchet",84,0.54
+1040,64,comment,1,0,"2024-11-07 21:14:02",58,Montpellier,high,"Transport Durable",879,0.28
+809,104,join,1,0.167,"2025-02-02 21:14:02",23,Nîmes,medium,"Urbanisme Durable",827,0.86
+735,497,post,1,0,"2025-04-15 22:14:02",23,Saint-Étienne,low,"Transport Durable",357,0.59
+186,355,post,1,0.125,"2025-09-21 22:14:02",38,Toulon,medium,"Éducation Environnementale",397,0.38
+705,431,comment,1,0.1,"2025-04-11 22:14:02",35,Villeurbanne,medium,"Urbanisme Durable",398,0.32
+1305,275,like,1,0,"2025-04-27 22:14:02",37,"Le Havre",high,"Recyclage & Zéro Déchet",921,0.95
+1702,165,comment,1,0,"2025-03-29 21:14:02",21,Marseille,low,"Énergies Renouvelables",204,0.63
+1491,47,comment,1,0,"2025-01-11 21:14:02",27,Lyon,medium,"Climat & Environnement",654,0.62
+1918,85,comment,1,0.2,"2025-03-14 21:14:02",48,Saint-Étienne,low,"Protection Animale",182,0.72
+1771,471,join,1,0,"2024-11-28 21:14:02",19,Villeurbanne,medium,"Urbanisme Durable",855,0.89
+1006,393,post,1,0,"2024-10-15 22:14:02",56,Nîmes,medium,"Climat & Environnement",522,0.74
+1728,263,join,1,0.125,"2025-02-09 21:14:02",60,Angers,high,"Urbanisme Durable",81,0.48
+803,441,comment,1,0.222,"2025-07-22 22:14:02",32,Montpellier,medium,"Éducation Environnementale",720,0.63
+1605,464,share,1,0,"2024-10-16 22:14:02",47,"Le Havre",high,"Recyclage & Zéro Déchet",261,0.54
+1157,130,post,3,0.5,"2025-05-18 22:14:02",24,Lyon,high,"Agriculture Écologique",156,0.35
+1269,31,share,1,0,"2025-01-06 21:14:02",40,Marseille,medium,"Protection Animale",998,0.57
+1836,220,join,1,0,"2025-10-06 22:14:02",33,Toulouse,low,"Énergies Renouvelables",678,0.46
+1893,384,share,1,0.143,"2025-06-30 22:14:02",28,Nîmes,low,"Biodiversité & Nature",10,0.16
+1565,336,comment,2,0.2,"2024-12-06 21:14:02",62,Toulouse,low,"Recyclage & Zéro Déchet",451,0.64
+879,382,like,2,0.4,"2025-03-08 21:14:02",55,Reims,low,"Protection Animale",45,0.98
+492,96,comment,1,0.222,"2025-06-30 22:14:02",43,Grenoble,medium,"Protection Animale",784,0.82
+1390,154,post,1,0.143,"2025-03-26 21:14:02",38,Villeurbanne,low,"Consommation Responsable",561,0.77
+737,102,comment,1,0,"2025-01-12 21:14:02",19,Lyon,high,"Urbanisme Durable",15,0.34
+931,27,join,1,0,"2025-03-30 22:14:02",21,Grenoble,medium,"Recyclage & Zéro Déchet",300,0.92
+620,455,like,1,0.167,"2025-08-11 22:14:02",62,Toulouse,low,"Éducation Environnementale",977,0.43
+844,191,join,1,0,"2024-12-21 21:14:02",28,Nantes,high,"Agriculture Écologique",137,0.73
+1252,133,like,1,0.125,"2025-07-29 22:14:02",22,Grenoble,low,"Éducation Environnementale",823,0.4
+17,303,comment,1,0,"2025-03-02 21:14:02",51,Toulon,medium,"Énergies Renouvelables",151,0.53
+1255,369,comment,2,0.286,"2025-05-19 22:14:02",65,Marseille,high,"Protection Animale",522,0.96
+690,329,join,1,0,"2025-02-09 21:14:02",40,"Le Havre",high,"Transport Durable",660,0.37
+635,358,share,1,0.143,"2025-04-07 22:14:02",28,Montpellier,low,"Protection Animale",280,0.74
+278,22,comment,1,0,"2024-10-26 22:14:02",40,Angers,low,"Éducation Environnementale",333,0.36
+994,198,join,1,0.1,"2025-10-07 22:14:02",36,Villeurbanne,high,"Agriculture Écologique",558,0.44
+1078,273,share,1,0,"2025-01-10 21:14:02",34,"Le Havre",high,"Transport Durable",495,0.83
+1490,201,share,1,0,"2025-03-21 21:14:02",53,Toulon,high,"Transport Durable",418,0.48
+932,323,post,1,0.1,"2025-01-23 21:14:02",40,Villeurbanne,high,"Climat & Environnement",879,0.61
+1078,56,join,1,0,"2024-12-16 21:14:02",34,"Le Havre",high,"Consommation Responsable",432,0.69
+215,281,join,1,0,"2025-04-02 22:14:02",43,Reims,high,"Éducation Environnementale",210,0.12
+337,488,comment,1,0,"2025-10-08 22:14:02",33,Nantes,medium,"Énergies Renouvelables",791,0.92
+1494,287,share,1,0,"2025-06-19 22:14:02",27,Saint-Étienne,medium,"Consommation Responsable",639,0.2
+1197,19,like,1,0,"2024-11-15 21:14:02",58,Saint-Étienne,low,"Urbanisme Durable",253,0.63
+200,480,like,1,0,"2025-01-03 21:14:02",37,Villeurbanne,low,"Éducation Environnementale",835,0.13
+758,245,comment,1,0.143,"2024-12-24 21:14:02",50,Reims,high,"Consommation Responsable",716,0.53
+199,33,share,1,0,"2024-10-25 22:14:02",64,Nîmes,high,"Agriculture Écologique",165,0.7
+399,407,join,1,0.1,"2025-06-04 22:14:02",45,Toulon,high,"Protection Animale",186,0.1
+1980,258,like,1,0.167,"2025-05-14 22:14:02",57,Reims,medium,"Consommation Responsable",708,0.41
+1806,270,post,1,0,"2025-07-24 22:14:02",21,Lille,low,"Économie Circulaire",58,0.34
+1382,382,like,1,0,"2024-10-15 22:14:02",30,Nice,high,"Protection Animale",45,0.98
+1687,50,post,1,0,"2024-11-21 21:14:02",32,"Le Havre",low,"Recyclage & Zéro Déchet",688,0.5
+1353,76,join,1,0,"2025-05-08 22:14:02",42,Toulon,low,"Consommation Responsable",869,0.93
+329,176,share,1,0.167,"2025-07-27 22:14:02",29,Nantes,low,"Innovation Verte",355,0.85
+728,114,join,2,0.222,"2025-03-25 21:14:02",54,Nantes,high,"Urbanisme Durable",736,0.16
+46,448,comment,1,0.143,"2025-07-04 22:14:02",56,Bordeaux,low,"Urbanisme Durable",504,0.81
+865,154,share,1,0,"2025-02-15 21:14:02",25,Dijon,high,"Consommation Responsable",561,0.77

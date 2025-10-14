@@ -512,13 +512,20 @@
                         <div class="message-item {{ $message->user_id === auth()->id() ? 'own-message' : 'other-message' }}"
                              data-message-id="{{ $message->id }}">
                             @if($message->user_id !== auth()->id())
-                                <img src="{{ $message->user->profile_image ? Storage::url($message->user->profile_image) : '/storage/profiles/default.jpg' }}"
+                                @php $isBotAvatar = strtolower($message->user->name ?? '') === 'ecochatbot'; @endphp
+                                <img src="{{ $isBotAvatar ? asset('assets/images/bot-avatar.png') : ($message->user->profile_image ? Storage::url($message->user->profile_image) : '/storage/profiles/default.jpg') }}"
                                      class="message-avatar"
-                                     onerror="this.src='/storage/profiles/default.jpg'">
+                                     onerror="this.src='{{ $isBotAvatar ? asset('assets/images/bot-avatar.png') : '/storage/profiles/default.jpg' }}'">
                             @endif
                             <div class="message-bubble">
                                 @if($message->user_id !== auth()->id())
-                                    <div class="message-sender">{{ $message->user->name }}</div>
+                                    <div class="message-sender">
+                                        {{ $message->user->name }}
+                                        @php $isBot = strtolower($message->user->name ?? '') === 'ecochatbot'; @endphp
+                                        @if($isBot)
+                                            <span class="badge bg-success ms-2">Bot</span>
+                                        @endif
+                                    </div>
                                 @endif
                                 <div class="message-content">{{ $message->content }}</div>
                                 @if($message->attachments)
