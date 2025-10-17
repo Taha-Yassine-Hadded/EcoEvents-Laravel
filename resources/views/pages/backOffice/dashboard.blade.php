@@ -24,7 +24,7 @@
                         <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
                             Total Users
                         </div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800">40,000</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $stats['general']['total_users'] ?? 0 }}</div>
                     </div>
                     <div class="col-auto">
                         <i class="fas fa-users fa-2x text-gray-300"></i>
@@ -40,9 +40,9 @@
                 <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
                         <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                            Revenue (Monthly)
+                            Total Sponsoring
                         </div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800">$215,000</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ number_format($stats['sponsoring']['total_amount'] ?? 0, 0, ',', ' ') }} €</div>
                     </div>
                     <div class="col-auto">
                         <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
@@ -57,22 +57,11 @@
             <div class="card-body">
                 <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
-                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Tasks</div>
-                        <div class="row no-gutters align-items-center">
-                            <div class="col-auto">
-                                <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">50%</div>
-                            </div>
-                            <div class="col">
-                                <div class="progress progress-sm mr-2">
-                                    <div class="progress-bar bg-info" role="progressbar"
-                                         style="width: 50%" aria-valuenow="50" aria-valuemin="0"
-                                         aria-valuemax="100"></div>
-                                </div>
-                            </div>
-                        </div>
+                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Sponsoring en Attente</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $stats['sponsoring']['pending_sponsorships'] ?? 0 }}</div>
                     </div>
                     <div class="col-auto">
-                        <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
+                        <i class="fas fa-handshake fa-2x text-gray-300"></i>
                     </div>
                 </div>
             </div>
@@ -85,12 +74,12 @@
                 <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
                         <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                            Pending Requests
+                            Sponsors Actifs
                         </div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800">18</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $stats['general']['total_sponsors'] ?? 0 }}</div>
                     </div>
                     <div class="col-auto">
-                        <i class="fas fa-comments fa-2x text-gray-300"></i>
+                        <i class="fas fa-users fa-2x text-gray-300"></i>
                     </div>
                 </div>
             </div>
@@ -98,57 +87,105 @@
     </div>
 </div>
 
-<!-- Gestion des Sponsors -->
+<!-- Gestion des Sponsoring -->
 <div class="row mb-4">
     <div class="col-12">
         <div class="card shadow mb-4">
             <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="card-title">Gestion des Sponsors</h6>
-                <button class="btn btn-primary btn-sm" onclick="loadSponsors()">
-                    <i class="fas fa-sync-alt"></i> Actualiser
-                </button>
+                <h6 class="card-title">Gestion des Sponsoring</h6>
+                <div class="btn-group">
+                    <a href="{{ route('admin.sponsors.pending-sponsorships') }}" class="btn btn-warning btn-sm">
+                        <i class="fas fa-handshake"></i> Propositions en Attente
+                        @if(($stats['sponsoring']['pending_sponsorships'] ?? 0) > 0)
+                            <span class="badge bg-danger ms-1">{{ $stats['sponsoring']['pending_sponsorships'] }}</span>
+                        @endif
+                    </a>
+                    <a href="{{ route('admin.sponsors.index') }}" class="btn btn-primary btn-sm">
+                        <i class="fas fa-users"></i> Gestion Sponsors
+                    </a>
+                </div>
             </div>
             <div class="card-body">
-                <!-- Filtres -->
-                <div class="row mb-3">
+                <!-- Statistiques des Sponsoring -->
+                <div class="row mb-4">
                     <div class="col-md-3">
-                        <input type="text" id="searchSponsor" class="form-control" placeholder="Rechercher...">
+                        <div class="text-center p-3 bg-light rounded">
+                            <h4 class="text-primary mb-1">{{ $stats['sponsoring']['total_sponsorships'] ?? 0 }}</h4>
+                            <small class="text-muted">Total Propositions</small>
+                        </div>
                     </div>
-                    <div class="col-md-2">
-                        <select id="statusFilter" class="form-control">
-                            <option value="">Tous les statuts</option>
-                            <option value="pending">En attente</option>
-                            <option value="approved">Approuvé</option>
-                            <option value="rejected">Rejeté</option>
-                            <option value="active">Actif</option>
-                            <option value="inactive">Inactif</option>
-                        </select>
+                    <div class="col-md-3">
+                        <div class="text-center p-3 bg-light rounded">
+                            <h4 class="text-warning mb-1">{{ $stats['sponsoring']['pending_sponsorships'] ?? 0 }}</h4>
+                            <small class="text-muted">En Attente</small>
+                        </div>
                     </div>
-                    <div class="col-md-2">
-                        <button class="btn btn-outline-primary" onclick="filterSponsors()">
-                            <i class="fas fa-search"></i> Filtrer
-                        </button>
+                    <div class="col-md-3">
+                        <div class="text-center p-3 bg-light rounded">
+                            <h4 class="text-success mb-1">{{ $stats['sponsoring']['approved_sponsorships'] ?? 0 }}</h4>
+                            <small class="text-muted">Approuvées</small>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="text-center p-3 bg-light rounded">
+                            <h4 class="text-info mb-1">{{ $stats['sponsoring']['recent_sponsorships'] ?? 0 }}</h4>
+                            <small class="text-muted">Cette Semaine</small>
+                        </div>
                     </div>
                 </div>
-                
-                <!-- Liste des Sponsors -->
-                <div class="table-responsive">
-                    <table class="table table-bordered" id="sponsorsTable">
-                        <thead>
-                            <tr>
-                                <th>Nom</th>
-                                <th>Email</th>
-                                <th>Entreprise</th>
-                                <th>Statut</th>
-                                <th>Date</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="sponsorsTableBody">
-                            <!-- Les données seront chargées via AJAX -->
-                        </tbody>
-                    </table>
+
+                <!-- Actions Rapides -->
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card border-left-warning">
+                            <div class="card-body">
+                                <h6 class="card-title text-warning">
+                                    <i class="fas fa-exclamation-triangle"></i> Attention Requise
+                                </h6>
+                                <p class="card-text">
+                                    Vous avez <strong>{{ $stats['sponsoring']['pending_sponsorships'] ?? 0 }}</strong> 
+                                    propositions de sponsoring en attente d'approbation.
+                                </p>
+                                <a href="{{ route('admin.sponsors.pending-sponsorships') }}" class="btn btn-warning btn-sm">
+                                    <i class="fas fa-eye"></i> Voir les Propositions
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card border-left-success">
+                            <div class="card-body">
+                                <h6 class="card-title text-success">
+                                    <i class="fas fa-chart-line"></i> Performance
+                                </h6>
+                                <p class="card-text">
+                                    Montant total des sponsoring approuvés : 
+                                    <strong>{{ number_format($stats['sponsoring']['approved_amount'] ?? 0, 0, ',', ' ') }} €</strong>
+                                </p>
+                                <a href="{{ route('admin.sponsors.index') }}" class="btn btn-success btn-sm">
+                                    <i class="fas fa-users"></i> Gérer les Sponsors
+                                </a>
+                            </div>
+                        </div>
+                    </div>
                 </div>
+
+                <!-- Propositions Récentes -->
+                @if(isset($stats['sponsoring']['pending_sponsorships']) && $stats['sponsoring']['pending_sponsorships'] > 0)
+                <div class="mt-4">
+                    <h6 class="text-warning">
+                        <i class="fas fa-clock"></i> Propositions Récentes en Attente
+                    </h6>
+                    <div class="alert alert-warning">
+                        <i class="fas fa-info-circle"></i>
+                        Il y a actuellement <strong>{{ $stats['sponsoring']['pending_sponsorships'] }}</strong> 
+                        propositions de sponsoring qui attendent votre validation. 
+                        <a href="{{ route('admin.sponsors.pending-sponsorships') }}" class="alert-link">
+                            Cliquez ici pour les examiner
+                        </a>.
+                    </div>
+                </div>
+                @endif
             </div>
         </div>
     </div>
@@ -229,6 +266,39 @@
 
 <!-- Charts Row -->
 <div class="row">
+    <!-- Recent Contracts Widget -->
+    <div class="col-xl-4 col-lg-5 mb-4">
+        <div class="card shadow h-100">
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="card-title mb-0"><i class="fas fa-file-contract"></i> Contrats récents</h6>
+                <a href="{{ route('admin.contracts.index') }}" class="btn btn-sm btn-outline-primary">Voir tout</a>
+            </div>
+            <div class="card-body">
+                @if(isset($recentContracts) && count($recentContracts) > 0)
+                    <div class="list-group">
+                        @foreach($recentContracts as $c)
+                            <div class="list-group-item d-flex justify-content-between align-items-start">
+                                <div class="ms-2 me-auto">
+                                    <div class="fw-bold">{{ $c->user->name ?? 'Sponsor' }} <span class="text-muted">·</span> {{ $c->event->title ?? 'Événement' }}</div>
+                                    <small class="text-muted">{{ \Carbon\Carbon::parse($c->updated_at)->format('d/m/Y H:i') }} · {{ $c->package_name }} · {{ number_format($c->amount, 0, ',', ' ') }} €</small>
+                                </div>
+                                <div class="btn-group btn-group-sm" role="group">
+                                    <a href="{{ route('contracts.sponsorship.view', $c->id) }}" class="btn btn-outline-info" target="_blank" title="Voir"><i class="fas fa-eye"></i></a>
+                                    <a href="{{ route('contracts.sponsorship.download', $c->id) }}" class="btn btn-outline-primary" title="Télécharger"><i class="fas fa-download"></i></a>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                @else
+                    <div class="text-center text-muted py-4">
+                        <i class="fas fa-file-contract fa-2x mb-2"></i>
+                        <div>Aucun contrat récent</div>
+                    </div>
+                @endif
+            </div>
+        </div>
+    </div>
+
     <!-- Revenue Chart -->
     <div class="col-xl-8 col-lg-7">
         <div class="card shadow mb-4">

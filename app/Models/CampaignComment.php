@@ -2,19 +2,12 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class CampaignComment extends Model
 {
-    use HasFactory;
-
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
-     */
     protected $fillable = [
         'campaign_id',
         'user_id',
@@ -22,20 +15,15 @@ class CampaignComment extends Model
     ];
 
     /**
-     * The attributes that should be cast.
-     *
-     * @return array<string, string>
+     * Relation avec l'utilisateur qui a posté le commentaire
      */
-    protected function casts(): array
+    public function user(): BelongsTo
     {
-        return [
-            'created_at' => 'datetime',
-            'updated_at' => 'datetime',
-        ];
+        return $this->belongsTo(User::class);
     }
 
     /**
-     * Get the campaign that the comment belongs to.
+     * Relation avec la campagne associée
      */
     public function campaign(): BelongsTo
     {
@@ -43,10 +31,18 @@ class CampaignComment extends Model
     }
 
     /**
-     * Get the user who posted the comment.
+     * Relation avec les likes du commentaire
      */
-    public function user(): BelongsTo
+    public function likes(): HasMany
     {
-        return $this->belongsTo(User::class);
+        return $this->hasMany(CommentLike::class, 'comment_id');
+    }
+
+    /**
+     * Accesseur pour le nombre de likes
+     */
+    public function getLikesCountAttribute(): int
+    {
+        return $this->likes()->count();
     }
 }

@@ -13,13 +13,14 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Créer les packages de sponsoring
-        $this->call(PackageSeeder::class);
-        
-        // Créer quelques sponsors de test
-        $this->call(SponsorSeeder::class);
-        
-        // Créer quelques sponsorships de test
-        $this->call(SponsorshipSeeder::class);
+        // Call your specific seeders in correct order
+        $this->call([
+            CategorySeeder::class,
+            EventSeeder::class,
+            UserSeeder::class,
+            PackageSeeder::class,
+            SponsorSeeder::class,
+            SponsorshipSeeder::class,
+        ]);
     }
 }

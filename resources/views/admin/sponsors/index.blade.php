@@ -84,6 +84,14 @@
 <div class="row">
     <div class="col-12">
         <div class="table-admin">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="mb-0">Liste des Sponsors</h5>
+                <div class="btn-group">
+                    <a href="{{ route('admin.sponsors.pending-sponsorships') }}" class="btn btn-outline-warning btn-sm">
+                        <i class="fas fa-handshake"></i> Propositions en Attente
+                    </a>
+                </div>
+            </div>
             <div class="table-responsive">
                 <table class="table table-hover mb-0">
                     <thead class="table-dark">

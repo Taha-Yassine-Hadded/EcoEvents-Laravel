@@ -1,13 +1,13 @@
 @extends('layouts.sponsor')
 
-@section('title', 'Mes Sponsorships - Echofy Sponsor')
+@section('title', 'Mes Sponsoring Acceptés - Echofy Sponsor')
 
 @section('content')
 <!-- Content Header -->
 <div class="content-header">
     <h1 class="page-title">
-        <i class="fas fa-handshake text-primary"></i>
-        Mes Sponsorships
+        <i class="fas fa-check-circle text-success"></i>
+        Mes Sponsoring Acceptés
     </h1>
     <nav class="breadcrumb-nav">
         <ol class="breadcrumb">
@@ -15,6 +15,13 @@
             <li class="breadcrumb-item active">Sponsorships</li>
         </ol>
     </nav>
+</div>
+
+<!-- Description -->
+<div class="alert alert-info">
+    <i class="fas fa-info-circle"></i>
+    <strong>Sponsoring acceptés uniquement :</strong> Cette page affiche uniquement vos propositions de sponsoring qui ont été approuvées par l'administration. 
+    <a href="{{ route('sponsor.all-sponsorships') }}" class="alert-link">Voir toutes mes propositions (en attente, rejetées, etc.)</a>
 </div>
 
 @if($sponsorships->count() > 0)
@@ -26,7 +33,7 @@
                     <div class="card-header py-3 d-flex justify-content-between align-items-center">
                         <h6 class="card-title mb-0">
                             <i class="fas fa-calendar-alt text-primary"></i>
-                            {{ $sponsorship->campaign->title }}
+                            {{ $sponsorship->event->title ?? 'Événement supprimé' }}
                         </h6>
                         <span class="badge badge-{{ 
                             $sponsorship->status === 'approved' ? 'success' : 
@@ -74,18 +81,18 @@
                             </div>
                         @endif
                         
-                        <div class="campaign-preview mb-3">
-                            <strong><i class="fas fa-info-circle text-primary"></i> Campagne :</strong>
+                        <div class="event-preview mb-3">
+                            <strong><i class="fas fa-info-circle text-primary"></i> Événement :</strong>
                             <div class="mt-1 p-2 bg-light rounded small">
-                                {{ Str::limit($sponsorship->campaign->description, 100) }}
+                                {{ Str::limit($sponsorship->event->description ?? 'Aucune description disponible', 100) }}
                             </div>
                         </div>
                     </div>
                     <div class="card-footer">
                         <div class="d-flex justify-content-between align-items-center">
-                            <a href="{{ route('sponsor.campaign.details', $sponsorship->campaign->id) }}" 
+                            <a href="{{ route('sponsor.campaign.details', $sponsorship->event->id ?? '#') }}" 
                                class="btn btn-outline-primary btn-sm">
-                                <i class="fas fa-eye"></i> Voir la Campagne
+                                <i class="fas fa-eye"></i> Voir l'Événement
                             </a>
                             
                             @if(in_array($sponsorship->status, ['pending', 'approved']))
@@ -126,9 +133,9 @@
                 <div class="card-body text-center py-5">
                     <i class="fas fa-handshake fa-4x text-muted mb-4"></i>
                     <h4 class="text-muted">Aucun sponsorship pour le moment</h4>
-                    <p class="text-muted">Vous n'avez pas encore proposé de sponsorship. Explorez les campagnes disponibles et proposez votre soutien !</p>
+                    <p class="text-muted">Vous n'avez pas encore de sponsoring accepté. Explorez les événements disponibles et proposez votre soutien !</p>
                     <a href="{{ route('sponsor.campaigns') }}" class="btn btn-primary">
-                        <i class="fas fa-calendar-alt"></i> Explorer les Campagnes
+                        <i class="fas fa-calendar-alt"></i> Explorer les Événements
                     </a>
                 </div>
             </div>

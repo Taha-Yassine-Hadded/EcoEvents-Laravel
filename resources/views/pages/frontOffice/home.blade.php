@@ -1,8 +1,20 @@
 @extends('layouts.app')
 
-@section('title', 'Echofy - Home')
+@section('title', 'EcoEvents - Accueil')
 
 @section('content')
+    <!-- Toast de bienvenue personnalisé -->
+    <div id="welcome-toast" class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 9999;">
+        <div class="toast align-items-center text-white border-0" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body">
+                    <i class="fas fa-leaf me-2"></i>
+                    <span id="toast-message"></span>
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
     <!-- Put the hero, sections, etc. from index-3.html here -->
     <section class="hero">
         <!--==================================================-->
@@ -301,117 +313,6 @@
         </div>
         <!--==================================================-->
         <!-- End Echofy Why Choose Area Home-Six -->
-        <!--==================================================-->
-
-
-
-        <!--==================================================-->
-        <!-- Start Echofy Pricing Area Home-Six -->
-        <!--==================================================-->
-        <div class="pricing-area home-six">
-            <div class="container">
-                <div class="row">
-                    <div class="col-lg-12 text-center">
-                        <div class="section-title center">
-                            <h4><img src="{{asset('assets/images/home6/section-title-shape.png')}}" alt="">Pricing Plan<img class="images-2" src="{{asset('assets/images/home6/section-title-shape.png')}}" alt=""></h4>
-                            <h1>A Customizable Approach</h1>
-                            <h1>for Your Business</h1>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-lg-4 col-md-6">
-                        <div class="single-pricing-box">
-                            <div class="pricing-text">
-                                <h4>Starter Plan</h4>
-                            </div>
-                            <div class="pricing-plan-content">
-                            <h1 class="price">$50</h1>
-                            <span>Month</span>
-                            <p>Fast project turnaround time, substantial cost savings & quality standards.</p>
-                            </div>
-                            <div class="pricing-list-item">
-                                <ul>
-                                    <li>Repair & Replacement</li>
-                                    <li>Reliability And Performance</li>
-                                    <li>Real Solar PV Systems</li>
-                                    <li>Just-In-Time Manufacturing</li>
-                                </ul>
-                            </div>
-                            <div class="echofy-button style-five">
-                            <a href="#">Purchase Now<i class="bi bi-arrow-right-short"></i></a>
-                            </div>
-                            <div class="pricing-shape-1">
-                                <img src="{{asset('assets/images/home6/pricing-shape-1.png')}}" alt="">
-                            </div>				    
-                            <div class="pricing-shape-2">
-                                <img src="{{asset('assets/images/home6/pricing-shape-2.png')}}" alt="">
-                            </div>
-                        </div>
-                    </div>			
-                    <div class="col-lg-4 col-md-6">
-                        <div class="single-pricing-box">
-                            <div class="pricing-text">
-                                <h4>Starter Plan</h4>
-                            </div>
-                            <div class="pricing-plan-content">
-                            <h1 class="price">$30</h1>
-                            <span>Month</span>
-                            <p>Fast project turnaround time, substantial cost savings & quality standards.</p>
-                            </div>
-                            <div class="pricing-list-item">
-                                <ul>
-                                    <li>Repair & Replacement</li>
-                                    <li>Reliability And Performance</li>
-                                    <li>Real Solar PV Systems</li>
-                                    <li>Just-In-Time Manufacturing</li>
-                                </ul>
-                            </div>
-                            <div class="echofy-button style-five">
-                            <a href="#">Purchase Now<i class="bi bi-arrow-right-short"></i></a>
-                            </div>
-                            <div class="pricing-shape-1">
-                                <img src="{{asset('assets/images/home6/pricing-shape-1.png')}}" alt="">
-                            </div>				    
-                            <div class="pricing-shape-2">
-                                <img src="{{asset('assets/images/home6/pricing-shape-2.png')}}" alt="">
-                            </div>
-                        </div>
-                    </div>			
-                    <div class="col-lg-4 col-md-6">
-                        <div class="single-pricing-box">
-                            <div class="pricing-text">
-                                <h4>Starter Plan</h4>
-                            </div>
-                            <div class="pricing-plan-content">
-                            <h1 class="price">$100</h1>
-                            <span>Month</span>
-                            <p>Fast project turnaround time, substantial cost savings & quality standards.</p>
-                            </div>
-                            <div class="pricing-list-item">
-                                <ul>
-                                    <li>Repair & Replacement</li>
-                                    <li>Reliability And Performance</li>
-                                    <li>Real Solar PV Systems</li>
-                                    <li>Just-In-Time Manufacturing</li>
-                                </ul>
-                            </div>
-                            <div class="echofy-button style-five">
-                            <a href="#">Purchase Now<i class="bi bi-arrow-right-short"></i></a>
-                            </div>
-                            <div class="pricing-shape-1">
-                                <img src="{{asset('assets/images/home6/pricing-shape-1.png')}}" alt="">
-                            </div>				    
-                            <div class="pricing-shape-2">
-                                <img src="{{asset('assets/images/home6/pricing-shape-2.png')}}" alt="">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!--==================================================-->
-        <!-- End Echofy Pricing Area Home-Six -->
         <!--==================================================-->
 
 
@@ -748,14 +649,86 @@
                             </div>
                             <div class="meta-blog">
                                 <span>Home2021March</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!--==================================================-->
-        <!-- End Echofy Blog Area Home-Six -->
-        <!--==================================================-->
-</section>
 @endsection
+
+@push('styles')
+<style>
+    .toast-container .toast {
+        background: linear-gradient(135deg, #28a745, #20c997) !important;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(40, 167, 69, 0.3);
+        min-width: 350px;
+    }
+    
+    .toast-body {
+        font-weight: 500;
+        font-size: 16px;
+    }
+    
+    .toast .fas {
+        color: #fff;
+    }
+    
+    /* Fallback pour affichage manuel */
+    .toast.show {
+        display: block !important;
+        opacity: 1 !important;
+    }
+    
+    .toast {
+        display: none;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+</style>
+@endpush
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Attendre que Bootstrap soit chargé
+    setTimeout(function() {
+        // Vérifier s'il y a un message de bienvenue dans localStorage
+        const welcomeMessage = localStorage.getItem('welcome_message');
+        
+        // Vérifier s'il y a un message depuis le serveur (pour les routes avec role_message)
+        const serverMessage = {!! json_encode(session('role_message', '')) !!};
+        
+        const messageToShow = welcomeMessage || serverMessage;
+        
+        console.log('Message à afficher:', messageToShow); // Debug
+        
+        if (messageToShow) {
+            // Afficher le toast
+            const toastElement = document.querySelector('.toast');
+            const toastMessage = document.getElementById('toast-message');
+            
+            if (toastElement && toastMessage) {
+                toastMessage.textContent = messageToShow;
+                
+                // Vérifier si Bootstrap Toast est disponible
+                if (typeof bootstrap !== 'undefined' && bootstrap.Toast) {
+                    const toast = new bootstrap.Toast(toastElement, {
+                        delay: 5000 // 5 secondes
+                    });
+                    toast.show();
+                } else {
+                    // Fallback : afficher le toast manuellement
+                    toastElement.classList.add('show');
+                    setTimeout(function() {
+                        toastElement.classList.remove('show');
+                    }, 5000);
+                }
+                
+                // Supprimer le message du localStorage après affichage
+                if (welcomeMessage) {
+                    localStorage.removeItem('welcome_message');
+                }
+            } else {
+                console.error('Éléments toast non trouvés'); // Debug
+            }
+        }
+    }, 500); // Attendre 500ms
+});
+</script>
+@endpush

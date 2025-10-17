@@ -92,7 +92,7 @@ class AdminSponsorController extends Controller
         
         // Sinon, retourner la vue normale
         $sponsorships = SponsorshipTemp::where('user_id', $sponsor->id)
-            ->with('campaign')
+            ->with('event')
             ->orderBy('created_at', 'desc')
             ->get();
 
@@ -181,6 +181,250 @@ class AdminSponsorController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Sponsor supprimé avec succès !'
+        ]);
+    }
+
+    /**
+     * Afficher tous les sponsorships approuvés avec contrats
+     */
+    public function approvedSponsorships(Request $request)
+    {
+        $query = SponsorshipTemp::where('status', 'approved')
+            ->with(['user', 'event'])
+            ->orderBy('created_at', 'desc');
+
+        // Filtres
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->whereHas('user', function($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%")
+                  ->orWhere('company_name', 'like', "%{$search}%");
+            })->orWhereHas('event', function($q) use ($search) {
+                $q->where('title', 'like', "%{$search}%");
+            });
+        }
+
+        if ($request->filled('event_id')) {
+            $query->where('event_id', $request->event_id);
+        }
+
+        if ($request->filled('date_from')) {
+            $query->whereDate('created_at', '>=', $request->date_from);
+        }
+
+        if ($request->filled('date_to')) {
+            $query->whereDate('created_at', '<=', $request->date_to);
+        }
+
+        $sponsorships = $query->paginate(15);
+
+        return view('admin.sponsors.approved-sponsorships', compact('sponsorships'));
+    }
+
+    /**
+     * Afficher toutes les propositions de sponsoring en attente
+     */
+    public function pendingSponsorships(Request $request)
+    {
+        $query = SponsorshipTemp::where('status', 'pending')
+            ->with(['user', 'event'])
+            ->orderBy('created_at', 'desc');
+
+        // Filtres
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->whereHas('user', function($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%")
+                  ->orWhere('company_name', 'like', "%{$search}%");
+            })->orWhereHas('event', function($q) use ($search) {
+                $q->where('title', 'like', "%{$search}%");
+            });
+        }
+
+        if ($request->filled('event_id')) {
+            $query->where('event_id', $request->event_id);
+        }
+
+        if ($request->filled('date_from')) {
+            $query->whereDate('created_at', '>=', $request->date_from);
+        }
+
+        if ($request->filled('date_to')) {
+            $query->whereDate('created_at', '<=', $request->date_to);
+        }
+
+        $sponsorships = $query->paginate(15);
+
+        return view('admin.sponsors.pending-sponsorships', compact('sponsorships'));
+    }
+
+    /**
+     * Approuver une proposition de sponsoring
+     */
+    public function approveSponsorship($id)
+    {
+        try {
+            $sponsorship = SponsorshipTemp::findOrFail($id);
+            
+            // Vérifier que la proposition est bien en attente
+            if ($sponsorship->status !== 'pending') {
+                return response()->json([
+                    'success' => false,
+                    'error' => 'Cette proposition ne peut plus être approuvée (statut: ' . $sponsorship->status . ')'
+                ], 422);
+            }
+            
+            // Mettre à jour le statut
+            $sponsorship->update(['status' => 'approved']);
+
+            // Générer le contrat PDF
+            $contractData = $this->generateContractData($sponsorship);
+            
+            // Sauvegarder un snapshot de contrat immédiatement et stocker son chemin
+            // On stocke un HTML statique pour consultation ultérieure fiable
+            $contractDir = 'contracts/' . $sponsorship->id;
+            $contractFile = 'contrat_sponsorship_' . $sponsorship->id . '_' . date('Ymd_His') . '.html';
+            try {
+                $html = app(\App\Http\Controllers\ContractController::class)->
+                    // Utiliser la méthode privée via génération directe HTML
+                    // Fallback: reconstruire minimalement ici si nécessaire
+                    // On appelle une méthode publique de snapshot si dispo
+                    // Ici, on regénère les données et vue dédiée existante
+                    // mais plus simple: réutiliser la vue blade existante
+                    // Pour rester simple et robuste, on génère via la vue blade
+                    // en important la vue contrats existante si approuvé
+                    // Cependant, la vue blade dépend du rendu HTTP.
+                    // On garde l'approche du ContractController via HTML generator
+                    // en dupliquant la logique: on instancie et appelle generateContractPDF
+                    // generateContractPDF est private, donc on la recopie ici rapidement
+                    // => plus simple: on recompose HTML minimal depuis generateContractData
+                    // Pour éviter la duplication complexe, on appelle la route view ultérieurement.
+                    // Compromis: on génère un HTML simple avec les données
+                    // (voir ci-dessous)
+                    __invoke();
+            } catch (\Throwable $t) {
+                // Ignorer, nous allons construire le HTML ici
+            }
+
+            // Construction HTML simple basée sur generateContractData
+            $contractData = $this->generateContractData($sponsorship);
+            $htmlSnapshot = '<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8"><title>Contrat ' .
+                htmlspecialchars($contractData['contract_number']) .
+                '</title></head><body><h1>Contrat de Sponsoring</h1>' .
+                '<p><strong>Contrat:</strong> ' . htmlspecialchars($contractData['contract_number']) . '</p>' .
+                '<p><strong>Sponsor:</strong> ' . htmlspecialchars($contractData['sponsor_name']) . ' (' . htmlspecialchars($contractData['sponsor_company']) . ')</p>' .
+                '<p><strong>Événement:</strong> ' . htmlspecialchars($contractData['event_title']) . ' - ' . htmlspecialchars((string) $contractData['event_date']) . '</p>' .
+                '<p><strong>Package:</strong> ' . htmlspecialchars($contractData['package_name']) . '</p>' .
+                '<p><strong>Montant:</strong> ' . htmlspecialchars((string) $contractData['amount']) . ' €</p>' .
+                '<p><strong>Date d\'approbation:</strong> ' . htmlspecialchars($contractData['approval_date']->format('d/m/Y H:i')) . '</p>' .
+                '<hr><p>Ce snapshot a été généré automatiquement lors de l\'approbation.</p></body></html>';
+
+            \Illuminate\Support\Facades\Storage::disk('local')->put($contractDir . '/' . $contractFile, $htmlSnapshot);
+            $sponsorship->update(['contract_pdf' => $contractDir . '/' . $contractFile]);
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Proposition de sponsoring approuvée avec succès !',
+                'contract_generated' => true,
+                'contract_data' => $contractData,
+                'contract_download_url' => route('contracts.sponsorship.download', $id),
+                'contract_view_url' => route('contracts.sponsorship.view', $id)
+            ]);
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('AdminSponsorController: Erreur approveSponsorship', [
+                'id' => $id,
+                'error' => $e->getMessage()
+            ]);
+            
+            return response()->json([
+                'success' => false,
+                'error' => 'Erreur lors de l\'approbation de la proposition'
+            ], 500);
+        }
+    }
+
+    /**
+     * Générer les données du contrat
+     */
+    private function generateContractData($sponsorship)
+    {
+        return [
+            'contract_number' => 'SPONS-' . str_pad($sponsorship->id, 6, '0', STR_PAD_LEFT) . '-' . date('Y'),
+            'sponsor_name' => $sponsorship->user->name,
+            'sponsor_company' => $sponsorship->user->company_name ?? 'Entreprise non spécifiée',
+            'sponsor_email' => $sponsorship->user->email,
+            'event_title' => $sponsorship->event->title ?? 'Événement non spécifié',
+            'event_date' => $sponsorship->event->date ?? now(),
+            'package_name' => $sponsorship->package_name,
+            'amount' => $sponsorship->amount,
+            'notes' => $sponsorship->notes,
+            'approval_date' => now(),
+        ];
+    }
+
+    /**
+     * Afficher le contrat PDF
+     */
+    public function viewContract($id)
+    {
+        $sponsorship = SponsorshipTemp::findOrFail($id);
+        
+        if ($sponsorship->status !== 'approved') {
+            abort(404, 'Contrat non disponible');
+        }
+
+        return view('contracts.sponsorship-contract', compact('sponsorship'));
+    }
+
+    /**
+     * Rejeter une proposition de sponsoring
+     */
+    public function rejectSponsorship($id)
+    {
+        try {
+            $sponsorship = SponsorshipTemp::findOrFail($id);
+            
+            // Vérifier que la proposition est bien en attente
+            if ($sponsorship->status !== 'pending') {
+                return response()->json([
+                    'success' => false,
+                    'error' => 'Cette proposition ne peut plus être rejetée (statut: ' . $sponsorship->status . ')'
+                ], 422);
+            }
+            
+            $sponsorship->update(['status' => 'rejected']);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Proposition de sponsoring rejetée avec succès !'
+            ]);
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('AdminSponsorController: Erreur rejectSponsorship', [
+                'id' => $id,
+                'error' => $e->getMessage()
+            ]);
+            
+            return response()->json([
+                'success' => false,
+                'error' => 'Erreur lors du rejet de la proposition'
+            ], 500);
+        }
+    }
+
+    /**
+     * Marquer un sponsoring comme terminé
+     */
+    public function completeSponsorship($id)
+    {
+        $sponsorship = SponsorshipTemp::findOrFail($id);
+        
+        $sponsorship->update(['status' => 'completed']);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Sponsoring marqué comme terminé !'
         ]);
     }
 

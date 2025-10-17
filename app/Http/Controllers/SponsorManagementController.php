@@ -7,7 +7,7 @@ use App\Models\Sponsor;
 use App\Models\Package;
 use App\Models\Sponsorship;
 use App\Models\SponsorshipTemp;
-use App\Models\EchofyCampaign;
+use App\Models\Event;
 use App\Models\User;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Hash;
@@ -355,13 +355,13 @@ class SponsorManagementController extends Controller
             return redirect()->route('home')->with('error', 'Accès non autorisé.');
         }
 
-        $campaign = EchofyCampaign::findOrFail($id);
+        $event = Event::findOrFail($id);
         
         // Vérifier si l'utilisateur a déjà proposé un sponsorship pour cette campagne
         $existingSponsorship = null;
         try {
             $existingSponsorship = SponsorshipTemp::where('user_id', $user->id)
-                ->where('campaign_id', $id)
+                ->where('event_id', $id)
                 ->first();
         } catch (\Exception $e) {
             // Table n'existe pas encore
@@ -413,7 +413,7 @@ class SponsorManagementController extends Controller
             ]
         ]);
 
-        return view('pages.backOffice.sponsor-campaign-details', compact('user', 'campaign', 'packages', 'existingSponsorship'));
+        return view('pages.backOffice.sponsor-campaign-details', compact('user', 'event', 'packages', 'existingSponsorship'));
     }
 
     // ==================== SPONSORSHIPS MANAGEMENT ====================
@@ -429,10 +429,11 @@ class SponsorManagementController extends Controller
             return redirect()->route('home')->with('error', 'Accès non autorisé.');
         }
 
-        // Récupérer les sponsorships de l'utilisateur depuis la table temporaire
+        // Récupérer uniquement les sponsorships acceptés de l'utilisateur
         try {
             $sponsorships = SponsorshipTemp::where('user_id', $user->id)
-                ->with(['campaign'])
+                ->where('status', 'approved')
+                ->with(['event'])
                 ->orderBy('created_at', 'desc')
                 ->paginate(10);
         } catch (\Exception $e) {
@@ -441,6 +442,31 @@ class SponsorManagementController extends Controller
         }
 
         return view('pages.backOffice.sponsor-sponsorships', compact('user', 'sponsorships'));
+    }
+
+    /**
+     * Afficher toutes les propositions de sponsoring (tous statuts)
+     */
+    public function showAllSponsorships(Request $request)
+    {
+        $user = $request->auth;
+        
+        if (!$user || $user->role !== 'sponsor') {
+            return redirect()->route('home')->with('error', 'Accès non autorisé.');
+        }
+
+        // Récupérer tous les sponsorships de l'utilisateur (tous statuts)
+        try {
+            $sponsorships = SponsorshipTemp::where('user_id', $user->id)
+                ->with(['event'])
+                ->orderBy('created_at', 'desc')
+                ->paginate(10);
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('SponsorManagementController: Erreur showAllSponsorships', ['error' => $e->getMessage()]);
+            $sponsorships = collect([]);
+        }
+
+        return view('pages.backOffice.sponsor-all-sponsorships', compact('user', 'sponsorships'));
     }
 
     /**
@@ -456,27 +482,49 @@ class SponsorManagementController extends Controller
 
         try {
             $validated = $request->validate([
-                'campaign_id' => 'required|exists:campaigns,id',
+                'event_id' => 'required|exists:events,id',
                 'package_id' => 'required|numeric|min:1', // Validation simplifiée
                 'amount' => 'required|numeric|min:0',
                 'notes' => 'nullable|string|max:1000',
             ]);
 
-            // Vérifier si l'utilisateur a déjà proposé un sponsorship pour cette campagne
+            // Vérifier si l'utilisateur a déjà proposé un sponsorship pour cet événement
+            // (peu importe le statut - pending, approved, rejected, etc.)
             $existingSponsorship = SponsorshipTemp::where('user_id', $user->id)
-                ->where('campaign_id', $validated['campaign_id'])
+                ->where('event_id', $validated['event_id'])
                 ->first();
 
             if ($existingSponsorship) {
+                $statusMessage = '';
+                switch($existingSponsorship->status) {
+                    case 'pending':
+                        $statusMessage = 'en attente d\'approbation';
+                        break;
+                    case 'approved':
+                        $statusMessage = 'déjà approuvé';
+                        break;
+                    case 'rejected':
+                        $statusMessage = 'rejeté';
+                        break;
+                    case 'completed':
+                        $statusMessage = 'terminé';
+                        break;
+                    case 'cancelled':
+                        $statusMessage = 'annulé';
+                        break;
+                    default:
+                        $statusMessage = 'existant';
+                }
+                
                 return response()->json([
-                    'error' => 'Vous avez déjà proposé un sponsorship pour cette campagne. Vous ne pouvez proposer qu\'un seul sponsorship par campagne.'
+                    'error' => "Vous avez déjà proposé un sponsorship pour cet événement (statut: {$statusMessage}). Vous ne pouvez proposer qu'un seul package par événement."
                 ], 422);
             }
 
             // Sauvegarder le sponsorship dans la table temporaire
             $sponsorship = SponsorshipTemp::create([
                 'user_id' => $user->id,
-                'campaign_id' => $validated['campaign_id'],
+                'event_id' => $validated['event_id'],
                 'package_id' => $validated['package_id'],
                 'package_name' => $this->getPackageName($validated['package_id']),
                 'amount' => $validated['amount'],
@@ -487,11 +535,24 @@ class SponsorManagementController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Sponsorship proposé avec succès !',
-                'sponsorship' => $sponsorship->load(['campaign'])
+                'sponsorship' => $sponsorship->load(['event'])
             ]);
 
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json(['errors' => $e->errors()], 422);
+        } catch (\Illuminate\Database\QueryException $e) {
+            // Gestion spécifique des erreurs de contrainte unique
+            if ($e->getCode() == 23000 && str_contains($e->getMessage(), 'Duplicate entry')) {
+                return response()->json([
+                    'error' => 'Vous avez déjà proposé un sponsorship pour cet événement. Vous ne pouvez proposer qu\'un seul package par événement.'
+                ], 422);
+            }
+            
+            \Illuminate\Support\Facades\Log::error('SponsorManagementController: Erreur QueryException createSponsorship', [
+                'error' => $e->getMessage(),
+                'code' => $e->getCode()
+            ]);
+            return response()->json(['error' => 'Erreur lors de la création du sponsorship.'], 500);
         } catch (\Exception $e) {
             \Illuminate\Support\Facades\Log::error('SponsorManagementController: Erreur createSponsorship', ['error' => $e->getMessage()]);
             return response()->json(['error' => 'Erreur lors de la création du sponsorship.'], 500);
@@ -523,7 +584,7 @@ class SponsorManagementController extends Controller
             \Illuminate\Support\Facades\Log::info('Sponsorship trouvé avant suppression', [
                 'id' => $sponsorship->id,
                 'user_id' => $sponsorship->user_id,
-                'campaign_id' => $sponsorship->campaign_id,
+                'event_id' => $sponsorship->event_id,
                 'status' => $sponsorship->status
             ]);
 
