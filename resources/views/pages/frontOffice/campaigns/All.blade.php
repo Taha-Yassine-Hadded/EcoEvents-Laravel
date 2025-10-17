@@ -756,7 +756,12 @@
             }
 
             campaigns.forEach(campaign => {
-                const isLiked = {{ auth()->check() ? '!!' . auth()->user()->likedCampaigns()->where('campaign_id', "' + campaign.id + '").exists() : 'false' }};
+                @if(auth()->check())
+                    const userLikedCampaigns = @json(auth()->user()->likedCampaigns()->pluck('campaign_id')->toArray());
+                    const isLiked = userLikedCampaigns.includes(parseInt(campaign.id));
+                @else
+                    const isLiked = false;
+                @endif
                 const campaignBox = document.createElement('div');
                 campaignBox.className = 'campaign-card single-campaign-box';
                 campaignBox.setAttribute('data-category', campaign.category);

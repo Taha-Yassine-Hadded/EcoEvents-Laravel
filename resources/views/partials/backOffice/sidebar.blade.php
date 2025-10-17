@@ -40,6 +40,19 @@
                         <li><a href="#" class="submenu-link">Tags</a></li>
                     </ul>
                 </li>
+                <li class="nav-item">
+                    <a href="{{ route('admin.events.index') }}" class="nav-link {{ request()->routeIs('admin.events.*') ? 'active' : '' }}">
+                        <i class="fas fa-calendar-alt"></i> <!-- calendar icon for events -->
+                        <span class="nav-text">Events</span>
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a href="{{ route('admin.categories.index') }}" class="nav-link {{ request()->routeIs('admin.categories.*') ? 'active' : '' }}">
+                        <i class="fas fa-tags"></i> <!-- tags icon for categories -->
+                        <span class="nav-text">Categories</span>
+                    </a>
+                </li>
 
                 <!-- Compagne Management -->
                 <li class="nav-item has-submenu">
@@ -50,8 +63,16 @@
                     </a>
                     <ul class="submenu">
                         <li><a href="{{ route('admin.campaigns.index') }}" class="submenu-link">All Compagnes</a></li>
-                        <li><a href="{{ route('admin.campaigns.create') }}" class="submenu-link">Add Compagne</a></li>                          <li><a href="#" class="submenu-link">Categories</a></li>
-                        <li><a href="#" class="submenu-link">Tags</a></li>
+                        <li><a href="{{ route('admin.campaigns.create') }}" class="submenu-link">Add Compagne</a></li>
+
+
+                        <!-- Campaigns Analytics -->
+                        <li class="nav-item">
+                            <a href="{{ route('admin.campaigns.dashboard') }}" class="nav-link {{ request()->routeIs('admin.campaigns.dashboard') ? 'active' : '' }}">
+                                <i class="fas fa-chart-pie"></i>
+                                <span class="nav-text">Analytics Campagnes</span>
+                            </a>
+                        </li>
                     </ul>
                 </li>
 

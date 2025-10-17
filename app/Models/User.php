@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Tymon\JWTAuth\Contracts\JWTSubject;
@@ -136,6 +137,25 @@ class User extends Authenticatable implements JWTSubject
     {
         return [];
     }
+
+
+    /**
+     * Get communities created by this user (if organizer).
+     */
+    public function createdCommunities()
+    {
+        return $this->hasMany(Community::class, 'organizer_id');
+    }
+
+    /**
+     * Get communities this user is member of.
+     */
+    public function memberCommunities()
+    {
+        return $this->belongsToMany(Community::class, 'community_members', 'user_id', 'community_id')
+                    ->withPivot(['status', 'is_active', 'joined_at'])
+                    ->withTimestamps();
+    }
     public function likes(): HasMany
     {
         return $this->hasMany(CampaignLike::class, 'user_id');
@@ -147,5 +167,12 @@ class User extends Authenticatable implements JWTSubject
     public function commentLikes(): HasMany
     {
         return $this->hasMany(CommentLike::class, 'user_id');
+
+    }
+
+    public function likedCampaigns(): BelongsToMany
+    {
+        return $this->belongsToMany(Campaign::class, 'campaign_likes', 'user_id', 'campaign_id')
+                    ->withTimestamps();
     }
 }

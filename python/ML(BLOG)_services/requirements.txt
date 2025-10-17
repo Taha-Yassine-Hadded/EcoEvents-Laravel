@@ -1,0 +1,9 @@
+# requirements.txt - Analyse de sentiment multilingue
+langdetect==1.0.9          # Détection langue (ar/fr/tunisien)
+pandas==1.5.3              # Traitement lexiques TSV/CSV
+numpy==1.24.3              # Calculs numériques
+fuzzywuzzy==0.18.0         # Matching flou dialectes tunisiens
+python-Levenshtein==0.25.1 # Optimisation fuzzy matching (C++ rapide)
+fastapi==0.104.1           # API serveur
+uvicorn==0.24.0            # Serveur ASGI pour FastAPI
+pymongo==4.6.3             # Cache MongoDB (optionnel)
