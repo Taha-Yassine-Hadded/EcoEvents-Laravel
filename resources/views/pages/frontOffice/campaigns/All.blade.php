@@ -10,7 +10,7 @@
 
     <!-- Container de notifications -->
     <div id="notification-container"></div>
-<h1></h1>
+    <h1></h1>
     <section class="campaigns-area">
         <div class="container">
             <!-- En-tête de section -->
@@ -67,6 +67,13 @@
                     </div>
                 </div>
             </div>
+
+            <!-- 🆕 FORMULAIRE CACHE POUR MAINTENIR LES FILTRES -->
+            <form id="filterForm" method="GET" action="{{ route('front.campaigns.index') }}" style="display: none;">
+                <input type="hidden" name="search" id="searchHidden" value="{{ $search ?? '' }}">
+                <input type="hidden" name="category" id="categoryHidden" value="{{ $category ?? 'all' }}">
+                <input type="hidden" name="status" id="statusHidden" value="{{ $status ?? 'all' }}">
+            </form>
 
             <!-- Grille des campagnes -->
             <div class="campaigns-grid" id="campaignsGrid">
@@ -132,6 +139,11 @@
                         </p>
                     </div>
                 @endforelse
+            </div>
+
+            <!-- 🆕 PAGINATION -->
+            <div class="pagination-container fade-in" id="paginationContainer">
+                {{ $campaigns->appends(request()->query())->links('pagination::bootstrap-5') }}
             </div>
         </div>
     </section>
@@ -616,6 +628,59 @@
             100% { transform: rotate(360deg); }
         }
 
+        /* 🆕 PAGINATION */
+        .pagination-container {
+            margin-top: 60px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            padding: 20px 0;
+        }
+
+        .page-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 48px;
+            height: 48px;
+            border: 2px solid #e2e8f0;
+            background: white;
+            color: #64748b;
+            text-decoration: none;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .page-link:hover {
+            background: #10b981;
+            color: white;
+            border-color: #10b981;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(16, 185, 129, 0.2);
+        }
+
+        .page-item.active .page-link {
+            background: linear-gradient(135deg, #10b981, #059669);
+            border-color: #10b981;
+            color: white;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+
+        .page-item.disabled .page-link {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
         /* Responsive Design */
         @media (max-width: 1024px) {
             .campaigns-grid {
@@ -647,6 +712,17 @@
 
             .campaign-card {
                 margin: 0 -10px;
+            }
+
+            .pagination {
+                flex-wrap: wrap;
+                gap: 6px;
+            }
+
+            .page-link {
+                width: 40px;
+                height: 40px;
+                font-size: 0.9rem;
             }
         }
 
@@ -698,131 +774,51 @@
             }, 500); // Débouncer de 500ms
         });
 
-        // Filtrage AJAX pour catégorie et statut
+        // 🆕 SYNCHRONISER FILTRES AVEC PAGINATION ET RECHARGEMENT
+        document.addEventListener('DOMContentLoaded', function() {
+            // Mettre à jour les selects avec les valeurs actuelles
+            document.getElementById('categorySelect').value = '{{ $category ?? "all" }}';
+            document.getElementById('statusSelect').value = '{{ $status ?? "all" }}';
+            document.getElementById('searchInput').value = '{{ $search ?? "" }}';
+
+            // Intercepter les clics de pagination pour maintenir les filtres
+            const pageLinks = document.querySelectorAll('.pagination .page-link:not(.active)');
+            pageLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    const url = new URL(this.href, window.location.origin);
+
+                    // Ajouter les paramètres de recherche et filtres
+                    const search = document.getElementById('searchInput').value;
+                    const category = document.getElementById('categorySelect').value;
+                    const status = document.getElementById('statusSelect').value;
+
+                    if (search) url.searchParams.set('search', search);
+                    if (category !== 'all') url.searchParams.set('category', category);
+                    if (status !== 'all') url.searchParams.set('status', status);
+
+                    this.href = url.toString();
+                });
+            });
+
+            // Filtres avec rechargement de page (maintenir pagination)
+            document.getElementById('categorySelect').addEventListener('change', function() {
+                document.getElementById('filterForm').submit();
+            });
+
+            document.getElementById('statusSelect').addEventListener('change', function() {
+                document.getElementById('filterForm').submit();
+            });
+        });
+
+        // Filtrage AJAX pour catégorie et statut (optionnel - peut être désactivé)
         function filterCampaigns() {
             const category = document.getElementById('categorySelect').value;
             const status = document.getElementById('statusSelect').value;
             console.log('Filtrage des campagnes:', { category, status });
 
-            fetch('{{ route("api.campaigns.filter") }}', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                    'Accept': 'application/json'
-                },
-                body: JSON.stringify({ category, status })
-            })
-                .then(response => {
-                    console.log('Réponse HTTP (filtrage):', response.status, response.statusText);
-                    if (!response.ok) {
-                        throw new Error('Erreur réseau');
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    console.log('Données reçues (filtrage):', data);
-                    if (data.success) {
-                        updateCampaignsGrid(data.campaigns);
-                        showNotification('Campagnes filtrées avec succès !');
-                    } else {
-                        showNotification(data.error || 'Erreur lors du filtrage', 'danger');
-                    }
-                })
-                .catch(error => {
-                    console.error('Erreur lors du filtrage:', error);
-                    showNotification('Une erreur est survenue', 'danger');
-                });
+            // Optionnel : utiliser AJAX ou recharger la page
+            document.getElementById('filterForm').submit();
         }
-
-        // Mettre à jour la grille des campagnes
-        function updateCampaignsGrid(campaigns) {
-            const grid = document.querySelector('.campaigns-grid');
-            grid.innerHTML = '';
-
-            if (campaigns.length === 0) {
-                grid.innerHTML = `
-                    <div class="empty-state">
-                        <div class="empty-icon">
-                            <i class="bi bi-search"></i>
-                        </div>
-                        <h3 class="empty-title">Aucune campagne trouvée</h3>
-                        <p class="empty-description">
-                            Essayez de modifier vos critères de recherche ou de filtrage
-                        </p>
-                    </div>
-                `;
-                return;
-            }
-
-            campaigns.forEach(campaign => {
-                @if(auth()->check())
-                    const userLikedCampaigns = @json(auth()->user()->likedCampaigns()->pluck('campaign_id')->toArray());
-                    const isLiked = userLikedCampaigns.includes(parseInt(campaign.id));
-                @else
-                    const isLiked = false;
-                @endif
-                const campaignBox = document.createElement('div');
-                campaignBox.className = 'campaign-card single-campaign-box';
-                campaignBox.setAttribute('data-category', campaign.category);
-                campaignBox.onclick = () => goToCampaignDetail(campaign.id);
-                campaignBox.innerHTML = `
-                    <div class="campaign-image campaign-thumb">
-                        <img src="${campaign.thumbnail}" alt="${campaign.title}">
-                        <div class="campaign-overlay"></div>
-                        <div class="campaign-status">${campaign.status.charAt(0).toUpperCase() + campaign.status.slice(1)}</div>
-                    </div>
-                    <div class="campaign-content">
-                        <div class="campaign-category campaign-text">${campaign.category.charAt(0).toUpperCase() + campaign.category.slice(1)}</div>
-                        <h3 class="campaign-title">${campaign.title.substring(0, 50)}${campaign.title.length > 50 ? '...' : ''}</h3>
-                        <p class="campaign-description">${campaign.content.substring(0, 150)}${campaign.content.length > 150 ? '...' : ''}</p>
-                        <div class="campaign-dates">
-                            <div class="date-item">
-                                <i class="bi bi-calendar2-event"></i>
-                                <span>${campaign.start_date}</span>
-                            </div>
-                            <div class="date-item">
-                                <i class="bi bi-calendar2-check"></i>
-                                <span>${campaign.end_date}</span>
-                            </div>
-                        </div>
-                        <div class="campaign-footer campaign-actions">
-                            <div class="campaign-stats">
-                                <div class="stat-item">
-                                    <i class="bi bi-eye"></i>
-                                    <span>${campaign.views_count}</span>
-                                </div>
-                                <div class="stat-item">
-                                    <i class="bi bi-heart"></i>
-                                    <span>${campaign.likes_count}</span>
-                                </div>
-                                <div class="stat-item">
-                                    <i class="bi bi-chat"></i>
-                                    <span>${campaign.comments_count}</span>
-                                </div>
-                            </div>
-                            <div class="campaign-actions action-buttons">
-                                <button class="action-btn ${isLiked ? 'liked' : ''}" onclick="event.stopPropagation(); toggleLike(this, ${campaign.id})">
-                                    <i class="bi bi-heart"></i>
-                                </button>
-                                <button class="action-btn" onclick="event.stopPropagation(); shareCampaign(${campaign.id})">
-                                    <i class="bi bi-share"></i>
-                                </button>
-                            </div>
-                        </div>
-                        <a href="/campaigns/${campaign.id}" class="cta-button echofy-button style-five" onclick="event.stopPropagation();">
-                            En savoir plus
-                            <i class="bi bi-arrow-right"></i>
-                        </a>
-                    </div>
-                `;
-                grid.appendChild(campaignBox);
-            });
-        }
-
-        // Événements pour les filtres
-        document.getElementById('categorySelect').addEventListener('change', filterCampaigns);
-        document.getElementById('statusSelect').addEventListener('change', filterCampaigns);
 
         // Navigation vers le détail
         function goToCampaignDetail(campaignId) {
