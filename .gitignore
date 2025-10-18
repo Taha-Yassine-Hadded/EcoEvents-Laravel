@@ -63,7 +63,7 @@ python/*/dist/
 # Logs
 *.log
 logs/
-
+*.pkl
 # OS
 .DS_Store
 Thumbs.db
@@ -71,3 +71,6 @@ Thumbs.db
 # Database
 *.sql
 *.sqlite
+
+venv/
+python/*/venv/

@@ -1,3 +1,4 @@
+
 @extends('layouts.app')
 
 @section('title', 'Campagnes de Sensibilisation - Echofy')
@@ -10,18 +11,17 @@
 
     <!-- Container de notifications -->
     <div id="notification-container"></div>
-    <h1></h1>
+
     <section class="campaigns-area">
         <div class="container">
             <!-- En-tête de section -->
             <div class="section-header fade-in">
                 <div class="section-subtitle">
                     <i class="bi bi-leaf"></i>
-
                 </div>
                 <h1 class="section-title">Campagnes de Sensibilisation Environnementale</h1>
                 <p class="section-description">
-                    Découvrez nos initiatives pour un avenir plus durable et rejoignez notre communauté engagée pour l'environnement.
+                    Découvrez toutes nos initiatives pour un avenir plus durable et rejoignez notre communauté engagée pour l'environnement.
                 </p>
             </div>
 
@@ -68,7 +68,7 @@
                 </div>
             </div>
 
-            <!-- 🆕 FORMULAIRE CACHE POUR MAINTENIR LES FILTRES -->
+            <!-- Formulaire caché pour maintenir les filtres -->
             <form id="filterForm" method="GET" action="{{ route('front.campaigns.index') }}" style="display: none;">
                 <input type="hidden" name="search" id="searchHidden" value="{{ $search ?? '' }}">
                 <input type="hidden" name="category" id="categoryHidden" value="{{ $category ?? 'all' }}">
@@ -78,16 +78,23 @@
             <!-- Grille des campagnes -->
             <div class="campaigns-grid" id="campaignsGrid">
                 @forelse ($campaigns as $index => $campaign)
-                    <div class="campaign-card single-campaign-box fade-in stagger-delay-{{ min($index + 1, 6) }}" data-category="{{ $campaign->category }}" onclick="goToCampaignDetail({{ $campaign->id }})">
+                    <div class="campaign-card single-campaign-box fade-in stagger-delay-{{ min($index + 1, 6) }}"
+                         data-category="{{ $campaign->category }}"
+                         onclick="goToCampaignDetail({{ $campaign->id }})">
                         <div class="campaign-image campaign-thumb">
-                            <img src="{{ !empty($campaign->media_urls['images']) && is_array($campaign->media_urls['images']) && \Illuminate\Support\Facades\Storage::disk('public')->exists($campaign->media_urls['images'][0]) ? \Illuminate\Support\Facades\Storage::url($campaign->media_urls['images'][0]) : asset('assets/images/home6/placeholder.jpg') }}" alt="{{ $campaign->title }}">
+                            @php
+                                $imageUrl = $campaign->media_urls['images'][0] ?? null;
+                                $imagePath = $imageUrl ? Storage::url($imageUrl) : asset('assets/images/home6/placeholder.jpg');
+                            @endphp
+                            <img src="{{ $imagePath }}" alt="{{ $campaign->title }}">
                             <div class="campaign-overlay"></div>
                             <div class="campaign-status">{{ ucfirst($campaign->status) }}</div>
                         </div>
+
                         <div class="campaign-content">
                             <div class="campaign-category campaign-text">{{ ucfirst($campaign->category) }}</div>
-                            <h3 class="campaign-title">{{ \Illuminate\Support\Str::limit($campaign->title, 50) }}</h3>
-                            <p class="campaign-description">{{ \Illuminate\Support\Str::limit(strip_tags($campaign->content), 150) }}</p>
+                            <h3 class="campaign-title">{{ Str::limit($campaign->title, 50) }}</h3>
+                            <p class="campaign-description">{{ Str::limit(strip_tags($campaign->content), 150) }}</p>
                             <div class="campaign-dates">
                                 <div class="date-item">
                                     <i class="bi bi-calendar2-event"></i>
@@ -114,9 +121,19 @@
                                     </div>
                                 </div>
                                 <div class="campaign-actions action-buttons">
-                                    <button class="action-btn {{ auth()->check() && auth()->user()->likedCampaigns()->where('campaign_id', $campaign->id)->exists() ? 'liked' : '' }}" onclick="event.stopPropagation(); toggleLike(this, {{ $campaign->id }})">
-                                        <i class="bi bi-heart"></i>
-                                    </button>
+                                    @auth
+                                        @php
+                                            $isLiked = auth()->user()->likedCampaigns()->where('campaign_id', $campaign->id)->exists();
+                                        @endphp
+                                        <button class="action-btn {{ $isLiked ? 'liked' : '' }}"
+                                                onclick="event.stopPropagation(); toggleLike(this, {{ $campaign->id }})">
+                                            <i class="bi bi-heart"></i>
+                                        </button>
+                                    @else
+                                        <button class="action-btn" onclick="event.stopPropagation(); window.location.href='{{ route('login') }}';">
+                                            <i class="bi bi-heart"></i>
+                                        </button>
+                                    @endauth
                                     <button class="action-btn" onclick="event.stopPropagation(); shareCampaign({{ $campaign->id }})">
                                         <i class="bi bi-share"></i>
                                     </button>
@@ -141,10 +158,116 @@
                 @endforelse
             </div>
 
-            <!-- 🆕 PAGINATION -->
+            <!-- Pagination -->
             <div class="pagination-container fade-in" id="paginationContainer">
-                {{ $campaigns->appends(request()->query())->links('pagination::bootstrap-5') }}
+                @if(isset($campaigns) && method_exists($campaigns, 'links') && $campaigns->hasPages())
+                    {{ $campaigns->appends(request()->query())->links('pagination::bootstrap-5') }}
+                @else
+                    <div class="text-center text-muted py-4">
+                        @if(isset($campaigns) && $campaigns->count() > 0)
+                            Affichage de {{ $campaigns->count() }} campagne(s)
+                        @else
+                            Aucune campagne trouvée
+                        @endif
+                    </div>
+                @endif
             </div>
+
+            <!-- 🆕 SECTION RECOMMANDÉE -->
+            @auth
+                <section class="recommended-section">
+                    <div class="section-header fade-in">
+                        <h2 class="section-title recommended-title">Recommandé pour vous</h2>
+
+                    </div>
+
+                    <div class="recommendation-list" id="recommendedGrid">
+                        @if(isset($recommendedCampaigns) && count($recommendedCampaigns) > 0)
+                            <script>
+                                window.recommendedCampaignsData = @json($recommendedCampaigns);
+                                console.log('✅ Recommandations serveur:', window.recommendedCampaignsData);
+                            </script>
+                            @foreach($recommendedCampaigns as $campaign)
+                                <div class="recommendation-item fade-in"
+                                     data-category="{{ $campaign['category'] }}"
+                                     onclick="goToCampaignDetail({{ $campaign['id'] }})">
+                                    <div class="recommendation-image">
+                                        <img src="{{ $campaign['image_url'] ?? asset('assets/images/home6/placeholder.jpg') }}"
+                                             alt="{{ $campaign['title'] }}"
+                                             loading="lazy">
+                                        <div class="campaign-overlay"></div>
+                                        <div class="campaign-status">{{ ucfirst($campaign['status']) }}</div>
+                                    </div>
+                                    <div class="recommendation-content">
+                                        <div class="campaign-category campaign-text">{{ ucfirst($campaign['category']) }}</div>
+                                        <h4 class="recommendation-title">{{ Str::limit($campaign['title'], 50) }}</h4>
+                                        <p class="recommendation-description">{{ Str::limit($campaign['description'], 100) }}</p>
+                                        <div class="campaign-dates">
+                                            <div class="date-item">
+                                                <i class="bi bi-calendar2-event"></i>
+                                                <span>{{ \Carbon\Carbon::parse($campaign['start_date'])->format('d/m/Y') }}</span>
+                                            </div>
+                                            <div class="date-item">
+                                                <i class="bi bi-calendar2-check"></i>
+                                                <span>{{ \Carbon\Carbon::parse($campaign['end_date'])->format('d/m/Y') }}</span>
+                                            </div>
+                                        </div>
+                                        <div class="campaign-footer campaign-actions">
+                                            <div class="campaign-stats">
+                                                <div class="stat-item">
+                                                    <i class="bi bi-eye"></i>
+                                                    <span>{{ $campaign['views_count'] ?? 0 }}</span>
+                                                </div>
+                                                <div class="stat-item">
+                                                    <i class="bi bi-heart"></i>
+                                                    <span>{{ $campaign['likes_count'] ?? 0 }}</span>
+                                                </div>
+                                                <div class="stat-item">
+                                                    <i class="bi bi-chat"></i>
+                                                    <span>{{ $campaign['comments_count'] ?? 0 }}</span>
+                                                </div>
+                                            </div>
+                                            <div class="campaign-actions action-buttons">
+                                                @auth
+                                                    <button class="action-btn {{ $campaign['is_liked'] ? 'liked' : '' }}"
+                                                            onclick="event.stopPropagation(); toggleLike(this, {{ $campaign['id'] }}, true)">
+                                                        <i class="bi bi-heart"></i>
+                                                    </button>
+                                                @else
+                                                    <button class="action-btn" onclick="event.stopPropagation(); window.location.href='{{ route('login') }}';">
+                                                        <i class="bi bi-heart"></i>
+                                                    </button>
+                                                @endauth
+                                                <button class="action-btn" onclick="event.stopPropagation(); shareCampaign({{ $campaign['id'] }})">
+                                                    <i class="bi bi-share"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <a href="/campaigns/{{ $campaign['id'] }}" class="cta-button echofy-button style-five" onclick="event.stopPropagation();">
+                                            En savoir plus
+                                            <i class="bi bi-arrow-right"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            @endforeach
+                        @else
+                            <div class="empty-state">
+                                <div class="empty-icon">
+                                    <i class="bi bi-lightning-charge"></i>
+                                </div>
+                                <h3 class="empty-title">Aucune recommandation pour le moment</h3>
+                                <p class="empty-description">
+                                    Participez à nos campagnes (likes, commentaires, vues) pour recevoir des recommandations personnalisées !
+                                </p>
+                                <a href="#campaignsGrid" class="cta-button echofy-button style-five">
+                                    Découvrir toutes les campagnes
+                                    <i class="bi bi-arrow-down"></i>
+                                </a>
+                            </div>
+                        @endif
+                    </div>
+                </section>
+            @endauth
         </div>
     </section>
 @endsection
@@ -167,6 +290,7 @@
         .campaigns-area {
             padding: 80px 0;
             min-height: 100vh;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
         }
 
         .container {
@@ -175,7 +299,7 @@
             padding: 0 20px;
         }
 
-        /* Notification fixe en haut à droite */
+        /* Notification fixe */
         #notification-container {
             position: fixed;
             top: 20px;
@@ -214,6 +338,143 @@
             border-color: rgba(239, 68, 68, 0.3);
         }
 
+        /* 🆕 SECTION RECOMMANDATIONS */
+        .recommended-section {
+            padding: 40px 0;
+            margin-top: 60px;
+        }
+
+        .recommended-section .section-header {
+            margin-bottom: 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 32px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.06);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .recommendation-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin-top: 24px;
+            padding-top: 24px;
+            border-top: 2px solid rgba(226, 232, 240, 0.5);
+        }
+
+        .recommendation-item {
+            display: flex;
+            gap: 20px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 16px;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+
+        .recommendation-item:hover {
+            background: rgba(16, 185, 129, 0.05);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+        }
+
+        .recommendation-image {
+            position: relative;
+            width: 200px;
+            height: 280px;
+            overflow: hidden;
+            border-radius: 12px;
+            flex-shrink: 0;
+        }
+
+        .recommendation-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .recommendation-item:hover .recommendation-image img {
+            transform: scale(1.1);
+        }
+
+        .recommendation-content {
+            flex: 1;
+        }
+
+        .recommendation-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 8px;
+            line-height: 1.3;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .recommendation-description {
+            color: #64748b;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-bottom: 12px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .loading-placeholder {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .placeholder-card {
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 16px;
+            padding: 20px;
+            height: 160px;
+            animation: pulse 2s infinite;
+            display: flex;
+            gap: 20px;
+        }
+
+        .placeholder-image {
+            width: 200px;
+            height: 120px;
+            background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+            border-radius: 12px;
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+            flex-shrink: 0;
+        }
+
+        .placeholder-content .placeholder-line {
+            height: 16px;
+            background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+            border-radius: 8px;
+            margin-bottom: 12px;
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+        }
+
+        .placeholder-line.short { width: 60%; }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        @keyframes loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
         /* En-tête de section */
         .section-header {
             text-align: center;
@@ -234,7 +495,7 @@
         }
 
         .section-title {
-            font-size: 3.5rem;
+            font-size: 2.8rem;
             font-weight: 800;
             background: linear-gradient(135deg, #1e293b, #475569);
             -webkit-background-clip: text;
@@ -244,14 +505,36 @@
             margin-bottom: 24px;
         }
 
+        .recommended-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #1e293b;
+            text-align: left;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .recommended-title::before {
+            content: '✨';
+            font-size: 1.6rem;
+        }
+
         .section-description {
             font-size: 1.2rem;
             color: #64748b;
-            max-width: 600px;
+            max-width: 900px;
             margin: 0 auto;
         }
 
-        /* Filtres modernes */
+        .recommended-section .section-description {
+            color: #64748b;
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        /* Filtres */
         .filters-container {
             background: rgba(255, 255, 255, 0.8);
             backdrop-filter: blur(20px);
@@ -269,23 +552,10 @@
             align-items: end;
         }
 
-        .filter-group {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
+        .filter-group { display: flex; flex-direction: column; gap: 8px; }
+        .filter-label { font-size: 0.9rem; font-weight: 600; color: #475569; margin-bottom: 4px; }
 
-        .filter-label {
-            font-size: 0.9rem;
-            font-weight: 600;
-            color: #475569;
-            margin-bottom: 4px;
-        }
-
-        .search-container {
-            position: relative;
-        }
-
+        .search-container { position: relative; }
         .search-input {
             width: 100%;
             padding: 16px 20px 16px 50px;
@@ -312,10 +582,7 @@
             font-size: 1.2rem;
         }
 
-        .custom-select {
-            position: relative;
-        }
-
+        .custom-select { position: relative; }
         .select-input {
             width: 100%;
             padding: 16px 20px;
@@ -325,7 +592,7 @@
             font-size: 1rem;
             color: #475569;
             cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.3s;
             appearance: none;
             box-shadow: 0 4px 6px rgba(0,0,0,0.05);
         }
@@ -344,10 +611,6 @@
             color: #64748b;
             pointer-events: none;
             transition: transform 0.3s ease;
-        }
-
-        .custom-select:hover .select-arrow {
-            transform: translateY(-50%) rotate(180deg);
         }
 
         /* Grille des campagnes */
@@ -403,6 +666,7 @@
             font-weight: 600;
             backdrop-filter: blur(10px);
             box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+            z-index: 1;
         }
 
         .campaign-overlay {
@@ -413,7 +677,8 @@
             transition: opacity 0.4s ease;
         }
 
-        .campaign-card:hover .campaign-overlay {
+        .campaign-card:hover .campaign-overlay,
+        .recommendation-item:hover .campaign-overlay {
             opacity: 1;
         }
 
@@ -470,9 +735,7 @@
             font-weight: 500;
         }
 
-        .date-item i {
-            color: #10b981;
-        }
+        .date-item i { color: #10b981; }
 
         .campaign-footer {
             display: flex;
@@ -482,11 +745,7 @@
             border-top: 1px solid rgba(226, 232, 240, 0.5);
         }
 
-        .campaign-stats {
-            display: flex;
-            gap: 20px;
-        }
-
+        .campaign-stats { display: flex; gap: 20px; }
         .stat-item {
             display: flex;
             align-items: center;
@@ -496,16 +755,9 @@
             font-weight: 500;
         }
 
-        .stat-item i {
-            color: #10b981;
-            font-size: 1rem;
-        }
+        .stat-item i { color: #10b981; font-size: 1rem; }
 
-        .campaign-actions {
-            display: flex;
-            gap: 8px;
-        }
-
+        .campaign-actions { display: flex; gap: 8px; }
         .action-btn {
             width: 40px;
             height: 40px;
@@ -514,7 +766,7 @@
             color: #10b981;
             border-radius: 12px;
             cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.3s;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -536,14 +788,6 @@
             color: white;
         }
 
-        .action-btn.liked i {
-            color: #ef4444;
-        }
-
-        .action-btn.liked:hover i {
-            color: white;
-        }
-
         .cta-button {
             background: linear-gradient(135deg, #10b981, #059669);
             color: white;
@@ -555,8 +799,9 @@
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.3s;
             box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+            margin-top: 16px;
         }
 
         .cta-button:hover {
@@ -574,25 +819,12 @@
             backdrop-filter: blur(20px);
             border-radius: 24px;
             border: 1px solid rgba(255, 255, 255, 0.3);
+            grid-column: 1 / -1;
         }
 
-        .empty-icon {
-            font-size: 4rem;
-            color: #cbd5e1;
-            margin-bottom: 24px;
-        }
-
-        .empty-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #475569;
-            margin-bottom: 12px;
-        }
-
-        .empty-description {
-            color: #64748b;
-            font-size: 1.1rem;
-        }
+        .empty-icon { font-size: 4rem; color: #cbd5e1; margin-bottom: 24px; }
+        .empty-title { font-size: 1.5rem; font-weight: 700; color: #475569; margin-bottom: 12px; }
+        .empty-description { color: #64748b; font-size: 1.1rem; }
 
         /* Animations de chargement */
         .loading-overlay {
@@ -628,7 +860,7 @@
             100% { transform: rotate(360deg); }
         }
 
-        /* 🆕 PAGINATION */
+        /* Pagination */
         .pagination-container {
             margin-top: 60px;
             display: flex;
@@ -636,14 +868,7 @@
             align-items: center;
         }
 
-        .pagination {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 8px;
-            padding: 20px 0;
-        }
-
+        .pagination { display: flex; justify-content: center; align-items: center; gap: 8px; padding: 20px 0; }
         .page-link {
             display: flex;
             align-items: center;
@@ -656,7 +881,7 @@
             text-decoration: none;
             border-radius: 12px;
             font-weight: 600;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.3s;
             box-shadow: 0 2px 8px rgba(0,0,0,0.05);
         }
 
@@ -673,57 +898,6 @@
             border-color: #10b981;
             color: white;
             box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
-        }
-
-        .page-item.disabled .page-link {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none !important;
-        }
-
-        /* Responsive Design */
-        @media (max-width: 1024px) {
-            .campaigns-grid {
-                grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-                gap: 24px;
-            }
-
-            .filters {
-                grid-template-columns: 1fr;
-                gap: 16px;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .section-title {
-                font-size: 2.5rem;
-            }
-
-            .filters-container {
-                padding: 24px 20px;
-                margin: 0 -20px 32px;
-                border-radius: 0;
-            }
-
-            .campaigns-grid {
-                grid-template-columns: 1fr;
-                gap: 20px;
-            }
-
-            .campaign-card {
-                margin: 0 -10px;
-            }
-
-            .pagination {
-                flex-wrap: wrap;
-                gap: 6px;
-            }
-
-            .page-link {
-                width: 40px;
-                height: 40px;
-                font-size: 0.9rem;
-            }
         }
 
         /* Animations d'entrée */
@@ -746,103 +920,218 @@
         .stagger-delay-4 { animation-delay: 0.4s; }
         .stagger-delay-5 { animation-delay: 0.5s; }
         .stagger-delay-6 { animation-delay: 0.6s; }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .campaigns-grid {
+                grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+                gap: 24px;
+            }
+            .filters { grid-template-columns: 1fr; gap: 16px; }
+            .recommendation-item {
+                flex-direction: row;
+                gap: 16px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .section-title { font-size: 2.5rem; }
+            .recommended-title { font-size: 1.5rem; }
+            .filters-container { padding: 24px 20px; margin: 0 -20px 32px; border-radius: 0; }
+            .campaigns-grid { grid-template-columns: 1fr; gap: 20px; }
+            .recommended-section { padding: 20px 0; }
+            .recommendation-item {
+                flex-direction: column;
+                gap: 12px;
+            }
+            .recommendation-image {
+                width: 100%;
+                height: 140px;
+                border-radius: 12px 12px 0 0;
+            }
+        }
     </style>
 @endpush
 
 @push('scripts')
     <script>
-        // Afficher une notification temporaire
-        function showNotification(message, type = 'success') {
-            console.log(`Affichage de la notification: ${message} (${type})`);
-            const container = document.getElementById('notification-container');
-            const alert = document.createElement('div');
-            alert.className = `alert alert-${type} show`;
-            alert.textContent = message;
-            container.appendChild(alert);
-            setTimeout(() => {
-                alert.classList.remove('show');
-                setTimeout(() => alert.remove(), 500);
-            }, 4000);
-        }
+        window.isAuthenticated = @json(auth()->check());
+        window.userId = @json(auth()->id() ?? null);
+        window.csrfToken = '{{ csrf_token() }}';
 
-        // Recherche avec rechargement
-        document.getElementById('searchInput').addEventListener('input', function() {
-            const form = document.getElementById('filterForm');
-            clearTimeout(this.searchTimeout);
-            this.searchTimeout = setTimeout(() => {
-                form.submit();
-            }, 500); // Débouncer de 500ms
-        });
-
-        // 🆕 SYNCHRONISER FILTRES AVEC PAGINATION ET RECHARGEMENT
         document.addEventListener('DOMContentLoaded', function() {
-            // Mettre à jour les selects avec les valeurs actuelles
-            document.getElementById('categorySelect').value = '{{ $category ?? "all" }}';
-            document.getElementById('statusSelect').value = '{{ $status ?? "all" }}';
-            document.getElementById('searchInput').value = '{{ $search ?? "" }}';
-
-            // Intercepter les clics de pagination pour maintenir les filtres
-            const pageLinks = document.querySelectorAll('.pagination .page-link:not(.active)');
-            pageLinks.forEach(link => {
-                link.addEventListener('click', function(e) {
-                    const url = new URL(this.href, window.location.origin);
-
-                    // Ajouter les paramètres de recherche et filtres
-                    const search = document.getElementById('searchInput').value;
-                    const category = document.getElementById('categorySelect').value;
-                    const status = document.getElementById('statusSelect').value;
-
-                    if (search) url.searchParams.set('search', search);
-                    if (category !== 'all') url.searchParams.set('category', category);
-                    if (status !== 'all') url.searchParams.set('status', status);
-
-                    this.href = url.toString();
-                });
-            });
-
-            // Filtres avec rechargement de page (maintenir pagination)
-            document.getElementById('categorySelect').addEventListener('change', function() {
-                document.getElementById('filterForm').submit();
-            });
-
-            document.getElementById('statusSelect').addEventListener('change', function() {
-                document.getElementById('filterForm').submit();
-            });
+            if (typeof window.recommendedCampaignsData !== 'undefined' && window.recommendedCampaignsData.length > 0) {
+                displayRecommendations(window.recommendedCampaignsData);
+                setTimeout(fetchRecommendations, 1000);
+            } else if (window.isAuthenticated) {
+                loadRecommendations();
+            }
         });
 
-        // Filtrage AJAX pour catégorie et statut (optionnel - peut être désactivé)
-        function filterCampaigns() {
-            const category = document.getElementById('categorySelect').value;
-            const status = document.getElementById('statusSelect').value;
-            console.log('Filtrage des campagnes:', { category, status });
+        async function loadRecommendations() {
+            const token = localStorage.getItem('jwt_token');
+            if (!token || !window.isAuthenticated) {
+                console.log('Non authentifié ou token manquant');
+                return;
+            }
 
-            // Optionnel : utiliser AJAX ou recharger la page
-            document.getElementById('filterForm').submit();
+            showLoadingRecommendations();
+            await fetchRecommendations();
         }
 
-        // Navigation vers le détail
-        function goToCampaignDetail(campaignId) {
-            window.location.href = '{{ url("/campaigns") }}/' + campaignId;
-        }
+        async function fetchRecommendations() {
+            try {
+                const token = localStorage.getItem('jwt_token');
+                const response = await fetch('{{ route("front.campaigns.recommendations") }}', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    }
+                });
 
-        // Partage campagne
-        function shareCampaign(campaignId) {
-            if (navigator.share) {
-                navigator.share({
-                    title: 'Echofy - Campagne de Sensibilisation',
-                    text: 'Découvrez cette campagne environnementale sur Echofy',
-                    url: window.location.origin + '/campaigns/' + campaignId
-                });
-            } else {
-                const url = window.location.origin + '/campaigns/' + campaignId;
-                navigator.clipboard.writeText(url).then(() => {
-                    showNotification('Lien copié dans le presse-papiers !');
-                });
+                if (response.ok) {
+                    const data = await response.json();
+                    displayRecommendations(data.campaigns);
+                    const countElement = document.getElementById('recommendationCount');
+                    if (countElement) {
+                        countElement.textContent = `(${data.count} sélectionnées)`;
+                    }
+
+                    if (data.count > 0) {
+                        showNotification(`${data.count} recommandations personnalisées chargées !`);
+                    }
+
+                    setTimeout(fetchRecommendations, 30 * 60 * 1000);
+                } else {
+                    throw new Error('Erreur API');
+                }
+            } catch (error) {
+                console.error('Erreur fetch recommandations:', error);
+                if (typeof window.recommendedCampaignsData !== 'undefined') {
+                    displayRecommendations(window.recommendedCampaignsData);
+                } else {
+                    showEmptyRecommendations();
+                }
             }
         }
 
-        // Toggle like
-        function toggleLike(button, campaignId) {
+        function showLoadingRecommendations() {
+            const grid = document.getElementById('recommendedGrid');
+            if (grid) {
+                grid.innerHTML = `
+                    <div class="loading-placeholder">
+                        <div class="placeholder-card">
+                            <div class="placeholder-image"></div>
+                            <div class="placeholder-content">
+                                <div class="placeholder-line"></div>
+                                <div class="placeholder-line short"></div>
+                                <div class="placeholder-line"></div>
+                            </div>
+                        </div>
+                        <div class="placeholder-card">
+                            <div class="placeholder-image"></div>
+                            <div class="placeholder-content">
+                                <div class="placeholder-line"></div>
+                                <div class="placeholder-line short"></div>
+                                <div class="placeholder-line"></div>
+                            </div>
+                        </div>
+                        <div class="placeholder-card">
+                            <div class="placeholder-image"></div>
+                            <div class="placeholder-content">
+                                <div class="placeholder-line"></div>
+                                <div class="placeholder-line short"></div>
+                                <div class="placeholder-line"></div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        function displayRecommendations(campaigns) {
+            const grid = document.getElementById('recommendedGrid');
+            if (!grid) return;
+
+            if (!campaigns || campaigns.length === 0) {
+                showEmptyRecommendations();
+                return;
+            }
+
+            grid.innerHTML = campaigns.map(campaign => `
+                <div class="recommendation-item fade-in"
+                     data-category="${campaign.category}"
+                     onclick="goToCampaignDetail(${campaign.id})">
+                    <div class="recommendation-image">
+                        <img src="${campaign.image_url || '{{ asset("assets/images/home6/placeholder.jpg") }}'}"
+                             alt="${campaign.title}"
+                             loading="lazy"
+                             onerror="this.src='{{ asset('assets/images/home6/placeholder.jpg') }}'">
+                        <div class="campaign-overlay"></div>
+                        <div class="campaign-status">${campaign.status.charAt(0).toUpperCase() + campaign.status.slice(1)}</div>
+                    </div>
+                    <div class="recommendation-content">
+                        <div class="campaign-category campaign-text">${campaign.category.charAt(0).toUpperCase() + campaign.category.slice(1)}</div>
+                        <h4 class="recommendation-title">${campaign.title}</h4>
+                        <p class="recommendation-description">${campaign.description}</p>
+                        <div class="campaign-dates">
+                            <div class="date-item">
+                                <i class="bi bi-calendar2-event"></i>
+                                <span>${campaign.start_date}</span>
+                            </div>
+                            <div class="date-item">
+                                <i class="bi bi-calendar2-check"></i>
+                                <span>${campaign.end_date}</span>
+                            </div>
+                        </div>
+                        <div class="campaign-footer campaign-actions">
+                            <div class="campaign-stats">
+                                <div class="stat-item"><i class="bi bi-eye"></i><span>${campaign.views_count || 0}</span></div>
+                                <div class="stat-item"><i class="bi bi-heart"></i><span>${campaign.likes_count || 0}</span></div>
+                                <div class="stat-item"><i class="bi bi-chat"></i><span>${campaign.comments_count || 0}</span></div>
+                            </div>
+                            <div class="campaign-actions action-buttons">
+                                <button class="action-btn ${campaign.is_liked ? 'liked' : ''}"
+                                        onclick="event.stopPropagation(); toggleLike(this, ${campaign.id}, true)">
+                                    <i class="bi bi-heart"></i>
+                                </button>
+                                <button class="action-btn" onclick="event.stopPropagation(); shareCampaign(${campaign.id})">
+                                    <i class="bi bi-share"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <a href="/campaigns/${campaign.id}" class="cta-button echofy-button style-five" onclick="event.stopPropagation();">
+                            En savoir plus
+                            <i class="bi bi-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function showEmptyRecommendations() {
+            const grid = document.getElementById('recommendedGrid');
+            if (grid) {
+                grid.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">
+                            <i class="bi bi-lightning-charge"></i>
+                        </div>
+                        <h3 class="empty-title">Aucune recommandation pour le moment</h3>
+                        <p class="empty-description">
+                            Participez à nos campagnes (likes, commentaires, vues) pour recevoir des recommandations personnalisées !
+                        </p>
+                        <a href="#campaignsGrid" class="cta-button echofy-button style-five">
+                            Découvrir toutes les campagnes
+                            <i class="bi bi-arrow-down"></i>
+                        </a>
+                    </div>
+                `;
+            }
+        }
+
+        function toggleLike(button, campaignId, isRecommended = false) {
             const token = localStorage.getItem('jwt_token');
             if (!token) {
                 showNotification('Vous devez être connecté pour aimer une campagne.', 'danger');
@@ -850,12 +1139,13 @@
                 return;
             }
 
-            fetch('/api/campaigns/' + campaignId + '/like', {
+            fetch(`/campaigns/${campaignId}/like`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                    'Accept': 'application/json'
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
                 }
             })
                 .then(response => response.json())
@@ -863,22 +1153,116 @@
                     if (data.success) {
                         button.classList.toggle('liked');
                         const heartIcon = button.querySelector('i');
-                        if (button.classList.contains('liked')) {
-                            heartIcon.style.color = '#ef4444';
-                        } else {
-                            heartIcon.style.color = '#10b981';
+                        if (heartIcon) {
+                            heartIcon.style.color = button.classList.contains('liked') ? '#ef4444' : '#10b981';
                         }
-                        const stats = button.closest('.campaign-actions').querySelector('.stat-item:nth-child(2) span');
-                        stats.textContent = data.likes_count;
-                        showNotification(data.action === 'liked' ? 'Merci pour votre réactivité !' : 'Like retiré.');
+
+                        const stats = button.closest('.campaign-actions')?.querySelector('.stat-item:nth-child(2) span');
+                        if (stats) {
+                            stats.textContent = data.likes_count;
+                        }
+
+                        showNotification(data.action === 'liked' ? 'Campagne aimée !' : 'Like retiré.');
+
+                        if (isRecommended) {
+                            invalidateRecommendationsCache();
+                        }
                     } else {
-                        showNotification(data.error || 'Erreur lors de l\'action', 'danger');
+                        showNotification(data.error || 'Erreur', 'danger');
                     }
                 })
                 .catch(error => {
                     console.error('Erreur:', error);
-                    showNotification('Une erreur est survenue', 'danger');
+                    showNotification('Erreur lors du like', 'danger');
                 });
         }
+
+        function invalidateRecommendationsCache() {
+            const token = localStorage.getItem('jwt_token');
+            if (!token) return;
+
+            fetch('{{ route("front.campaigns.invalidate-cache") }}', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(() => {
+                    console.log('Cache invalidé');
+                    fetchRecommendations();
+                })
+                .catch(err => console.error('Erreur invalidation:', err));
+        }
+
+        function showNotification(message, type = 'success') {
+            const notification = document.createElement('div');
+            notification.className = `alert alert-${type} show`;
+            notification.textContent = message;
+            document.getElementById('notification-container').appendChild(notification);
+            setTimeout(() => notification.remove(), 3000);
+        }
+
+        function shareCampaign(campaignId) {
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Echofy - Campagne',
+                    url: `${window.location.origin}/campaigns/${campaignId}`
+                });
+            } else {
+                navigator.clipboard.writeText(`${window.location.origin}/campaigns/${campaignId}`)
+                    .then(() => showNotification('Lien copié !'));
+            }
+        }
+
+        let searchTimeout;
+        const searchInput = document.getElementById('searchInput');
+        if (searchInput) {
+            searchInput.addEventListener('input', function() {
+                const form = document.getElementById('filterForm');
+                if (form) {
+                    clearTimeout(searchTimeout);
+                    searchTimeout = setTimeout(() => form.submit(), 500);
+                }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const categorySelect = document.getElementById('categorySelect');
+            const statusSelect = document.getElementById('statusSelect');
+
+            if (categorySelect) categorySelect.value = '{{ $category ?? "all" }}';
+            if (statusSelect) statusSelect.value = '{{ $status ?? "all" }}';
+
+            [categorySelect, statusSelect].forEach(select => {
+                if (select) {
+                    select.addEventListener('change', () => {
+                        const form = document.getElementById('filterForm');
+                        if (form) form.submit();
+                    });
+                }
+            });
+        });
+
+        function goToCampaignDetail(campaignId) {
+            window.location.href = `/campaigns/${campaignId}`;
+        }
+
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('page-link') && !e.target.closest('.active')) {
+                e.preventDefault();
+                const url = new URL(e.target.href, window.location.origin);
+                const search = document.getElementById('searchInput')?.value || '';
+                const category = document.getElementById('categorySelect')?.value || 'all';
+                const status = document.getElementById('statusSelect')?.value || 'all';
+
+                if (search) url.searchParams.set('search', search);
+                if (category !== 'all') url.searchParams.set('category', category);
+                if (status !== 'all') url.searchParams.set('status', status);
+
+                window.location.href = url.toString();
+            }
+        });
     </script>
 @endpush

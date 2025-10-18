@@ -74,24 +74,11 @@
                                 <div class="error-message" id="titleError"></div>
                             </div>
 
-                            <div class="form-group">
-                                <label for="category">Catégorie <span class="required">*</span></label>
-                                <div class="select-wrapper">
-                                    <select id="category" name="category" class="form-control" required>
-                                        <option value="">Sélectionnez une catégorie</option>
-                                        <option value="recyclage">Recyclage</option>
-                                        <option value="climat">Climat</option>
-                                        <option value="biodiversite">Biodiversité</option>
-                                        <option value="eau">Ressources en eau</option>
-                                        <option value="energie">Énergie renouvelable</option>
-                                        <option value="transport">Transport durable</option>
-                                        <option value="alimentation">Alimentation durable</option>
-                                        <option value="pollution">Lutte contre la pollution</option>
-                                        <option value="sensibilisation">Sensibilisation générale</option>
-                                    </select>
-                                </div>
-                                <div class="error-message" id="categoryError"></div>
-                            </div>
+
+
+
+
+
 
                             <div class="form-row">
                                 <div class="form-group">
@@ -642,57 +629,57 @@
             return isValid;
         }
 
-        function validateStep1() {
-            let isValid = true;
 
-            // Validation du titre
-            const title = document.getElementById('title');
-            if (!title.value.trim()) {
-                showError('titleError', 'Le titre est requis');
-                isValid = false;
-            } else if (title.value.length > 100) {
-                showError('titleError', 'Le titre ne peut pas dépasser 100 caractères');
-                isValid = false;
-            } else {
-                hideError('titleError');
-            }
 
-            // Validation de la catégorie
-            const category = document.getElementById('category');
-            if (!category.value) {
-                showError('categoryError', 'Veuillez sélectionner une catégorie');
-                isValid = false;
-            } else {
-                hideError('categoryError');
-            }
 
-            // Validation des dates
-            const startDate = document.getElementById('start_date');
-            const endDate = document.getElementById('end_date');
-            const today = new Date().toISOString().split('T')[0];
 
-            if (!startDate.value) {
-                showError('startDateError', 'La date de début est requise');
-                isValid = false;
-            } else if (startDate.value < today) {
-                showError('startDateError', 'La date de début ne peut pas être dans le passé');
-                isValid = false;
-            } else {
-                hideError('startDateError');
-            }
+function validateStep1() {
+    let isValid = true;
 
-            if (!endDate.value) {
-                showError('endDateError', 'La date de fin est requise');
-                isValid = false;
-            } else if (endDate.value <= startDate.value) {
-                showError('endDateError', 'La date de fin doit être postérieure à la date de début');
-                isValid = false;
-            } else {
-                hideError('endDateError');
-            }
+    // Validation du titre
+    const title = document.getElementById('title');
+    if (!title.value.trim()) {
+        showError('titleError', 'Le titre est requis');
+        isValid = false;
+    } else if (title.value.length > 100) {
+        showError('titleError', 'Le titre ne peut pas dépasser 100 caractères');
+        isValid = false;
+    } else {
+        hideError('titleError');
+    }
 
-            return isValid;
-        }
+    // Validation des dates
+    const startDate = document.getElementById('start_date');
+    const endDate = document.getElementById('end_date');
+    const today = new Date().toISOString().split('T')[0];
+
+    if (!startDate.value) {
+        showError('startDateError', 'La date de début est requise');
+        isValid = false;
+    } else if (startDate.value < today) {
+        showError('startDateError', 'La date de début ne peut pas être dans le passé');
+        isValid = false;
+    } else {
+        hideError('startDateError');
+    }
+
+    if (!endDate.value) {
+        showError('endDateError', 'La date de fin est requise');
+        isValid = false;
+    } else if (endDate.value <= startDate.value) {
+        showError('endDateError', 'La date de fin doit être postérieure à la date de début');
+        isValid = false;
+    } else {
+        hideError('endDateError');
+    }
+
+    return isValid;
+}
+
+
+
+
+
 
         function validateStep2() {
             const content = document.getElementById('content');

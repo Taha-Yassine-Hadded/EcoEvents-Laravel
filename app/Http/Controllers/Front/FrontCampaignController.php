@@ -8,29 +8,102 @@ use App\Models\CampaignComment;
 use App\Models\CampaignLike;
 use App\Models\CampaignView;
 use App\Models\CommentLike;
-use App\Models\CampaignCommentSentiment; // ✅ AJOUTÉ
+use App\Models\CampaignCommentSentiment;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http; // ✅ AJOUTÉ
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Cache;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class FrontCampaignController extends Controller
 {
+    private $cacheTtl = 3600; // 1 heure de cache pour recommandations
+    private $viewTtl = 1800; // 30 minutes pour vues
+
     /**
      * Afficher la liste des campagnes côté front-office
      */
+
     public function index(Request $request)
     {
         try {
+            // ✅ Utiliser utilisateur du middleware VerifyJWT
+            $user = $request->auth;
+
+            Log::info('🚀 INDEX DEBUG - Recommandations', [
+                'user_id' => $user?->id,
+                'auth_check' => (bool)$user,
+                'email' => $user?->email,
+                'method' => 'middleware_jwt'
+            ]);
+
+            // 🎯 GESTION DES RECOMMANDATIONS (récupérer en premier pour exclure)
+            $recommendedCampaigns = [];
+            $recommendedCampaignIds = [];
+
+            if ($user) {
+                Log::info('✅ Utilisateur authentifié détecté', [
+                    'user_id' => $user->id,
+                    'email' => $user->email
+                ]);
+
+                try {
+                    $recommendedCampaigns = $this->getUserRecommendations($user);
+
+                    // ✅ GARANTIR DONNÉES NON NULLES
+                    if (empty($recommendedCampaigns) || !is_array($recommendedCampaigns)) {
+                        Log::warning('⚠️ Recommandations vides - Fallback appliqué', ['user_id' => $user->id]);
+                        $recommendedCampaigns = $this->getFallbackRecommendations();
+                    }
+
+                    // Récupérer les IDs des campagnes recommandées
+                    $recommendedCampaignIds = array_column($recommendedCampaigns, 'id');
+
+                    Log::info('📊 Recommandations chargées', [
+                        'user_id' => $user->id,
+                        'count' => count($recommendedCampaigns),
+                        'categories' => array_unique(array_column($recommendedCampaigns, 'category')),
+                        'recommended_ids' => $recommendedCampaignIds
+                    ]);
+
+                    // DEBUG : Vérifier recommandations
+                    foreach ($recommendedCampaigns as $index => $rec) {
+                        Log::info("🔍 DEBUG RECOMMANDATION {$index}", [
+                            'id' => $rec['id'] ?? 'null',
+                            'title' => $rec['title'] ?? 'null',
+                            'category' => $rec['category'] ?? 'null',
+                            'score' => $rec['recommendation_score'] ?? 'null'
+                        ]);
+                    }
+                } catch (\Exception $e) {
+                    Log::error('❌ Erreur recommandations', [
+                        'user_id' => $user->id,
+                        'error' => $e->getMessage(),
+                        'trace' => $e->getTraceAsString()
+                    ]);
+                    $recommendedCampaigns = $this->getFallbackRecommendations();
+                    $recommendedCampaignIds = array_column($recommendedCampaigns, 'id');
+                }
+            } else {
+                Log::info('❌ Non connecté - Recommandations populaires par défaut');
+                $recommendedCampaigns = $this->getFallbackRecommendations();
+                $recommendedCampaignIds = array_column($recommendedCampaigns, 'id');
+            }
+
+            // Récupération et filtrage des campagnes principales
             $search = $request->query('search', '');
             $category = $request->query('category', 'all');
             $status = $request->query('status', 'all');
 
             $query = Campaign::query()
                 ->with('creator')
+                ->withCount(['likes', 'comments']) // ✅ Retirer 'views' de withCount
                 ->where('status', '!=', 'draft')
+                ->whereNotIn('id', $recommendedCampaignIds) // ✅ Exclure les campagnes recommandées
                 ->orderBy('created_at', 'desc');
 
             if (!empty($search)) {
@@ -57,9 +130,48 @@ class FrontCampaignController extends Controller
                 }
             }
 
+            // ✅ Récupérer campagnes avec pagination
             $campaigns = $query->paginate(6);
 
-            $campaignsForJs = $campaigns->map(function ($campaign) {
+            // ✅ Ajouter comptage manuel des vues
+            $campaigns->getCollection()->transform(function ($campaign) {
+                $campaign->views_count = CampaignView::where('campaign_id', $campaign->id)->count();
+                return $campaign;
+            });
+
+            // ✅ DEBUG : Vérifier les données
+            Log::info('🔍 DEBUG CAMPAGNES - Données brutes', [
+                'total_campaigns' => $campaigns->total(),
+                'current_page' => $campaigns->currentPage(),
+                'campaigns_count' => $campaigns->count(),
+                'has_campaigns' => $campaigns->count() > 0,
+                'search' => $search,
+                'category' => $category,
+                'status' => $status,
+                'excluded_recommended_ids' => $recommendedCampaignIds,
+                'query_sql' => $query->toSql(),
+                'query_bindings' => $query->getBindings()
+            ]);
+
+            // DEBUG : Vérifier chaque campagne
+            foreach ($campaigns as $index => $campaign) {
+                Log::info("🔍 DEBUG CAMPAGNE {$index}", [
+                    'id' => $campaign->id,
+                    'title' => $campaign->title,
+                    'status' => $campaign->status,
+                    'category' => $campaign->category,
+                    'likes_count' => $campaign->likes_count,
+                    'views_count' => $campaign->views_count,
+                    'comments_count' => $campaign->comments_count,
+                    'has_creator' => !is_null($campaign->creator)
+                ]);
+            }
+
+            // Préparer données pour JS
+            $campaignsForJs = $campaigns->map(function ($campaign) use ($user) {
+                $isLiked = $user ? CampaignLike::where('campaign_id', $campaign->id)
+                    ->where('user_id', $user->id)->exists() : false;
+
                 return [
                     'id' => $campaign->id,
                     'title' => $campaign->title,
@@ -68,91 +180,459 @@ class FrontCampaignController extends Controller
                     'status' => $this->calculateStatus($campaign->start_date, $campaign->end_date),
                     'start_date' => $campaign->start_date->format('d/m/Y'),
                     'end_date' => $campaign->end_date->format('d/m/Y'),
-                    'views_count' => $campaign->views_count,
-                    'likes_count' => $campaign->likes_count,
-                    'comments_count' => $campaign->comments_count,
-                    'sentiment_stats' => $this->getCampaignSentimentStats($campaign->id), // ✅ AJOUTÉ
-                    'thumbnail' => !empty($campaign->media_urls['images']) && is_array($campaign->media_urls['images']) && Storage::disk('public')->exists($campaign->media_urls['images'][0])
-                        ? Storage::url($campaign->media_urls['images'][0])
-                        : 'https://via.placeholder.com/400x200?text=Image',
+                    'views_count' => $campaign->views_count ?? 0,
+                    'likes_count' => $campaign->likes_count ?? 0,
+                    'comments_count' => $campaign->comments_count ?? 0,
+                    'sentiment_stats' => $this->getCampaignSentimentStats($campaign->id),
+                    'thumbnail' => $this->getCampaignImageUrl($campaign),
                     'created_at' => $campaign->created_at->format('d/m/Y H:i'),
+                    'is_liked' => $isLiked,
                     'creator' => $campaign->creator ? [
                         'name' => $campaign->creator->name,
                         'email' => $campaign->creator->email
                     ] : null
                 ];
-            });
+            })->toArray();
+
+            Log::info('🎯 INDEX COMPLET - Préparation vue', [
+                'total_campaigns' => $campaigns->total(),
+                'recommended_count' => count($recommendedCampaigns),
+                'user_authenticated' => (bool)$user,
+                'campaigns_for_js_count' => count($campaignsForJs)
+            ]);
 
             return view('pages.frontOffice.campaigns.All', [
                 'campaigns' => $campaigns,
+                'recommendedCampaigns' => $recommendedCampaigns,
                 'campaignsForJs' => $campaignsForJs,
                 'search' => $search,
                 'category' => $category,
-                'status' => $status
+                'status' => $status,
+                'user' => $user
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error('💥 ERREUR CRITIQUE - Chargement campagnes', [
+                'message' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            // Fallback simple
+            $fallbackCampaigns = Campaign::where('status', '!=', 'draft')
+                ->orderBy('created_at', 'desc')
+                ->paginate(6);
+
+            // Ajouter comptage manuel des vues
+            $fallbackCampaigns->getCollection()->transform(function ($campaign) {
+                $campaign->views_count = CampaignView::where('campaign_id', $campaign->id)->count();
+                $campaign->likes_count = CampaignLike::where('campaign_id', $campaign->id)->count();
+                $campaign->comments_count = CampaignComment::where('campaign_id', $campaign->id)->count();
+                return $campaign;
+            });
+
+            return view('pages.frontOffice.campaigns.All', [
+                'campaigns' => $fallbackCampaigns,
+                'recommendedCampaigns' => $this->getFallbackRecommendations(),
+                'campaignsForJs' => [],
+                'search' => $request->query('search', ''),
+                'category' => 'all',
+                'status' => 'all',
+                'error' => 'Une erreur est survenue lors du chargement des campagnes.'
+            ]);
+        }
+    }
+
+
+
+
+
+
+
+
+
+    /**
+     * 🆕 Récupérer l'utilisateur authentifié via multiple méthodes
+     */
+    private function getAuthenticatedUser(Request $request)
+    {
+        // ✅ SIMPLIFICATION : Utiliser directement l'utilisateur du middleware
+        $user = $request->auth;
+
+        if ($user) {
+            Log::debug('✅ Utilisateur récupéré via middleware VerifyJWT', ['user_id' => $user->id]);
+
+            // S'assurer que l'utilisateur est aussi disponible dans Auth pour la compatibilité
+            if (!Auth::check()) {
+                Auth::setUser($user);
+            }
+        } else {
+            Log::debug('❌ Aucun utilisateur authentifié trouvé via middleware');
+        }
+
+        return $user;
+    }
+
+
+
+
+
+
+
+
+
+    /**
+     * 🆕 Méthode de fallback pour récupérer l'utilisateur via le token
+     */
+    private function getUserFromToken(Request $request)
+    {
+        try {
+            $token = $request->bearerToken()
+                ?? $request->cookie('jwt_token')
+                ?? $request->header('X-JWT-Token');
+
+            if (!$token) {
+                Log::debug('🔐 Aucun token JWT trouvé');
+                return null;
+            }
+
+            Log::debug('🔐 Tentative décodage token manuel', ['token_present' => true]);
+
+            // Décodage manuel du token JWT
+            $parts = explode('.', $token);
+            if (count($parts) !== 3) {
+                Log::warning('🔐 Format token invalide');
+                return null;
+            }
+
+            $payload = json_decode(base64_decode($parts[1]), true);
+            if (!$payload || !isset($payload['sub'])) {
+                Log::warning('🔐 Payload token invalide', ['payload' => $payload]);
+                return null;
+            }
+
+            $userId = $payload['sub'];
+            $user = \App\Models\User::find($userId);
+
+            if ($user) {
+                Log::info('🔐 Utilisateur récupéré via token manuel', ['user_id' => $user->id]);
+                // Connecter l'utilisateur dans Auth pour les requêtes suivantes
+                Auth::setUser($user);
+            }
+
+            return $user;
+
+        } catch (\Exception $e) {
+            Log::error('🔐 Erreur décodage token manuel', [
+                'error' => $e->getMessage(),
+                'token_preview' => $token ? substr($token, 0, 50) . '...' : 'null'
+            ]);
+            return null;
+        }
+    }
+
+    /**
+     * 🆕 Déterminer la méthode utilisée pour récupérer l'utilisateur
+     */
+    private function getUserMethod($user, Request $request)
+    {
+        if (!$user) return 'none';
+
+        if ($user === JWTAuth::user()) return 'jwt';
+        if ($user === Auth::user()) return 'auth';
+        if ($user === $request->auth) return 'request_auth';
+
+        return 'manual_token';
+    }
+
+    /**
+     * 🆕 Obtenir les recommandations personnalisées avec cache
+     */
+    public function recommendations(Request $request)
+    {
+        try {
+            // ✅ CORRECTION : Utiliser la même méthode que index()
+            $user = $this->getAuthenticatedUser($request);
+
+            if (!$user) {
+                return response()->json(['error' => 'Utilisateur non authentifié'], 401);
+            }
+
+            $cacheKey = "recommendations_user_{$user->id}";
+
+            // Vérifier si cache invalide à cause d'interaction récente
+            if ($this->hasRecentUserInteraction($user->id)) {
+                Cache::forget($cacheKey);
+                Cache::forget("user_interactions_{$user->id}");
+            }
+
+            $recommendedCampaigns = Cache::remember($cacheKey, $this->cacheTtl, function () use ($user) {
+                return $this->getUserRecommendations($user);
+            });
+
+            if (empty($recommendedCampaigns)) {
+                Log::warning('⚠️ Recommandations API vides - Fallback', ['user_id' => $user->id]);
+                $recommendedCampaigns = $this->getFallbackRecommendations();
+            }
+
+            return response()->json([
+                'success' => true,
+                'campaigns' => $recommendedCampaigns,
+                'count' => count($recommendedCampaigns),
+                'cache_key' => $cacheKey,
+                'last_updated' => Cache::get($cacheKey . '_timestamp', now()->toISOString())
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error('Erreur recommandations: ' . $e->getMessage(), ['user_id' => $user->id ?? null]);
+            // Fallback sans cache
+            $user = $this->getAuthenticatedUser($request);
+            $fallback = $user ? $this->getUserRecommendations($user) : [];
+            return response()->json(['success' => true, 'campaigns' => $fallback, 'count' => count($fallback), 'fallback' => true]);
+        }
+    }
+
+    /**
+     * 🆕 Invalider cache après interaction
+     */
+    public function invalidateRecommendationsCache(Request $request)
+    {
+        try {
+            // ✅ CORRECTION : Utiliser la même méthode que index()
+            $user = $this->getAuthenticatedUser($request);
+
+            if (!$user) {
+                return response()->json(['error' => 'Non authentifié'], 401);
+            }
+
+            $cacheKey = "recommendations_user_{$user->id}";
+            $interactionKey = "user_interactions_{$user->id}";
+
+            Cache::forget($cacheKey);
+            Cache::forget($interactionKey);
+
+            // Marquer interaction récente
+            Cache::put("user_interaction_trigger_{$user->id}", now(), 300);
+
+            Log::info('Cache recommandations invalidé', ['user_id' => $user->id, 'cache_key' => $cacheKey]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Cache invalidé avec succès',
+                'cleared_keys' => [$cacheKey, $interactionKey]
             ]);
         } catch (\Exception $e) {
-            Log::error('Erreur lors du chargement des campagnes front-office: ' . $e->getMessage());
+            Log::error('Erreur invalidation cache: ' . $e->getMessage());
             return response()->json(['error' => 'Erreur serveur'], 500);
         }
     }
 
     /**
-     * Filtrer les campagnes pour l'API
+     * 🆕 Logique de recommandation basée sur historique
      */
-    public function filter(Request $request)
+    private function getUserRecommendations($user)
     {
-        try {
-            $category = $request->input('category', 'all');
-            $status = $request->input('status', 'all');
+        Log::info('🧠 DÉBUT getUserRecommendations', ['user_id' => $user?->id]);
 
-            $query = Campaign::query()
-                ->with('creator')
-                ->where('status', '!=', 'draft')
-                ->orderBy('created_at', 'desc');
+        // Fallback pour utilisateurs non connectés
+        if (!$user) {
+            Log::info('🔄 Fallback pour utilisateur non connecté');
+            return $this->getFallbackRecommendations();
+        }
 
-            if ($category !== 'all') {
-                $query->where('category', $category);
-            }
+        $userInteractions = $this->analyzeUserInteractions($user->id);
+        $recommendedCampaigns = [];
 
-            if ($status !== 'all') {
-                $today = Carbon::today();
-                if ($status === 'upcoming') {
-                    $query->where('start_date', '>', $today);
-                } elseif ($status === 'active') {
-                    $query->where('start_date', '<=', $today)
-                        ->where('end_date', '>=', $today);
-                } elseif ($status === 'ended') {
-                    $query->where('end_date', '<', $today);
+        if (!empty($userInteractions['preferred_categories'])) {
+            Log::info('🎯 Recherche par catégories préférées', [
+                'categories' => $userInteractions['preferred_categories']
+            ]);
+
+            $today = Carbon::today();
+            $campaigns = Campaign::whereIn('category', $userInteractions['preferred_categories'])
+                ->whereIn('status', ['active', 'upcoming'])
+                ->whereNotIn('id', $userInteractions['interacted_campaigns'])
+                ->where(function ($query) use ($today) {
+                    $query->where('start_date', '>', $today) // upcoming
+                    ->orWhere(function ($q) use ($today) {
+                        $q->where('start_date', '<=', $today)
+                            ->where('end_date', '>=', $today); // active
+                    });
+                })
+                ->withCount(['likes', 'comments'])
+                ->orderByRaw("
+                FIELD(category, '" . implode("','", $userInteractions['preferred_categories']) . "') ASC,
+                likes_count DESC,
+                created_at DESC
+            ")
+                ->limit(3) // Limiter à 3 campagnes
+                ->get();
+
+            // Ajouter comptage manuel des vues
+            $campaigns->transform(function ($campaign) {
+                $campaign->views_count = CampaignView::where('campaign_id', $campaign->id)->count();
+                return $campaign;
+            });
+
+            $recommendedCampaigns = $campaigns->map(fn($c) => $this->formatCampaignForRecommendation($c, $user))->toArray();
+        }
+
+        // Compléter si moins de 3 campagnes
+        if (count($recommendedCampaigns) < 3) {
+            $needed = 3 - count($recommendedCampaigns);
+            Log::info('➕ Complément nécessaire', ['needed' => $needed]);
+            $additional = $this->getSimilarCampaigns($userInteractions, $needed);
+            $recommendedCampaigns = array_merge($recommendedCampaigns, $additional);
+        }
+
+        // Fallback ultime
+        if (empty($recommendedCampaigns)) {
+            Log::warning('⚠️ Aucune recommandation - Fallback populaire');
+            $recommendedCampaigns = $this->getFallbackRecommendations();
+        }
+
+        // Mélanger et limiter à 3
+        shuffle($recommendedCampaigns);
+        $final = array_slice($recommendedCampaigns, 0, 3);
+
+        Log::info('✅ FIN getUserRecommendations', [
+            'user_id' => $user->id,
+            'count' => count($final)
+        ]);
+
+        return $final;
+    }
+    /**
+     * 🆕 Analyser l'historique des interactions utilisateur
+     */
+    private function analyzeUserInteractions($userId)
+    {
+        $cacheKey = "user_interactions_{$userId}";
+        return Cache::remember($cacheKey, $this->cacheTtl, function () use ($userId) {
+
+            $likedCampaigns = CampaignLike::where('user_id', $userId)
+                ->pluck('campaign_id')
+                ->toArray();
+
+            $recentViews = CampaignView::where('user_id', $userId)
+                ->where('created_at', '>=', Carbon::now()->subDays(30))
+                ->pluck('campaign_id')
+                ->toArray();
+
+            $commentedCampaigns = CampaignComment::where('user_id', $userId)
+                ->where('created_at', '>=', Carbon::now()->subDays(90))
+                ->pluck('campaign_id')
+                ->toArray();
+
+            $interactedCampaigns = array_unique(array_merge(
+                $likedCampaigns,
+                $recentViews,
+                $commentedCampaigns
+            ));
+
+            $categories = [];
+
+            // Poids: likes(3) > comments(2) > views(1)
+            $interactions = [
+                'likes' => $likedCampaigns,
+                'comments' => $commentedCampaigns,
+                'views' => $recentViews
+            ];
+
+            foreach ($interactions as $type => $campaignIds) {
+                $weight = $type === 'likes' ? 3 : ($type === 'comments' ? 2 : 1);
+                $campaignCategories = Campaign::whereIn('id', $campaignIds)
+                    ->pluck('category')
+                    ->groupBy('category')
+                    ->map(fn($items) => count($items) * $weight)
+                    ->toArray();
+
+                foreach ($campaignCategories as $cat => $score) {
+                    $categories[$cat] = ($categories[$cat] ?? 0) + $score;
                 }
             }
 
-            $campaigns = $query->get()->map(function ($campaign) {
-                return [
-                    'id' => $campaign->id,
-                    'title' => $campaign->title,
-                    'content' => strip_tags($campaign->content),
-                    'category' => $campaign->category,
-                    'status' => $this->calculateStatus($campaign->start_date, $campaign->end_date),
-                    'start_date' => $campaign->start_date->format('d/m/Y'),
-                    'end_date' => $campaign->end_date->format('d/m/Y'),
-                    'views_count' => $campaign->views_count,
-                    'likes_count' => $campaign->likes_count,
-                    'comments_count' => $campaign->comments_count,
-                    'sentiment_stats' => $this->getCampaignSentimentStats($campaign->id), // ✅ AJOUTÉ
-                    'thumbnail' => !empty($campaign->media_urls['images']) && is_array($campaign->media_urls['images']) && Storage::disk('public')->exists($campaign->media_urls['images'][0])
-                        ? Storage::url($campaign->media_urls['images'][0])
-                        : asset('assets/images/home6/placeholder.jpg'),
-                ];
-            });
+            arsort($categories);
+            $preferredCategories = array_keys(array_slice($categories, 0, 3, true));
 
-            return response()->json([
-                'success' => true,
-                'campaigns' => $campaigns
+            $result = [
+                'preferred_categories' => $preferredCategories,
+                'interacted_campaigns' => $interactedCampaigns,
+                'scores' => $categories,
+                'interaction_counts' => [
+                    'likes' => count($likedCampaigns),
+                    'views' => count($recentViews),
+                    'comments' => count($commentedCampaigns)
+                ],
+                'last_analyzed' => now()
+            ];
+
+            Log::info('Analyse interactions utilisateur terminée', [
+                'user_id' => $userId,
+                'preferred_categories' => $preferredCategories,
+                'total_interactions' => count($interactedCampaigns)
             ]);
-        } catch (\Exception $e) {
-            Log::error('Erreur lors du filtrage des campagnes via API: ' . $e->getMessage());
-            return response()->json(['error' => 'Erreur serveur'], 500);
+
+            return $result;
+        });
+    }
+
+    /**
+     * 🆕 Vérifier interaction récente pour invalidation cache
+     */
+    private function hasRecentUserInteraction($userId)
+    {
+        $recentTime = Carbon::now()->subMinutes(5);
+        return CampaignLike::where('user_id', $userId)
+                ->where('created_at', '>=', $recentTime)
+                ->exists() ||
+            CampaignView::where('user_id', $userId)
+                ->where('created_at', '>=', $recentTime)
+                ->exists() ||
+            CampaignComment::where('user_id', $userId)
+                ->where('updated_at', '>=', $recentTime)
+                ->exists();
+    }
+
+    /**
+     * 🆕 Obtenir campagnes similaires
+     */
+    /**
+     * 🆕 Obtenir campagnes similaires
+     */
+    private function getSimilarCampaigns($userInteractions, $limit = 3)
+    {
+        Log::info('🔍 Recherche campagnes similaires', ['limit' => $limit]);
+
+        $today = Carbon::today();
+        $query = Campaign::whereIn('status', ['active', 'upcoming'])
+            ->whereNotIn('id', $userInteractions['interacted_campaigns'])
+            ->where(function ($query) use ($today) {
+                $query->where('start_date', '>', $today) // upcoming
+                ->orWhere(function ($q) use ($today) {
+                    $q->where('start_date', '<=', $today)
+                        ->where('end_date', '>=', $today); // active
+                });
+            })
+            ->withCount(['likes', 'comments']);
+
+        if (!empty($userInteractions['preferred_categories'])) {
+            $query->whereIn('category', $userInteractions['preferred_categories']);
         }
+
+        $campaigns = $query->orderBy('likes_count', 'desc')
+            ->orderBy('created_at', 'desc')
+            ->limit($limit)
+            ->get();
+
+        // Ajouter comptage manuel des vues
+        $campaigns->transform(function ($campaign) {
+            $campaign->views_count = CampaignView::where('campaign_id', $campaign->id)->count();
+            return $campaign;
+        });
+
+        return $campaigns->map(fn($c) => $this->formatCampaignForRecommendation($c, Auth::user()))->toArray();
     }
 
     /**
@@ -203,7 +683,8 @@ class FrontCampaignController extends Controller
     public function show(Request $request, Campaign $campaign)
     {
         try {
-            $user = $request->auth ?? Auth::guard('api')->user();
+            // ✅ CORRECTION : Utiliser la même méthode que index()
+            $user = $this->getAuthenticatedUser($request);
 
             if ($user) {
                 Log::info('Utilisateur authentifié pour incrémenter les vues', [
@@ -214,6 +695,7 @@ class FrontCampaignController extends Controller
 
                 $existingView = CampaignView::where('campaign_id', $campaign->id)
                     ->where('user_id', $user->id)
+                    ->where('created_at', '>=', Carbon::now()->subDay())
                     ->exists();
 
                 if (!$existingView) {
@@ -222,17 +704,13 @@ class FrontCampaignController extends Controller
                         'user_id' => $user->id,
                     ]);
                     $campaign->increment('views_count');
-                    Log::info('Vue incrémentée', [
-                        'campaign_id' => $campaign->id,
-                        'user_id' => $user->id,
-                        'views_count' => $campaign->views_count,
-                    ]);
+
+                    // 🆕 Tracker vue pour recommandations
+                    $this->trackUserView($user->id, $campaign->id);
                 }
             }
 
             $campaign->load('comments.user', 'likes.user');
-
-            // ✅ CHARGER SENTIMENTS POUR LA VUE
             $sentimentStats = $this->getCampaignSentimentStats($campaign->id);
 
             return view('pages.frontOffice.campaigns.Show', compact('campaign', 'user', 'sentimentStats'));
@@ -243,12 +721,30 @@ class FrontCampaignController extends Controller
     }
 
     /**
-     * Gérer les likes (API endpoint)
+     * 🆕 Tracker vue utilisateur pour recommandations
+     */
+    private function trackUserView($userId, $campaignId)
+    {
+        $cacheKey = "user_views_{$userId}";
+        $views = Cache::get($cacheKey, []);
+
+        $views[$campaignId] = now()->timestamp;
+        if (count($views) > 50) { // Limite pour performance
+            array_shift($views);
+        }
+
+        Cache::put($cacheKey, $views, $this->viewTtl);
+        Cache::put("user_interaction_trigger_{$userId}", now(), 300);
+    }
+
+    /**
+     * Gérer les likes (API endpoint) + invalider cache
      */
     public function like(Request $request, Campaign $campaign)
     {
         try {
-            $user = $request->auth;
+            // ✅ CORRECTION : Utiliser la même méthode que index()
+            $user = $this->getAuthenticatedUser($request);
 
             if (!$user) {
                 return response()->json(['error' => 'Vous devez être connecté pour aimer une campagne.'], 401);
@@ -271,6 +767,13 @@ class FrontCampaignController extends Controller
 
             $likesCount = $campaign->likes()->count();
 
+            // 🆕 Invalider cache après like
+            Cache::forget("recommendations_user_{$user->id}");
+            Cache::forget("user_interactions_{$user->id}");
+            Cache::put("user_interaction_trigger_{$user->id}", now(), 300);
+
+            Log::info("{$action} campagne", ['user_id' => $user->id, 'campaign_id' => $campaign->id]);
+
             return response()->json([
                 'success' => true,
                 'likes_count' => $likesCount,
@@ -282,20 +785,15 @@ class FrontCampaignController extends Controller
         }
     }
 
-
-
-
-
-
-
-
     /**
-     * Stocker un nouveau commentaire + ANALYSE SENTIMENT AUTOMATIQUE
+     * Stocker un nouveau commentaire + ANALYSE SENTIMENT AUTOMATIQUE + cache
      */
     public function storeComment(Request $request, Campaign $campaign)
     {
         try {
-            $user = $request->auth;
+            // ✅ CORRECTION : Utiliser la même méthode que index()
+            $user = $this->getAuthenticatedUser($request);
+
             if (!$user) {
                 Log::warning('Utilisateur non authentifié pour commenter', ['campaign_id' => $campaign->id]);
                 return response()->json(['error' => 'Vous devez être connecté pour commenter.'], 401);
@@ -305,7 +803,6 @@ class FrontCampaignController extends Controller
                 'content' => 'required|string|max:1000',
             ]);
 
-            // ✅ CRÉATION COMMENTAIRE
             $comment = CampaignComment::create([
                 'campaign_id' => $campaign->id,
                 'user_id' => $user->id,
@@ -316,16 +813,16 @@ class FrontCampaignController extends Controller
                 'user_id' => $user->id,
                 'campaign_id' => $campaign->id,
                 'comment_id' => $comment->id,
-                'content_preview' => substr($comment->content, 0, 50) . '...',
             ]);
 
-            // ✅ ANALYSE SENTIMENT AUTOMATIQUE (ASYNCHRONE)
             $this->analyzeCommentSentimentAsync($campaign->id, $comment->id, $request->input('content'), $user->id);
 
-            // ✅ SUPPRIMÉ : $campaign->increment('comments_count'); // COLONNE N'EXISTE PAS
-
-            // ✅ COMPTER LES COMMENTAIRES VIA RELATION
             $commentsCount = $campaign->fresh()->comments()->count();
+
+            // 🆕 Invalider cache après commentaire
+            Cache::forget("recommendations_user_{$user->id}");
+            Cache::forget("user_interactions_{$user->id}");
+            Cache::put("user_interaction_trigger_{$user->id}", now(), 300);
 
             return response()->json([
                 'success' => true,
@@ -337,7 +834,7 @@ class FrontCampaignController extends Controller
                     'created_at' => $comment->created_at->toISOString(),
                     'sentiment_status' => 'analyzing',
                 ],
-                'comments_count' => $commentsCount, // ✅ COMPTE RÉEL
+                'comments_count' => $commentsCount,
                 'message' => 'Commentaire publié ! Analyse de sentiment en cours...',
                 'sentiment_analyzing' => true
             ]);
@@ -346,160 +843,97 @@ class FrontCampaignController extends Controller
             Log::error('Erreur lors de l\'ajout du commentaire: ' . $e->getMessage(), [
                 'campaign_id' => $campaign->id,
                 'user_id' => $user->id ?? 'N/A',
-                'request_data' => $request->all(),
             ]);
             return response()->json(['error' => 'Erreur serveur'], 500);
         }
     }
 
-
-
-
-
-
     /**
-     * Modifier un commentaire + RÉ-ANALYSE SENTIMENT AUTOMATIQUE ✅
+     * Modifier un commentaire + RÉ-ANALYSE SENTIMENT + cache
      */
     public function updateComment(Request $request, Campaign $campaign, CampaignComment $comment)
     {
         try {
-            // Vérifier autorisation
-            $user = $request->auth;
+            // ✅ CORRECTION : Utiliser la même méthode que index()
+            $user = $this->getAuthenticatedUser($request);
+
             if ($comment->user_id !== $user->id) {
-                return response()->json([
-                    'success' => false,
-                    'error' => 'Vous n\'êtes pas autorisé à modifier ce commentaire.'
-                ], 403);
+                return response()->json(['error' => 'Non autorisé'], 403);
             }
 
-            $request->validate([
-                'content' => 'required|string|max:1000',
-            ]);
-
-            $oldContent = $comment->content;
+            $request->validate(['content' => 'required|string|max:1000']);
             $newContent = $request->input('content');
 
-            // ✅ MISE À JOUR COMMENTAIRE
             $comment->update(['content' => $newContent]);
-
-            // ✅ RÉ-ANALYSE SENTIMENT
             $this->analyzeCommentSentimentAsync($campaign->id, $comment->id, $newContent, $user->id);
 
-            Log::info('Commentaire modifié - Ré-analyse sentiment lancée', [
-                'user_id' => $user->id,
-                'campaign_id' => $campaign->id,
-                'comment_id' => $comment->id,
-                'old_content' => substr($oldContent, 0, 30) . '...',
-                'new_content' => substr($newContent, 0, 30) . '...'
-            ]);
+            // 🆕 Invalider cache
+            Cache::forget("recommendations_user_{$user->id}");
+            Cache::forget("user_interactions_{$user->id}");
 
             return response()->json([
                 'success' => true,
                 'comment' => [
                     'id' => $comment->id,
                     'content' => $comment->content,
-                    'user_name' => $user->name,
-                    'updated_at' => $comment->updated_at->toISOString(),
-                    'sentiment_status' => 'reanalyzing', // ✅ Statut pour frontend
+                    'sentiment_status' => 'reanalyzing',
                 ],
-                'message' => 'Commentaire mis à jour ! Nouvelle analyse de sentiment en cours...',
-                'sentiment_reanalyzing' => true
+                'message' => 'Commentaire mis à jour !'
             ]);
 
         } catch (\Exception $e) {
-            Log::error('Erreur modification commentaire: ' . $e->getMessage(), [
-                'campaign_id' => $campaign->id,
-                'comment_id' => $comment->id,
-                'user_id' => $user->id ?? auth()->id(),
-            ]);
+            Log::error('Erreur modification commentaire: ' . $e->getMessage());
             return response()->json(['error' => 'Erreur serveur'], 500);
         }
     }
 
-
-
-
-
     /**
-     * Supprimer un commentaire + SENTIMENT LIÉ
+     * Supprimer un commentaire + cache
      */
     public function deleteComment(Request $request, Campaign $campaign, CampaignComment $comment)
     {
         try {
-            $user = $request->auth;
-            if (!$user) {
-                return response()->json(['error' => 'Vous devez être connecté.'], 401);
+            // ✅ CORRECTION : Utiliser la même méthode que index()
+            $user = $this->getAuthenticatedUser($request);
+
+            if (!$user || ($comment->user_id !== $user->id && $user->role !== 'admin')) {
+                return response()->json(['error' => 'Non autorisé'], 403);
             }
 
-            if ($comment->user_id !== $user->id && $user->role !== 'admin') {
-                return response()->json(['error' => 'Non autorisé.'], 403);
-            }
-
-            if ($comment->campaign_id !== $campaign->id) {
-                return response()->json(['error' => 'Commentaire invalide.'], 404);
-            }
-
-            $commentId = $comment->id;
-
-            // ✅ SUPPRESSION SENTIMENT LIÉ
             $sentimentDeletedCount = CampaignCommentSentiment::where('campaign_comment_id', $comment->id)->delete();
-
-            // ✅ SUPPRESSION COMMENTAIRE
             $comment->delete();
 
-            // ✅ SUPPRIMÉ : $campaign->decrement('comments_count'); // COLONNE N'EXISTE PAS
-
-            // ✅ COMPTER LES COMMENTAIRES RESTANTS
             $commentsCount = $campaign->fresh()->comments()->count();
 
-            Log::info('Commentaire et sentiment supprimés', [
-                'user_id' => $user->id,
-                'campaign_id' => $campaign->id,
-                'comment_id' => $commentId,
-                'sentiment_deleted_count' => $sentimentDeletedCount,
-                'remaining_comments' => $commentsCount
-            ]);
+            // 🆕 Invalider cache
+            if ($user) {
+                Cache::forget("recommendations_user_{$user->id}");
+                Cache::forget("user_interactions_{$user->id}");
+            }
 
             return response()->json([
                 'success' => true,
-                'comments_count' => $commentsCount, // ✅ COMPTE RÉEL
-                'message' => 'Commentaire et analyse supprimés avec succès',
+                'comments_count' => $commentsCount,
                 'sentiment_deleted' => $sentimentDeletedCount > 0
             ]);
 
         } catch (\Exception $e) {
-            Log::error('Erreur suppression commentaire: ' . $e->getMessage(), [
-                'campaign_id' => $campaign->id,
-                'comment_id' => $comment->id ?? 'N/A',
-                'user_id' => $user->id ?? 'N/A',
-            ]);
+            Log::error('Erreur suppression commentaire: ' . $e->getMessage());
             return response()->json(['error' => 'Erreur serveur'], 500);
         }
     }
 
-
-
-
-
-
-
-
-
-
-
     /**
-     * Gérer le like/dé-like d'un commentaire
+     * Gérer le like/dé-like d'un commentaire + cache
      */
     public function likeComment(Request $request, Campaign $campaign, CampaignComment $comment)
     {
         try {
-            $user = $request->auth;
-            if (!$user) {
-                return response()->json(['error' => 'Vous devez être connecté pour liker un commentaire.'], 401);
-            }
+            // ✅ CORRECTION : Utiliser la même méthode que index()
+            $user = $this->getAuthenticatedUser($request);
 
-            if ($comment->campaign_id !== $campaign->id) {
-                return response()->json(['error' => 'Commentaire non valide.'], 404);
+            if (!$user) {
+                return response()->json(['error' => 'Authentification requise'], 401);
             }
 
             $existingLike = CommentLike::where('comment_id', $comment->id)
@@ -519,12 +953,8 @@ class FrontCampaignController extends Controller
 
             $likesCount = $comment->likes()->count();
 
-            Log::info('Like/Dé-like commentaire', [
-                'user_id' => $user->id,
-                'comment_id' => $comment->id,
-                'action' => $action,
-                'likes_count' => $likesCount,
-            ]);
+            // 🆕 Invalider cache (comment likes influencent moins directement)
+            Cache::put("user_interaction_trigger_{$user->id}", now(), 300);
 
             return response()->json([
                 'success' => true,
@@ -538,7 +968,7 @@ class FrontCampaignController extends Controller
     }
 
     /**
-     * Récupérer les sentiments d'une campagne (API pour frontend) ✅
+     * Récupérer les sentiments d'une campagne
      */
     public function getCampaignSentiments(Request $request, Campaign $campaign)
     {
@@ -553,8 +983,7 @@ class FrontCampaignController extends Controller
                     COUNT(*) as total,
                     AVG(overall_sentiment_score) as avg_score,
                     SUM(CASE WHEN overall_sentiment_score > 0 THEN 1 ELSE 0 END) as positive,
-                    SUM(CASE WHEN overall_sentiment_score < 0 THEN 1 ELSE 0 END) as negative,
-                    COUNT(DISTINCT CASE WHEN detected_language = "tunisian" THEN 1 END) as tunisian_count
+                    SUM(CASE WHEN overall_sentiment_score < 0 THEN 1 ELSE 0 END) as negative
                 ')
                 ->first();
 
@@ -569,7 +998,6 @@ class FrontCampaignController extends Controller
                     'score' => round($sentiment->overall_sentiment_score, 3),
                     'confidence' => round($sentiment->confidence * 100, 1) . '%',
                     'analyzed_at' => $sentiment->created_at->format('d/m H:i'),
-                    'emotion_class' => $this->getEmotionClass($sentiment->dominant_emotion, $sentiment->overall_sentiment_score)
                 ];
             });
 
@@ -587,37 +1015,21 @@ class FrontCampaignController extends Controller
                     'avg_sentiment' => round($stats->avg_score ?? 0, 3),
                     'positive_ratio' => $stats->total > 0 ? round(($stats->positive / $stats->total) * 100, 1) : 0,
                     'negative_ratio' => $stats->total > 0 ? round(($stats->negative / $stats->total) * 100, 1) : 0,
-                    'tunisian_ratio' => $stats->total > 0 ? round(($stats->tunisian_count / $stats->total) * 100, 1) : 0
                 ]
             ]);
 
         } catch (\Exception $e) {
-            Log::error('Erreur récupération sentiments campagne: ' . $e->getMessage(), ['campaign_id' => $campaign->id]);
+            Log::error('Erreur récupération sentiments campagne: ' . $e->getMessage());
             return response()->json(['error' => 'Erreur serveur'], 500);
         }
     }
 
-
-
-
-
-
-
-
     /**
-     * 🚀 ANALYSE SENTIMENT DIRECTE VERS PYTHON (CORRIGÉ)
+     * Analyse sentiment asynchrone
      */
     private function analyzeCommentSentimentAsync($campaignId, $commentId, $content, $userId)
     {
         try {
-            Log::info('🚀 Lancement analyse sentiment PYTHON DIRECT', [
-                'campaign_id' => $campaignId,
-                'comment_id' => $commentId,
-                'content_preview' => substr($content, 0, 50),
-                'user_id' => $userId
-            ]);
-
-            // ✅ APPEL DIRECT PYTHON API (PAS route Laravel !)
             $pythonApiUrl = env('PYTHON_API_URL', 'http://localhost:5000/analyze-comment');
 
             $response = Http::timeout(15)
@@ -629,123 +1041,239 @@ class FrontCampaignController extends Controller
                     'user_id' => $userId
                 ]);
 
-            Log::info('📡 Réponse Python API', [
-                'status' => $response->status(),
-                'successful' => $response->successful(),
-                'body_preview' => substr($response->body(), 0, 200),
-                'url' => $pythonApiUrl
-            ]);
+            if ($response->successful() && isset($response->json()['data'])) {
+                $data = $response->json()['data'];
 
-            if ($response->successful()) {
-                $pythonData = $response->json();
-
-                if (isset($pythonData['data'])) {
-                    $data = $pythonData['data'];
-
-                    // ✅ SAUVEGARDE DIRECTE EN DB
-                    $sentiment = \App\Models\CampaignCommentSentiment::updateOrCreate(
-                        ['campaign_comment_id' => $commentId],
-                        [
-                            'campaign_id' => $campaignId,
-                            'comment_content' => $content,
-                            'overall_sentiment_score' => $data['overall_sentiment_score'] ?? 0,
-                            'positive' => $data['positive'] ?? 0,
-                            'negative' => $data['negative'] ?? 0,
-                            'neutral' => $data['neutral'] ?? 0,
-                            'dominant_emotion' => $data['dominant_emotion'] ?? 'neutral',
-                            'confidence' => $data['confidence'] ?? 0.5,
-                            'detected_language' => $data['detected_language'] ?? 'unknown',
-                            'joy' => $data['joy'] ?? 0,
-                            'anger' => $data['anger'] ?? 0,
-                            'sadness' => $data['sadness'] ?? 0,
-                            'fear' => $data['fear'] ?? 0,
-                            'surprise' => $data['surprise'] ?? 0,
-                            'disgust' => $data['disgust'] ?? 0,
-                            'trust' => $data['trust'] ?? 0,
-                            'anticipation' => $data['anticipation'] ?? 0,
-                            'raw_scores' => json_encode($data['raw_scores'] ?? []),
-                            'matched_words' => json_encode($data['matched_words'] ?? []),
-                            'analysis_method' => $data['analysis_method'] ?? 'python_direct'
-                        ]
-                    );
-
-                    Log::info('✅ Sentiment SAUVÉ depuis Python', [
-                        'sentiment_id' => $sentiment->id,
-                        'score' => $sentiment->overall_sentiment_score,
-                        'emotion' => $sentiment->dominant_emotion,
-                        'language' => $sentiment->detected_language,
-                        'matched_words' => $data['matched_words'] ?? []
-                    ]);
-
-                    return; // ✅ Succès, sortie
-                }
-            }
-
-            // ❌ ÉCHEC → Fallback
-            throw new \Exception('Python API failed: ' . $response->status());
-
-        } catch (\Exception $e) {
-            Log::error('💥 ERREUR analyse sentiment Python', [
-                'comment_id' => $commentId,
-                'error' => $e->getMessage(),
-                'url' => env('PYTHON_API_URL')
-            ]);
-
-            // ✅ FALLBACK : Sauvegarde avec scores réels (pas tous à 0 !)
-            try {
-                $sentiment = \App\Models\CampaignCommentSentiment::updateOrCreate(
+                \App\Models\CampaignCommentSentiment::updateOrCreate(
                     ['campaign_comment_id' => $commentId],
                     [
                         'campaign_id' => $campaignId,
                         'comment_content' => $content,
-                        'overall_sentiment_score' => 0.1, // Neutre léger
-                        'positive' => 0.3,
-                        'negative' => 0.1,
-                        'neutral' => 0.6,
+                        'overall_sentiment_score' => $data['overall_sentiment_score'] ?? 0,
+                        'positive' => $data['positive'] ?? 0,
+                        'negative' => $data['negative'] ?? 0,
+                        'neutral' => $data['neutral'] ?? 0,
+                        'dominant_emotion' => $data['dominant_emotion'] ?? 'neutral',
+                        'confidence' => $data['confidence'] ?? 0.5,
+                        'detected_language' => $data['detected_language'] ?? 'unknown',
+                        'joy' => $data['joy'] ?? 0,
+                        'anger' => $data['anger'] ?? 0,
+                        'sadness' => $data['sadness'] ?? 0,
+                        'fear' => $data['fear'] ?? 0,
+                        'surprise' => $data['surprise'] ?? 0,
+                        'disgust' => $data['disgust'] ?? 0,
+                        'trust' => $data['trust'] ?? 0,
+                        'anticipation' => $data['anticipation'] ?? 0,
+                        'raw_scores' => json_encode($data['raw_scores'] ?? []),
+                        'matched_words' => json_encode($data['matched_words'] ?? []),
+                        'analysis_method' => 'python_api'
+                    ]
+                );
+            } else {
+                // Fallback
+                \App\Models\CampaignCommentSentiment::updateOrCreate(
+                    ['campaign_comment_id' => $commentId],
+                    [
+                        'campaign_id' => $campaignId,
+                        'comment_content' => $content,
+                        'overall_sentiment_score' => 0,
+                        'positive' => 0.33, 'negative' => 0.33, 'neutral' => 0.34,
                         'dominant_emotion' => 'neutral',
                         'confidence' => 0.5,
                         'detected_language' => 'fallback',
-                        'joy' => 0.2, 'anger' => 0.1, 'trust' => 0.3,
-                        'sadness' => 0.1, 'fear' => 0.0, 'surprise' => 0.0,
-                        'disgust' => 0.0, 'anticipation' => 0.1,
                         'analysis_method' => 'emergency_fallback'
                     ]
                 );
-
-                Log::warning('🛡️ FALLBACK sentiment sauvé', [
-                    'comment_id' => $commentId,
-                    'sentiment_id' => $sentiment->id
-                ]);
-            } catch (\Exception $fallbackError) {
-                Log::error('❌ ÉCHEC fallback', [
-                    'comment_id' => $commentId,
-                    'error' => $fallbackError->getMessage()
-                ]);
             }
+        } catch (\Exception $e) {
+            Log::error('Erreur analyse sentiment: ' . $e->getMessage());
         }
     }
-
-
-
-
-
-
-
-
 
     /**
-     * Classe CSS pour affichage émotions
+     * Helper pour obtenir l'URL de l'image
      */
-    private function getEmotionClass($emotion, $score)
+    private function getCampaignImageUrl($campaign)
     {
-        $positiveEmotions = ['joy', 'positive', 'trust', 'anticipation', 'surprise'];
-        $negativeEmotions = ['anger', 'sadness', 'fear', 'disgust', 'negative'];
+        if (!empty($campaign->media_urls['images']) &&
+            is_array($campaign->media_urls['images']) &&
+            isset($campaign->media_urls['images'][0])) {
 
-        if (in_array($emotion, $positiveEmotions) || $score > 0) {
-            return 'sentiment-positive';
-        } elseif (in_array($emotion, $negativeEmotions) || $score < 0) {
-            return 'sentiment-negative';
+            $imagePath = $campaign->media_urls['images'][0];
+            return Storage::disk('public')->exists($imagePath)
+                ? Storage::url($imagePath)
+                : asset('assets/images/home6/placeholder.jpg');
         }
-        return 'sentiment-neutral';
+
+        return asset('assets/images/home6/placeholder.jpg');
     }
+
+    /**
+     * 🆕 Fallback : TOP campagnes populaires (GARANTIT BADGES VISIBLES)
+     */
+    private function getFallbackRecommendations()
+    {
+        Log::info('🔄 Fallback: Recommandations populaires activées');
+
+        $today = Carbon::today();
+        $campaigns = Campaign::whereIn('status', ['active', 'upcoming'])
+            ->where(function ($query) use ($today) {
+                $query->where('start_date', '>', $today) // upcoming
+                ->orWhere(function ($q) use ($today) {
+                    $q->where('start_date', '<=', $today)
+                        ->where('end_date', '>=', $today); // active
+                });
+            })
+            ->withCount(['likes', 'comments'])
+            ->orderBy('likes_count', 'desc')
+            ->orderBy('created_at', 'desc')
+            ->limit(3) // Limiter à 3 campagnes
+            ->get();
+
+        // Ajouter comptage manuel des vues
+        $campaigns->transform(function ($campaign) {
+            $campaign->views_count = CampaignView::where('campaign_id', $campaign->id)->count();
+            return $campaign;
+        });
+
+        return $campaigns->map(fn($c) => $this->formatCampaignForRecommendation($c, null))->toArray();
+    }
+
+    private function formatCampaignForRecommendation($campaign, $user = null)
+    {
+        $isLiked = $user ? CampaignLike::where('campaign_id', $campaign->id)
+            ->where('user_id', $user->id)->exists() : false;
+
+        $score = $this->calculateRecommendationScore($campaign, $user);
+
+        return [
+            'id' => $campaign->id,
+            'title' => $campaign->title,
+            'description' => Str::limit(strip_tags($campaign->content), 150),
+            'category' => $campaign->category,
+            'status' => $this->calculateStatus($campaign->start_date, $campaign->end_date),
+            'image_url' => $this->getCampaignImageUrl($campaign),
+            'views_count' => $campaign->views_count ?? 0,
+            'likes_count' => $campaign->likes_count ?? 0,
+            'comments_count' => $campaign->comments_count ?? 0,
+            'is_liked' => $isLiked,
+            'recommendation_score' => $score,
+            'start_date' => $campaign->start_date->format('Y-m-d'), // Format ISO pour compatibilité
+            'end_date' => $campaign->end_date->format('Y-m-d'), // Format ISO pour compatibilité
+            'created_at' => $campaign->created_at->toISOString(),
+            'debug' => ['score_raw' => $score]
+        ];
+    }
+
+    /**
+     * 🆕 Score de recommandation amélioré
+     */
+    private function calculateRecommendationScore($campaign, $user)
+    {
+        $likes = $campaign->likes_count ?? 0;
+        $views = $campaign->views_count ?? 0;
+        $comments = $campaign->comments()->count();
+
+        // Score de base
+        $score = ($likes * 0.4) + ($views * 0.3) + ($comments * 0.3);
+
+        // Bonus fraîcheur (7 derniers jours)
+        if ($campaign->created_at->gt(Carbon::now()->subDays(7))) {
+            $score *= 1.5;
+        }
+
+        // Bonus si utilisateur a déjà interagi
+        if ($user && CampaignLike::where('campaign_id', $campaign->id)->where('user_id', $user->id)->exists()) {
+            $score *= 2;
+        }
+
+        return max(round($score, 1), 1.0); // ✅ MINIMUM 1.0 pour badge visible
+    }
+
+    /**
+     * Filtrer les campagnes pour l'API
+     */
+    public function filter(Request $request)
+    {
+        try {
+            $category = $request->input('category', 'all');
+            $status = $request->input('status', 'all');
+
+            $query = Campaign::query()
+                ->with('creator')
+                ->where('status', '!=', 'draft')
+                ->orderBy('created_at', 'desc');
+
+            if ($category !== 'all') {
+                $query->where('category', $category);
+            }
+
+            if ($status !== 'all') {
+                $today = Carbon::today();
+                if ($status === 'upcoming') {
+                    $query->where('start_date', '>', $today);
+                } elseif ($status === 'active') {
+                    $query->where('start_date', '<=', $today)
+                        ->where('end_date', '>=', $today);
+                } elseif ($status === 'ended') {
+                    $query->where('end_date', '<', $today);
+                }
+            }
+
+            // ✅ CORRECTION : Utiliser paginate() au lieu de get()
+            $campaigns = $query->paginate(6); // ou le nombre d'éléments par page que vous voulez
+
+            $campaignsData = $campaigns->map(function ($campaign) {
+                return [
+                    'id' => $campaign->id,
+                    'title' => $campaign->title,
+                    'content' => strip_tags($campaign->content),
+                    'category' => $campaign->category,
+                    'status' => $this->calculateStatus($campaign->start_date, $campaign->end_date),
+                    'start_date' => $campaign->start_date->format('d/m/Y'),
+                    'end_date' => $campaign->end_date->format('d/m/Y'),
+                    'views_count' => $campaign->views_count,
+                    'likes_count' => $campaign->likes_count,
+                    'comments_count' => $campaign->comments()->count(),
+                    'sentiment_stats' => $this->getCampaignSentimentStats($campaign->id),
+                    'thumbnail' => $this->getCampaignImageUrl($campaign),
+                ];
+            });
+
+            return response()->json([
+                'success' => true,
+                'campaigns' => $campaignsData,
+                'pagination' => [
+                    'current_page' => $campaigns->currentPage(),
+                    'last_page' => $campaigns->lastPage(),
+                    'per_page' => $campaigns->perPage(),
+                    'total' => $campaigns->total(),
+                    'next_page_url' => $campaigns->nextPageUrl(),
+                    'prev_page_url' => $campaigns->previousPageUrl(),
+                ]
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Erreur lors du filtrage des campagnes via API: ' . $e->getMessage());
+            return response()->json(['error' => 'Erreur serveur'], 500);
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }

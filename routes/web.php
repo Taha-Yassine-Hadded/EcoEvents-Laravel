@@ -3,7 +3,6 @@
 use App\Http\Controllers\Api\SentimentAnalysisController;
 use App\Http\Controllers\CampaignController;
 use App\Http\Controllers\CampaignAnalyticsController;
-
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Front\FrontCampaignController;
 use App\Http\Controllers\LoginController;
@@ -13,14 +12,18 @@ use App\Http\Controllers\EventController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\RegistrationController;
 use App\Http\Controllers\PasswordResetController;
+use App\Http\Controllers\CommunityController;
+use App\Http\Controllers\PublicCommunityController;
+use App\Http\Controllers\CommunityMembershipController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 Route::get('/', function () {
     return view('pages.frontOffice.home');
 })->name('home');
-
-
 
 // About page
 Route::get('/about', function () {
@@ -102,16 +105,10 @@ Route::get('/dashboard', [DashboardController::class, 'index'])
     ->middleware([\App\Http\Middleware\VerifyJWT::class, \App\Http\Middleware\RoleGuard::class . ':admin'])
     ->name('admin.dashboard');
 
-/*Route::get('/dashboard', [DashboardController::class, 'index'])
-    ->middleware('\App\Http\Middleware\VerifyJWT::class')
-    ->name('admin.dashboard');*/
-
 // Test route
-// Test route avec un seul middleware
 Route::get('/test', function () {
     return 'Test route works!';
 })->middleware(\App\Http\Middleware\VerifyJWT::class);
-
 
 // Simple register test
 Route::get('/register-test', function () {
@@ -134,7 +131,6 @@ Route::post('/logout', [LoginController::class, 'logout'])->middleware(\App\Http
 Route::get('/user', [UserController::class, 'getUser'])
     ->middleware(\App\Http\Middleware\VerifyJWT::class)
     ->name('user.get');
-
 
 // Routes pour les différents rôles
 Route::get('/organizer-home', function () {
@@ -174,9 +170,6 @@ Route::get('/check-user', function () {
 // ========================================
 // ROUTES COMMUNAUTÉS - INTERFACE ORGANISATEUR
 // ========================================
-use App\Http\Controllers\CommunityController;
-use App\Http\Controllers\PublicCommunityController;
-
 Route::prefix('organizer')->name('organizer.')->middleware([\App\Http\Middleware\VerifyJWT::class, \App\Http\Middleware\RoleGuard::class . ':organizer'])->group(function () {
     // CRUD Communautés
     Route::resource('communities', CommunityController::class);
@@ -185,8 +178,8 @@ Route::prefix('organizer')->name('organizer.')->middleware([\App\Http\Middleware
     Route::patch('communities/{community}/toggle-status', [CommunityController::class, 'toggleStatus'])->name('communities.toggle-status');
 
     // Gestion des demandes d'adhésion
-    Route::post('communities/{community}/approve/{user}', [\App\Http\Controllers\CommunityMembershipController::class, 'approve'])->name('communities.approve');
-    Route::post('communities/{community}/reject/{user}', [\App\Http\Controllers\CommunityMembershipController::class, 'reject'])->name('communities.reject');
+    Route::post('communities/{community}/approve/{user}', [CommunityMembershipController::class, 'approve'])->name('communities.approve');
+    Route::post('communities/{community}/reject/{user}', [CommunityMembershipController::class, 'reject'])->name('communities.reject');
 });
 
 // Route de test pour vérifier le rôle utilisateur
@@ -261,28 +254,19 @@ Route::get('/switch-to-organizer', function() {
 
 // Route pour forcer la déconnexion complète
 Route::get('/force-logout', function() {
-    // Déconnexion Laravel
     Auth::logout();
-
-    // Vider toutes les sessions
     session()->flush();
     session()->regenerate();
-
-    // Supprimer le token JWT du localStorage (via JavaScript)
     return "
     <h3>🚪 Déconnexion forcée</h3>
     <p>Toutes les sessions ont été supprimées.</p>
     <script>
-        // Supprimer le token JWT
         localStorage.removeItem('jwt_token');
         sessionStorage.clear();
-
-        // Redirection après nettoyage
         setTimeout(function() {
             window.location.href = '/login';
         }, 2000);
     </script>
-    <p>Redirection vers la page de connexion...</p>
     ";
 })->middleware('web');
 
@@ -290,15 +274,13 @@ Route::get('/force-logout', function() {
 // ROUTES COMMUNAUTÉS - INTERFACE PUBLIQUE
 // ========================================
 Route::prefix('communities')->name('communities.')->group(function () {
-    // Pages publiques (avec middleware JWT optionnel)
     Route::get('/', [PublicCommunityController::class, 'index'])->name('index')->middleware('jwt.optional');
     Route::get('/{community}', [PublicCommunityController::class, 'show'])->name('show')->middleware('jwt.optional');
     Route::get('/category/{category}', [PublicCommunityController::class, 'byCategory'])->name('by-category');
 
-    // Actions nécessitant une connexion
     Route::middleware([\App\Http\Middleware\VerifyJWT::class])->group(function () {
-        Route::post('/{community}/join', [\App\Http\Controllers\CommunityMembershipController::class, 'join'])->name('join');
-        Route::delete('/{community}/leave', [\App\Http\Controllers\CommunityMembershipController::class, 'leave'])->name('leave');
+        Route::post('/{community}/join', [CommunityMembershipController::class, 'join'])->name('join');
+        Route::delete('/{community}/leave', [CommunityMembershipController::class, 'leave'])->name('leave');
     });
 });
 
@@ -306,13 +288,12 @@ Route::prefix('communities')->name('communities.')->group(function () {
 // ROUTES GESTION DES DEMANDES D'ADHÉSION
 // ========================================
 Route::prefix('organizer')->name('organizer.')->middleware([\App\Http\Middleware\VerifyJWT::class])->group(function () {
-    // Gestion des demandes d'adhésion
-    Route::get('/membership-requests', [\App\Http\Controllers\CommunityController::class, 'membershipRequests'])->name('membership-requests');
-    Route::post('/membership-requests/{membership}/approve', [\App\Http\Controllers\CommunityController::class, 'approveMembership'])->name('membership.approve');
-    Route::post('/membership-requests/{membership}/reject', [\App\Http\Controllers\CommunityController::class, 'rejectMembership'])->name('membership.reject');
+    Route::get('/membership-requests', [CommunityController::class, 'membershipRequests'])->name('membership-requests');
+    Route::post('/membership-requests/{membership}/approve', [CommunityController::class, 'approveMembership'])->name('membership.approve');
+    Route::post('/membership-requests/{membership}/reject', [CommunityController::class, 'rejectMembership'])->name('membership.reject');
 });
 
-// Routes pour la gestion des campagnes
+// Routes pour la gestion des campagnes ADMIN - ✅ CORRIGÉ
 Route::prefix('admin/campaigns')->middleware([\App\Http\Middleware\VerifyJWT::class, \App\Http\Middleware\RoleGuard::class . ':admin'])->group(function () {
     Route::get('/create', [CampaignController::class, 'create'])->name('admin.campaigns.create');
     Route::post('/store', [CampaignController::class, 'store'])->name('admin.campaigns.store');
@@ -327,18 +308,40 @@ Route::prefix('admin/campaigns')->middleware([\App\Http\Middleware\VerifyJWT::cl
     Route::post('/{id}/notify', [CampaignController::class, 'notify'])->name('admin.campaigns.notify');
     Route::get('/{id}/comments', [CampaignController::class, 'comments'])->name('admin.campaigns.comments');
     Route::delete('/{id}/comments/{comment}', [CampaignController::class, 'deleteComment'])->name('admin.campaigns.comments.delete');
+}); // ✅ Fermeture correcte du groupe admin/campaigns
 
-
-
-}
-);
-
+// Routes pour la gestion des campagnes FRONT - ✅ CORRIGÉ
 Route::prefix('campaigns')->group(function () {
-    Route::get('/', [FrontCampaignController::class, 'index'])->name('front.campaigns.index');
+    Route::get('/{campaign}/sentiments', [FrontCampaignController::class, 'getCampaignSentiments'])
+        ->middleware(\App\Http\Middleware\VerifyJWT::class)
+        ->name('front.campaigns.sentiments');
+
+    Route::get('/', [FrontCampaignController::class, 'index'])
+        ->middleware(\App\Http\Middleware\VerifyJWT::class)
+        ->name('front.campaigns.index');
     Route::get('/{campaign}', [FrontCampaignController::class, 'show'])
         ->middleware(\App\Http\Middleware\VerifyJWT::class)
         ->name('front.campaigns.show');
 
+    // Recommandations
+    Route::get('/recommendations', [FrontCampaignController::class, 'recommendations'])
+        ->middleware(\App\Http\Middleware\VerifyJWT::class)
+        ->name('front.campaigns.recommendations');
+
+    // Invalidation cache
+    Route::post('/invalidate-recommendations-cache', [FrontCampaignController::class, 'invalidateRecommendationsCache'])
+        ->middleware(\App\Http\Middleware\VerifyJWT::class)
+        ->name('front.campaigns.invalidate-cache');
+
+    // Likes
+    Route::post('/{campaign}/like', [FrontCampaignController::class, 'like'])
+        ->middleware(\App\Http\Middleware\VerifyJWT::class)
+        ->name('api.campaigns.like');
+
+    // Commentaires
+    Route::post('/{campaign}/comments', [FrontCampaignController::class, 'storeComment'])
+        ->middleware(\App\Http\Middleware\VerifyJWT::class)
+        ->name('front.campaigns.comments.store');
 
     Route::put('/{campaign}/comments/{comment}', [FrontCampaignController::class, 'updateComment'])
         ->middleware(\App\Http\Middleware\VerifyJWT::class)
@@ -348,44 +351,19 @@ Route::prefix('campaigns')->group(function () {
         ->middleware(\App\Http\Middleware\VerifyJWT::class)
         ->name('front.campaigns.comments.delete');
 
-
-    Route::post('/{campaign}/comments', [FrontCampaignController::class, 'storeComment'])
-        ->middleware(\App\Http\Middleware\VerifyJWT::class)
-        ->name('front.campaigns.comments.store');
-
     Route::post('/{campaign}/comments/{comment}/like', [FrontCampaignController::class, 'likeComment'])
         ->middleware(\App\Http\Middleware\VerifyJWT::class)
         ->name('api.comments.like');
-
-
-
-
-    // AUTO-ANALYSE : Déclenchée quand un commentaire est mis à jour
-    Route::put('/{campaign}/comments/{comment}', [FrontCampaignController::class, 'updateComment'])
-        ->middleware(\App\Http\Middleware\VerifyJWT::class)
-        ->name('front.campaigns.comments.update'); // Garde ta route existante
-
-    // AUTO-ANALYSE : Déclenchée quand un commentaire est supprimé
-    Route::delete('/{campaign}/comments/{comment}', [FrontCampaignController::class, 'deleteComment'])
-        ->middleware(\App\Http\Middleware\VerifyJWT::class)
-        ->name('front.campaigns.comments.delete'); // Garde ta route existante
 });
 
+// Route de filtrage
 Route::post('/campaigns/filter', [FrontCampaignController::class, 'filter'])->name('api.campaigns.filter');
-// API routes
-Route::post('/campaigns/{campaign}/like', [FrontCampaignController::class, 'like'])
-    ->middleware(\App\Http\Middleware\VerifyJWT::class)
-    ->name('api.campaigns.like');// Dans web.php, dans le groupe admin/campaigns
-//Route::delete('/{id}', [CampaignController::class, 'destroy'])->name('admin.campaigns.destroy');
-
-
 
 // --------------------
 // FrontOffice (Public events, visible to all users)
 // --------------------
 Route::get('/events', [EventController::class, 'index'])->name('front.events.index');
 Route::get('/events/{event}', [EventController::class, 'show'])->name('front.events.show');
-
 
 // --------------------
 // FrontOffice Organizer (Own events management)
@@ -396,13 +374,13 @@ Route::prefix('organizer/events')->middleware([\App\Http\Middleware\VerifyJWT::c
     Route::get('/{event}/edit', [EventController::class, 'edit'])->name('front.events.edit');
     Route::put('/{event}', [EventController::class, 'update'])->name('front.events.update');
     Route::delete('/{event}', [EventController::class, 'destroy'])->name('front.events.destroy');
+    Route::post('/{event}', [EventController::class, 'updateOrganizer'])->name('organizer.events.update');
 });
 
 // --------------------
 // BackOffice (Admin full CRUD for events and categories)
 // --------------------
 Route::prefix('admin')->middleware([\App\Http\Middleware\VerifyJWT::class, \App\Http\Middleware\RoleGuard::class . ':admin'])->name('admin.')->group(function () {
-
     // Events
     Route::get('/events', [EventController::class, 'backIndex'])->name('events.index');
     Route::get('/events/create', [EventController::class, 'createAdmin'])->name('events.create');
@@ -421,14 +399,9 @@ Route::prefix('admin')->middleware([\App\Http\Middleware\VerifyJWT::class, \App\
     Route::delete('/categories/{category}', [CategoryController::class, 'destroy'])->name('categories.destroy');
 });
 
-
 Route::get('/api/categories', function() {
     $categories = \App\Models\Category::all();
     return response()->json(['categories' => $categories]);
-});
-
-Route::prefix('organizer/events')->middleware([\App\Http\Middleware\VerifyJWT::class, \App\Http\Middleware\RoleGuard::class . ':organizer'])->group(function () {
-    Route::post('/{event}', [EventController::class, 'updateOrganizer'])->name('organizer.events.update');
 });
 
 // --------------------
@@ -448,29 +421,16 @@ Route::get('/events/{event}/registration-status', [RegistrationController::class
 
 Route::get('/my-registrations', [RegistrationController::class, 'myRegistrations'])->name('registrations.index');
 
-
-
-
-
-// Routes API Sentiment (nécessitent authentification)
+// Routes API Sentiment
 Route::prefix('api')->middleware(\App\Http\Middleware\VerifyJWT::class)->name('api.')->group(function () {
-    // Analyse sentiment d'un commentaire
     Route::post('/sentiment/analyze', [SentimentAnalysisController::class, 'analyzeComment'])->name('sentiment.analyze');
-
-    // Test connexion API Python
     Route::get('/sentiment/test', [SentimentAnalysisController::class, 'testConnection'])->name('sentiment.test');
 });
 
-
-
-
 // Routes admin pour gestion sentiments
 Route::prefix('admin')->middleware([\App\Http\Middleware\VerifyJWT::class, \App\Http\Middleware\RoleGuard::class . ':admin'])->name('admin.')->group(function () {
-    // Dashboard sentiments
     Route::get('/campaigns/{campaign}/sentiments', [CampaignController::class, 'sentiments'])->name('campaigns.sentiments');
     Route::delete('/sentiments/{sentiment}', [CampaignController::class, 'deleteSentiment'])->name('sentiments.destroy');
-
-    // Stats globales
     Route::get('/sentiments/stats', function() {
         return \App\Models\CampaignCommentSentiment::selectRaw('
             detected_language,
@@ -483,21 +443,7 @@ Route::prefix('admin')->middleware([\App\Http\Middleware\VerifyJWT::class, \App\
     })->name('sentiments.stats');
 });
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// ✅ ROUTE DEBUG PYTHON DIRECT (accessible via navigateur)
+// ✅ ROUTE DEBUG PYTHON DIRECT
 Route::get('/debug/python-test', function() {
     $testData = [
         'campaign_id' => 21,
@@ -567,4 +513,3 @@ Route::post('/debug/sentiment-laravel', function(Request $request) {
         return response()->json(['error' => $e->getMessage()], 500);
     }
 })->middleware(\App\Http\Middleware\VerifyJWT::class);
-
