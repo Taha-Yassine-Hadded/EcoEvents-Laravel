@@ -227,7 +227,7 @@ jobs:
           DB_DATABASE: ecoEvent_test
           DB_USERNAME: root
           DB_PASSWORD: password
-        run: vendor/bin/phpunit --coverage-text --coverage-clover=coverage.xml
+        run: php vendor/bin/phpunit --coverage-text --coverage-clover=coverage.xml
 
       - name: 📊 Upload coverage report
         uses: actions/upload-artifact@v4
