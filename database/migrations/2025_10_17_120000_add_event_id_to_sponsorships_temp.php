@@ -11,10 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('sponsorships_temp', function (Blueprint $table) {
-            // Ajouter la colonne event_id pour lier aux événements du collègue
-            $table->unsignedBigInteger('event_id')->nullable()->after('user_id');
-        });
+        if (!Schema::hasColumn('sponsorships_temp', 'event_id')) {
+            Schema::table('sponsorships_temp', function (Blueprint $table) {
+                // Ajouter la colonne event_id pour lier aux événements du collègue
+                $table->unsignedBigInteger('event_id')->nullable()->after('user_id');
+            });
+        }
     }
 
     /**
@@ -22,8 +24,10 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('sponsorships_temp', function (Blueprint $table) {
-            $table->dropColumn('event_id');
-        });
+        if (Schema::hasColumn('sponsorships_temp', 'event_id')) {
+            Schema::table('sponsorships_temp', function (Blueprint $table) {
+                $table->dropColumn('event_id');
+            });
+        }
     }
 };
