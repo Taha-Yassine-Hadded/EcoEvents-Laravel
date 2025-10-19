@@ -1,4 +1,4 @@
-name: 🌿 EcoEvents CI/CD Pipeline with SonarCloud
+name: 🌿 EcoEvents CI/CD Pipeline
 
 on:
   push:
@@ -121,43 +121,8 @@ jobs:
           echo "📊 Check the logs above for any issues"
 
   # ==========================================
-  # 4. SONARCLOUD ANALYSIS
+  # 4. (Removed) SONARCLOUD ANALYSIS
   # ==========================================
-  sonarcloud:
-    name: 🔍 SonarCloud Analysis
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - name: 🔄 Checkout code
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: 📥 Download vendor artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: vendor
-          path: vendor
-
-      - name: 🐘 Setup PHP ${{ env.PHP_VERSION }}
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: ${{ env.PHP_VERSION }}
-
-      - name: 🔍 SonarCloud Scan
-        uses: SonarSource/sonarcloud-github-action@master
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        with:
-          args: >
-            -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }}
-            -Dsonar.organization=${{ secrets.SONAR_ORGANIZATION }}
-
-      - name: 📊 SonarCloud Quality Gate
-        run: |
-          echo "✅ SonarCloud analysis completed"
-          echo "📊 Check quality gate status in SonarCloud dashboard"
 
   # ==========================================
   # 5. UNIT & INTEGRATION TESTS
@@ -334,7 +299,7 @@ jobs:
   docker:
     name: 🐳 Docker Build & Push
     runs-on: ubuntu-latest
-    needs: [tests, security, build-frontend, phpstan, sonarcloud]
+    needs: [tests, security, build-frontend, phpstan]
     if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'
     steps:
       - name: 🔄 Checkout code
