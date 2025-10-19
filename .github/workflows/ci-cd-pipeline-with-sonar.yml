@@ -160,7 +160,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: 📥 Download vendor artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: vendor
           path: vendor
@@ -311,7 +311,7 @@ jobs:
         run: npm run build
 
       - name: 💾 Upload build artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: public-build
           path: public/build
