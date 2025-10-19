@@ -16,7 +16,7 @@ return new class extends Migration
             $table->text('address')->nullable()->after('phone');
             $table->string('city')->nullable()->after('address');
             $table->json('interests')->nullable()->after('city');
-            $table->enum('role', ['user', 'organizer', 'admin'])->default('user')->after('interests');
+            $table->enum('role', ['user', 'organizer', 'sponsor', 'admin'])->default('user')->after('interests');
             $table->text('bio')->nullable()->after('role');
             $table->string('profile_image')->nullable()->after('bio');
         });

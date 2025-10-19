@@ -9,7 +9,7 @@
     <section class="campaign-detail-area home-six">
         <div class="container">
             <!-- Notification Container -->
-            <div id="notification-container" style="position: fixed; top: 20px; right: 20px; z-index: 1000;"></div>
+            <div id="notification-container" style="position: fixed; top: 20px; right: 20px; z-index: 1000;" aria-live="polite"></div>
 
             <div class="campaign-hero">
                 <div class="campaign-image">
@@ -171,7 +171,12 @@
                     <div class="comment-form">
                         <form id="comment-form" method="POST">
                             @csrf
-                            <textarea name="content" class="comment-input" placeholder="Partagez votre expérience ou posez une question..." required></textarea>
+                            <div class="comment-input-container">
+                                <textarea name="content" id="comment-input" class="comment-input" placeholder="Partagez votre expérience ou posez une question..." required></textarea>
+                                <button type="button" id="emoji-button" class="emoji-button" aria-label="Ouvrir le sélecteur d'emojis">
+                                    <i class="bi bi-emoji-smile"></i>
+                                </button>
+                            </div>
                             <button type="submit" class="comment-submit">
                                 <i class="bi bi-send"></i> Publier le commentaire
                             </button>
@@ -231,38 +236,38 @@
                         <p class="text-center">Aucun commentaire pour le moment.</p>
                     @endforelse
                 </div>
-            </div>
 
-            <!-- Modal de partage -->
-            <div class="share-modal" id="shareModal">
-                <div class="share-content">
-                    <div class="share-header">
-                        <h3>Partager cette campagne</h3>
-                        <button class="close-modal" onclick="closeShareModal()">
-                            <i class="bi bi-x"></i>
-                        </button>
-                    </div>
-                    <div class="share-options">
-                        <a href="#" class="share-option facebook" onclick="shareOnFacebook()">
-                            <i class="bi bi-facebook"></i>
-                            <span>Facebook</span>
-                        </a>
-                        <a href="#" class="share-option twitter" onclick="shareOnTwitter()">
-                            <i class="bi bi-twitter"></i>
-                            <span>Twitter</span>
-                        </a>
-                        <a href="#" class="share-option linkedin" onclick="shareOnLinkedIn()">
-                            <i class="bi bi-linkedin"></i>
-                            <span>LinkedIn</span>
-                        </a>
-                        <a href="#" class="share-option whatsapp" onclick="shareOnWhatsApp()">
-                            <i class="bi bi-whatsapp"></i>
-                            <span>WhatsApp</span>
-                        </a>
-                        <a href="#" class="share-option copy" onclick="copyLink()">
-                            <i class="bi bi-link"></i>
-                            <span>Copier le lien</span>
-                        </a>
+                <!-- Modal de partage -->
+                <div class="share-modal" id="shareModal">
+                    <div class="share-content">
+                        <div class="share-header">
+                            <h3>Partager cette campagne</h3>
+                            <button class="close-modal" onclick="closeShareModal()">
+                                <i class="bi bi-x"></i>
+                            </button>
+                        </div>
+                        <div class="share-options">
+                            <a href="#" class="share-option facebook" onclick="shareOnFacebook()">
+                                <i class="bi bi-facebook"></i>
+                                <span>Facebook</span>
+                            </a>
+                            <a href="#" class="share-option twitter" onclick="shareOnTwitter()">
+                                <i class="bi bi-twitter"></i>
+                                <span>Twitter</span>
+                            </a>
+                            <a href="#" class="share-option linkedin" onclick="shareOnLinkedIn()">
+                                <i class="bi bi-linkedin"></i>
+                                <span>LinkedIn</span>
+                            </a>
+                            <a href="#" class="share-option whatsapp" onclick="shareOnWhatsApp()">
+                                <i class="bi bi-whatsapp"></i>
+                                <span>WhatsApp</span>
+                            </a>
+                            <a href="#" class="share-option copy" onclick="copyLink()">
+                                <i class="bi bi-link"></i>
+                                <span>Copier le lien</span>
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -271,6 +276,7 @@
     <!--==================================================-->
     <!-- End Echofy Campaign Detail Area -->
     <!--==================================================-->
+    </section>
 @endsection
 
 @push('styles')
@@ -541,6 +547,33 @@
             margin-bottom: 2rem;
         }
 
+        .comment-input-container {
+            position: relative;
+            margin-bottom: 1rem;
+        }
+
+        .comment-input-container::after {
+            content: '';
+            display: none;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #28a745;
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            position: absolute;
+            right: 40px;
+            top: 10px;
+        }
+
+        .comment-input-container.loading::after {
+            display: block;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
         .comment-input {
             width: 100%;
             border: none;
@@ -548,12 +581,45 @@
             border-radius: 8px;
             resize: vertical;
             min-height: 100px;
-            margin-bottom: 1rem;
             font-family: inherit;
         }
 
         .comment-input:focus {
             outline: 2px solid #28a745;
+        }
+
+        .emoji-button {
+            position: absolute;
+            right: 10px;
+            top: 10px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.2rem;
+            color: #666;
+        }
+
+        .emoji-button:hover {
+            color: #28a745;
+        }
+
+        emoji-picker {
+            --category-icon-size: 20px;
+            --emoji-size: 20px;
+            width: 100%;
+            max-width: 400px;
+            max-height: 300px;
+            position: absolute;
+            z-index: 1000;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            display: none;
+            --background: #f8f9fa;
+            --button-active-background: #28a745;
+            --search-background: #fff;
+        }
+
+        emoji-picker.show {
+            display: block;
         }
 
         .comment-submit {
@@ -835,7 +901,47 @@
 @endpush
 
 @push('scripts')
+    <script src="https://unpkg.com/emoji-picker-element@^1.12.0/index.js" type="module"></script>
     <script>
+        // Initialize Emoji Picker
+        document.addEventListener('DOMContentLoaded', () => {
+            const textarea = document.getElementById('comment-input');
+            const emojiButton = document.getElementById('emoji-button');
+            const picker = document.createElement('emoji-picker');
+            picker.setAttribute('locale', 'fr');
+            picker.classList.add('emoji-picker');
+            textarea.parentElement.appendChild(picker);
+
+            emojiButton.addEventListener('click', (e) => {
+                e.preventDefault(); // Empêche tout comportement par défaut
+                e.stopPropagation(); // Empêche la propagation pour éviter les clics multiples
+                const isPickerVisible = picker.classList.contains('show');
+                // Ferme toutes les autres instances d'emoji-picker
+                document.querySelectorAll('emoji-picker').forEach(p => p.classList.remove('show'));
+                // Ouvre ou ferme le sélecteur actuel
+                if (!isPickerVisible) {
+                    picker.classList.add('show');
+                }
+            });
+
+            picker.addEventListener('emoji-click', (event) => {
+                const cursorPos = textarea.selectionStart;
+                const textBefore = textarea.value.substring(0, cursorPos);
+                const textAfter = textarea.value.substring(cursorPos);
+                textarea.value = textBefore + event.detail.unicode + textAfter;
+                textarea.focus();
+                textarea.selectionStart = textarea.selectionEnd = cursorPos + event.detail.unicode.length;
+                picker.classList.remove('show');
+            });
+
+            // Close picker when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!picker.contains(e.target) && e.target !== emojiButton) {
+                    picker.classList.remove('show');
+                }
+            });
+        });
+
         // Afficher une notification temporaire
         function showNotification(message, type = 'success') {
             console.log(`Affichage de la notification: ${message} (${type})`);
@@ -848,6 +954,53 @@
                 alert.classList.remove('show');
                 setTimeout(() => alert.remove(), 500);
             }, 4000);
+        }
+
+        // Vérifier le sentiment d'un commentaire via polling
+        function checkCommentSentiment(commentId, maxAttempts = 5, interval = 2000) {
+            const token = localStorage.getItem('jwt_token');
+            if (!token) {
+                showNotification('Vous devez être connecté pour vérifier le sentiment.', 'danger');
+                return;
+            }
+
+            let attempts = 0;
+            const poll = setInterval(() => {
+                fetch('{{ route("front.campaigns.sentiments", $campaign->id) }}', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json'
+                    }
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success && data.sentiments) {
+                            const sentiment = data.sentiments.find(s => s.comment_id == commentId);
+                            if (sentiment && sentiment.score !== null) {
+                                clearInterval(poll);
+                                if (sentiment.score < 0) {
+                                    showNotification("Votre commentaire risque d'être supprimé par l'admin.", 'danger');
+                                } else {
+                                    showNotification('Merci pour votre commentaire !');
+                                }
+                            } else if (attempts >= maxAttempts) {
+                                clearInterval(poll);
+                                showNotification('Analyse du sentiment non terminée. Veuillez réessayer plus tard.', 'danger');
+                            }
+                        } else if (attempts >= maxAttempts) {
+                            clearInterval(poll);
+                            showNotification('Erreur lors de la vérification du sentiment.', 'danger');
+                        }
+                        attempts++;
+                    })
+                    .catch(error => {
+                        console.error('Erreur lors de la vérification du sentiment:', error);
+                        clearInterval(poll);
+                        showNotification('Erreur lors de la vérification du sentiment.', 'danger');
+                    });
+            }, interval);
         }
 
         // Toggle like for campaign
@@ -958,6 +1111,7 @@
                 return;
             }
 
+            textarea.parentElement.classList.add('loading');
             const formData = new FormData(this);
             fetch('{{ route("front.campaigns.comments.store", $campaign->id) }}', {
                 method: 'POST',
@@ -974,6 +1128,7 @@
                 })
                 .then(data => {
                     console.log('Données reçues (ajout commentaire):', data);
+                    textarea.parentElement.classList.remove('loading');
                     if (data.success) {
                         const commentsList = document.querySelector('.comments-list');
                         const commentCount = document.querySelector('.comments-header h3');
@@ -1020,13 +1175,14 @@
                         commentsList.prepend(newComment);
                         commentCount.textContent = `Commentaires (${data.comments_count})`;
                         textarea.value = '';
-                        showNotification('Merci pour votre commentaire !');
+                        checkCommentSentiment(data.comment.id);
                     } else {
                         showNotification(data.error || 'Erreur lors de l\'ajout du commentaire', 'danger');
                     }
                 })
                 .catch(error => {
                     console.error('Erreur lors de l\'ajout du commentaire:', error);
+                    textarea.parentElement.classList.remove('loading');
                     showNotification('Une erreur est survenue', 'danger');
                 });
         });
@@ -1050,6 +1206,7 @@
                     return;
                 }
 
+                textarea.parentElement.parentElement.classList.add('loading');
                 const formData = new FormData();
                 formData.append('content', content);
                 formData.append('_method', 'PUT');
@@ -1077,6 +1234,7 @@
                     })
                     .then(data => {
                         console.log('Données reçues (modification commentaire):', data);
+                        textarea.parentElement.parentElement.classList.remove('loading');
                         if (data.success) {
                             document.getElementById(`comment-content-${commentId}`).textContent = data.comment.content;
                             hideEditForm(commentId);
@@ -1087,6 +1245,7 @@
                     })
                     .catch(error => {
                         console.error('Erreur lors de la modification du commentaire:', error);
+                        textarea.parentElement.parentElement.classList.remove('loading');
                         showNotification('Une erreur est survenue', 'danger');
                     });
             });

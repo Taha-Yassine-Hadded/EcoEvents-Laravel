@@ -27,15 +27,24 @@ class RoleGuard
                 'headers' => $request->headers->all(),
             ]);
 
-            // Vérifier si l'utilisateur a un des rôles autorisés
-            if (!$user || !in_array($user->role, $allowedRoles)) {
+            // Vérifier si l'utilisateur a le rôle requis
+            if (!$user || $user->role !== $role) {
                 Log::warning('RoleGuard: Accès non autorisé, rôle insuffisant', [
                     'user_id' => $user ? $user->id : null,
                     'user_role' => $user ? $user->role : null,
                     'allowed_roles' => $allowedRoles,
                     'url' => $request->url(),
                 ]);
-                return redirect()->route('home')->with('error', 'Accès non autorisé : rôle insuffisant.');
+                
+                $roleMessages = [
+                    'admin' => 'administrateurs',
+                    'organizer' => 'organisateurs',
+                    'sponsor' => 'sponsors',
+                    'user' => 'utilisateurs'
+                ];
+                
+                $roleMessage = $roleMessages[$role] ?? $role;
+                return redirect()->route('home')->with('error', "Accès non autorisé : réservé aux {$roleMessage}.");
             }
 
             Log::info('RoleGuard: Autorisation réussie', [
