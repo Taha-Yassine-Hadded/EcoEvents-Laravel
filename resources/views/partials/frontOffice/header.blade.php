@@ -51,6 +51,10 @@
                                     <i class="bi bi-people"></i>
                                     Mes Communautés
                                 </a>
+                                <a href="{{ route('organizer.communities.index') }}" class="organizer-link" id="organizer-link" style="display: none;">
+                                    <i class="bi bi-people"></i>
+                                    Mes Communautés
+                                </a>
                                 <a href="#" id="theme-toggle" class="theme-toggle">
                                     <i class="bi bi-moon"></i>
                                     <span class="theme-text">Mode sombre</span>

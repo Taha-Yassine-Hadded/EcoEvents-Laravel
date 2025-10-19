@@ -1,3 +1,4 @@
+# Laravel
 /.phpunit.cache
 /node_modules
 /public/build
@@ -15,8 +16,61 @@ Homestead.yaml
 npm-debug.log
 yarn-error.log
 /auth.json
+
+# IDE & Editors
 /.fleet
 /.idea
 /.nova
 /.vscode
 /.zed
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments (CRUCIAL)
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+python/*/venv/
+python/*/__pycache__/
+python/*/pip-log.txt
+python/*/*.pyc
+python/*/build/
+python/*/dist/
+
+# Logs
+*.log
+logs/
+*.pkl
+# OS
+.DS_Store
+Thumbs.db
+
+# Database
+*.sql
+*.sqlite
+
+venv/
+python/*/venv/

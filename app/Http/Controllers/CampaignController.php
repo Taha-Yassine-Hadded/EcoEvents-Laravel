@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\CampaignExport;
+use Illuminate\Support\Facades\Http; // Ajouter cette ligne en haut du fichier avec les autres imports
 
 class CampaignController extends Controller
 {
@@ -94,17 +95,17 @@ class CampaignController extends Controller
         }
     }
 
-    
-    /**
-     * Enregistrer une nouvelle campagne
-     */
+
+/**
+* Enregistrer une nouvelle campagne
+*/
     public function store(Request $request)
     {
         try {
             $validated = $request->validate([
                 'title' => 'required|string|min:10|max:255',
                 'content' => 'required|string|min:100|max:2000',
-                'category' => 'required|in:recyclage,climat,biodiversite,eau,energie,transport,alimentation,pollution,sensibilisation',
+                // 'category' => 'required|in:recyclage,climat,biodiversite,eau,energie,transport,alimentation,pollution,sensibilisation', // Supprimer cette ligne
                 'start_date' => 'required|date',
                 'end_date' => 'required|date|after:start_date',
                 'objectives.*' => 'nullable|string|max:500',
@@ -116,10 +117,40 @@ class CampaignController extends Controller
                 'terms' => 'required|accepted'
             ]);
 
+            // Combiner content, objectives et actions pour l'analyse IA
+            $text_for_analysis = $validated['content'];
+            if (!empty($request->input('objectives', []))) {
+                $text_for_analysis .= ' ' . implode(' ', array_filter($request->input('objectives', [])));
+            }
+            if (!empty($request->input('actions', []))) {
+                $text_for_analysis .= ' ' . implode(' ', array_filter($request->input('actions', [])));
+            }
+
+            // Appeler l'API Python pour prédire la catégorie
+            $response = Http::post('http://localhost:6000/predict-category', [
+                'text' => $text_for_analysis
+            ]);
+
+            if ($response->failed()) {
+                Log::error('Erreur lors de l\'appel à l\'API de prédiction de catégorie: ' . $response->body());
+                return response()->json(['error' => 'Erreur lors de la prédiction de la catégorie'], 500);
+            }
+
+            $api_result = $response->json();
+            if (!$api_result['success'] || !isset($api_result['data']['category'])) {
+                Log::error('Réponse invalide de l\'API de prédiction: ' . json_encode($api_result));
+                return response()->json(['error' => 'Erreur lors de la prédiction de la catégorie'], 500);
+            }
+
+            $category = $api_result['data']['category'];
+
+
+
+
             $campaign = new Campaign();
             $campaign->title = $validated['title'];
             $campaign->content = $validated['content'];
-            $campaign->category = $validated['category'];
+            $campaign->category = $category; // Utiliser la catégorie prédite
             $campaign->start_date = Carbon::parse($validated['start_date']);
             $campaign->end_date = Carbon::parse($validated['end_date']);
             $campaign->status = $this->calculateStatus($campaign->start_date, $campaign->end_date);
@@ -149,17 +180,14 @@ class CampaignController extends Controller
             return response()->json([
                 'success' => true,
                 'campaign_id' => $campaign->id,
+                'category' => $category, // Retourner la catégorie prédite
                 'message' => 'Campagne créée avec succès'
             ]);
         } catch (\Exception $e) {
             Log::error('Erreur lors de la création de la campagne: ' . $e->getMessage());
-            return response()->json(['error' => 'Erreur lors de la création'], 500);
+            return response()->json(['error' => 'Erreur lors de la création: ' . $e->getMessage()], 500);
         }
     }
-
-
-
-
 
 
     /**

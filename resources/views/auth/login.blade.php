@@ -195,6 +195,15 @@
                         // Stocker le message de bienvenue pour l'admin
                         localStorage.setItem('welcome_message', 'Bienvenue Admin ! Vous avez accès au panneau d\'administration.');
                         window.location.href = '{{ route("admin.dashboard") }}';
+<<<<<<< HEAD
+                    } else if (data.user.role === 'organisateur') {
+                        // Stocker le message de bienvenue pour l'organisateur
+                        localStorage.setItem('welcome_message', 'Bienvenue Organisateur ! Vous pouvez maintenant gérer vos événements.');
+                        window.location.href = '{{ route("organizer.home") }}';
+                    } else if (data.user.role === 'participant') {
+                        // Stocker le message de bienvenue pour le participant
+                        localStorage.setItem('welcome_message', 'Bienvenue Participant ! Découvrez les événements écologiques près de chez vous.');
+=======
                     } else if (data.user.role === 'sponsor') {
                         localStorage.setItem('welcome_message', 'Bienvenue Sponsor ! Gérez vos sponsorships et campagnes.');
                         window.location.href = '{{ route("sponsor.dashboard") }}';
@@ -205,6 +214,7 @@
                     } else if (data.user.role === 'user') {
                         // Stocker le message de bienvenue pour l'utilisateur
                         localStorage.setItem('welcome_message', 'Bienvenue ! Découvrez les événements écologiques près de chez vous.');
+>>>>>>> 5d3dbd2521bb6bbf65406afa9a464a6a1650fa02
                         window.location.href = '{{ route("participant.home") }}';
                     } else {
                         // Utilisateur par défaut
