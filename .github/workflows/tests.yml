@@ -8,6 +8,15 @@ on:
 jobs:
   tests:
     runs-on: ubuntu-latest
+    env:
+      APP_ENV: testing
+      CACHE_DRIVER: array
+      SESSION_DRIVER: array
+      QUEUE_CONNECTION: sync
+      BROADCAST_DRIVER: log
+      MAIL_MAILER: array
+      DB_CONNECTION: sqlite
+      DB_DATABASE: ':memory:'
 
     steps:
       - name: Checkout
@@ -32,6 +41,21 @@ jobs:
 
       - name: Install dependencies
         run: composer install --no-interaction --prefer-dist --no-progress
+
+      - name: Prepare environment (.env and key)
+        run: |
+          cp .env.example .env || true
+          php artisan key:generate --no-interaction --force
+
+      - name: Prepare storage and cache directories
+        run: |
+          mkdir -p storage/framework/cache/data
+          mkdir -p storage/framework/sessions
+          mkdir -p storage/framework/views
+          mkdir -p bootstrap/cache
+          php artisan config:clear || true
+          php artisan cache:clear || true
+          php artisan view:clear || true
 
       - name: Run PHPUnit with coverage
         run: |
