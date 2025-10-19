@@ -2,9 +2,10 @@ name: 🌿 EcoEvents CI/CD Pipeline with SonarCloud
 
 on:
   push:
-    branches: [ main, develop, feature/devops-pipeline ]
+    branches: [ main, develop, feature-devops-pipeline-clean ]
   pull_request:
-    branches: [ main, develop ]
+    branches: [ main, develop, feature-devops-pipeline-clean ]
+  workflow_dispatch:
 
 env:
   PHP_VERSION: '8.2'
