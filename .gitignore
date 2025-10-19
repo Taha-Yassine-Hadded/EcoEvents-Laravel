@@ -74,3 +74,9 @@ Thumbs.db
 
 venv/
 python/*/venv/
+/storage/
+/bootstrap/cache/*
+/vendor/
+/node_modules/
+/public/build/
+/public/storage
