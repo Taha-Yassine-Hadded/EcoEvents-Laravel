@@ -201,9 +201,12 @@ jobs:
           echo "DB_DATABASE=ecoEvent_test" >> .env
           echo "DB_USERNAME=root" >> .env
           echo "DB_PASSWORD=password" >> .env
+          echo "CACHE_STORE=file" >> .env
+          echo "CACHE_DRIVER=file" >> .env
+          echo "SESSION_DRIVER=file" >> .env
           php artisan key:generate
           php artisan config:clear
-          php artisan cache:clear
+          # Do not clear cache here; run after migrations
 
       - name: 🗄️ Run migrations
         env:
@@ -214,6 +217,17 @@ jobs:
           DB_USERNAME: root
           DB_PASSWORD: password
         run: php artisan migrate --force
+
+      - name: 🧹 Clear application cache
+        env:
+          DB_CONNECTION: mysql
+          DB_HOST: 127.0.0.1
+          DB_PORT: 3306
+          DB_DATABASE: ecoEvent_test
+          DB_USERNAME: root
+          DB_PASSWORD: password
+        run: |
+          php artisan cache:clear
 
       - name: 🧪 Execute PHPUnit tests
         env:
@@ -305,6 +319,9 @@ jobs:
         with:
           name: node_modules
           path: node_modules
+
+      - name: 📦 Install NPM dependencies (ensure vite present)
+        run: npm ci
 
       - name: 🔨 Build production assets
         run: npm run build
