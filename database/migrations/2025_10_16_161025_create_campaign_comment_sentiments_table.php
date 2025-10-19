@@ -10,7 +10,8 @@ return new class extends Migration
         Schema::create('campaign_comment_sentiments', function (Blueprint $table) {
             $table->id();
             $table->foreignId('campaign_comment_id')->constrained('campaign_comments')->onDelete('cascade');
-            $table->foreignId('campaign_id')->constrained('campaigns')->onDelete('cascade');
+            // Reference the renamed campaigns table to match earlier rename migration
+            $table->foreignId('campaign_id')->constrained('echofy_campaigns')->onDelete('cascade');
 
             // Émotions NRC-EmoLex (0-1)
             $table->integer('anger')->default(0);
