@@ -131,7 +131,7 @@ jobs:
       - name: 🔄 Checkout code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Shallow clones should be disabled for better analysis
+          fetch-depth: 0
 
       - name: 📥 Download vendor artifacts
         uses: actions/download-artifact@v4
@@ -201,12 +201,10 @@ jobs:
           echo "DB_DATABASE=ecoEvent_test" >> .env
           echo "DB_USERNAME=root" >> .env
           echo "DB_PASSWORD=password" >> .env
-          echo "CACHE_STORE=file" >> .env
           echo "CACHE_DRIVER=file" >> .env
           echo "SESSION_DRIVER=file" >> .env
+          echo "QUEUE_CONNECTION=sync" >> .env
           php artisan key:generate
-          php artisan config:clear
-          # Do not clear cache here; run after migrations
 
       - name: 🗄️ Run migrations
         env:
@@ -216,17 +214,9 @@ jobs:
           DB_DATABASE: ecoEvent_test
           DB_USERNAME: root
           DB_PASSWORD: password
-        run: php artisan migrate --force
-
-      - name: 🧹 Clear application cache
-        env:
-          DB_CONNECTION: mysql
-          DB_HOST: 127.0.0.1
-          DB_PORT: 3306
-          DB_DATABASE: ecoEvent_test
-          DB_USERNAME: root
-          DB_PASSWORD: password
         run: |
+          php artisan migrate --force
+          php artisan config:clear
           php artisan cache:clear
 
       - name: 🧪 Execute PHPUnit tests
@@ -313,14 +303,9 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
 
-      - name: 📥 Download node_modules
-        uses: actions/download-artifact@v4
-        with:
-          name: node_modules
-          path: node_modules
-
-      - name: 📦 Install NPM dependencies (ensure vite present)
+      - name: 📦 Install NPM dependencies
         run: npm ci
 
       - name: 🔨 Build production assets
@@ -398,7 +383,9 @@ jobs:
         run: |
           echo "🌿 Deploying to staging environment..."
           echo "Image: ghcr.io/${{ github.repository }}:develop-${{ github.sha }}"
-          # Ajoutez ici vos commandes de déploiement SSH ou webhook
+          # Add your SSH deployment commands or webhook here
+          # Example:
+          # sshpass -p "${{ secrets.STAGING_PASSWORD }}" ssh -o StrictHostKeyChecking=no ${{ secrets.STAGING_USER }}@${{ secrets.STAGING_HOST }} "cd /app && docker-compose pull && docker-compose up -d"
 
       - name: 🗄️ Run migrations
         run: |
@@ -429,7 +416,9 @@ jobs:
         run: |
           echo "🌿 Deploying to production environment..."
           echo "Image: ghcr.io/${{ github.repository }}:latest"
-          # Ajoutez ici vos commandes de déploiement
+          # Add your deployment commands here
+          # Example:
+          # sshpass -p "${{ secrets.PROD_PASSWORD }}" ssh -o StrictHostKeyChecking=no ${{ secrets.PROD_USER }}@${{ secrets.PROD_HOST }} "cd /app && docker-compose pull && docker-compose up -d"
 
       - name: 🗄️ Run migrations
         run: |
@@ -448,20 +437,31 @@ jobs:
     name: 📊 Post-Deployment Checks
     runs-on: ubuntu-latest
     needs: [deploy-staging, deploy-production]
-    if: always()
+    if: always() && (needs.deploy-staging.result == 'success' || needs.deploy-production.result == 'success')
     steps:
       - name: 🏥 Health check
         run: |
           echo "Running health checks..."
-          # curl -f https://ecoevents.com/health || exit 1
+          # Example staging check
+          # if [ "${{ github.ref }}" == "refs/heads/develop" ]; then
+          #   curl -f https://staging.ecoevents.com/health || exit 1
+          # fi
+          # Example production check
+          # if [ "${{ github.ref }}" == "refs/heads/main" ]; then
+          #   curl -f https://ecoevents.com/health || exit 1
+          # fi
 
       - name: 📊 Send metrics to monitoring
         run: |
           echo "Sending deployment metrics..."
-          # Intégration avec Grafana/Prometheus si configuré
+          # Integration with Grafana/Prometheus if configured
+          # curl -X POST https://monitoring.ecoevents.com/metrics \
+          #   -H "Authorization: Bearer ${{ secrets.MONITORING_TOKEN }}" \
+          #   -d '{"deployment": "success", "branch": "${{ github.ref_name }}", "sha": "${{ github.sha }}"}'
 
       - name: ✅ Pipeline completed
         run: |
           echo "🌿 Pipeline DevOps EcoEvents terminée avec succès!"
           echo "Repository: Public with SonarCloud"
+          echo "Branch: ${{ github.ref_name }}"
           echo "Timestamp: $(date)"
