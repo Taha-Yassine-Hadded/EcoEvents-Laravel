@@ -14,6 +14,8 @@ class Event extends Model
         'description',
         'date',
         'location',
+        'latitude',
+        'longitude',
         'capacity',
         'status',
         'organizer_id',
@@ -28,6 +30,8 @@ class Event extends Model
      */
     protected $casts = [
         'date' => 'datetime',
+        'latitude' => 'decimal:8',
+        'longitude' => 'decimal:8',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];
@@ -54,5 +58,28 @@ class Event extends Model
     public function registrations()
     {
         return $this->hasMany(Registration::class);
+    }
+
+    /**
+     * Check if event has coordinates for map display.
+     */
+    public function hasCoordinates(): bool
+    {
+        return !is_null($this->latitude) && !is_null($this->longitude);
+    }
+
+    /**
+     * Get coordinates as array.
+     */
+    public function getCoordinates(): ?array
+    {
+        if (!$this->hasCoordinates()) {
+            return null;
+        }
+
+        return [
+            'lat' => (float) $this->latitude,
+            'lng' => (float) $this->longitude
+        ];
     }
 }

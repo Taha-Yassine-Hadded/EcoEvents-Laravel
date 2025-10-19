@@ -175,4 +175,20 @@ class User extends Authenticatable implements JWTSubject
         return $this->belongsToMany(Campaign::class, 'campaign_likes', 'user_id', 'campaign_id')
                     ->withTimestamps();
     }
+
+    /**
+     * Get user's registrations for events.
+     */
+    public function registrations(): HasMany
+    {
+        return $this->hasMany(Registration::class);
+    }
+
+    /**
+     * Get events created by this user (if organizer).
+     */
+    public function events(): HasMany
+    {
+        return $this->hasMany(Event::class, 'organizer_id');
+    }
 }

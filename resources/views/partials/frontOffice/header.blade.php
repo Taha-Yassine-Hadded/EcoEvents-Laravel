@@ -48,9 +48,17 @@
                                     <i class="bi bi-person"></i>
                                     Profile
                                 </a>
+                                <a href="{{ route('admin.dashboard') }}" class="dashboard-link" id="dashboard-link" style="display: none;">
+                                    <i class="bi bi-speedometer2"></i>
+                                    Dashboard
+                                </a>
                                 <a href="{{ route('organizer.communities.index') }}" class="organizer-link" id="organizer-link" style="display: none;">
                                     <i class="bi bi-people"></i>
                                     Mes Communautés
+                                </a>
+                                <a href="{{ route('registrations.index') }}" class="registrations-link" id="registrations-link" style="display: none;">
+                                    <i class="bi bi-calendar-check"></i>
+                                    Mes Inscriptions
                                 </a>
                                 <a href="#" id="theme-toggle" class="theme-toggle">
                                     <i class="bi bi-moon"></i>
@@ -96,9 +104,7 @@
                 <li><a href="{{ url('/events') }}">Événements</a></li>
                 <li><a href="{{ route('communities.index') }}">Communautés</a></li>
                 <li><a href="{{ url('/blog') }}">Blog</a></li>
-
                 <li><a href="{{ url('/campaigns?search=&category=all&status=all') }}">Nos Campagnes</a></li>
-
                 <li><a href="{{ url('/contact') }}">Contact</a></li>
                 <li id="mobile-auth-area">
                     <div class="mobile-auth-buttons" id="mobile-auth-buttons">
@@ -115,9 +121,17 @@
                                 <i class="bi bi-person"></i>
                                 Profile
                             </a>
+                            <a href="{{ route('admin.dashboard') }}" class="dashboard-link" id="mobile-dashboard-link" style="display: none;">
+                                <i class="bi bi-speedometer2"></i>
+                                Dashboard
+                            </a>
                             <a href="{{ route('organizer.communities.index') }}" class="organizer-link" id="mobile-organizer-link" style="display: none;">
                                 <i class="bi bi-people"></i>
                                 Mes Communautés
+                            </a>
+                            <a href="{{ route('registrations.index') }}" class="registrations-link" id="mobile-registrations-link" style="display: none;">
+                                <i class="bi bi-calendar-check"></i>
+                                Mes Inscriptions
                             </a>
                             <a href="#" id="mobile-theme-toggle" class="theme-toggle">
                                 <i class="bi bi-moon"></i>
@@ -258,7 +272,7 @@
         background: #ffffff;
         border-radius: 12px;
         padding: 8px 0;
-        z-index: 1000;
+        z-index: 2000; /* Increased from 1000 to 2000 */
         box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
         border: 1px solid rgba(0, 0, 0, 0.05);
         opacity: 0;
@@ -428,10 +442,22 @@
                         // Mettre à jour l'avatar
                         updateAvatar(data.user);
 
+                        // Afficher le lien dashboard si l'utilisateur est admin ou organisateur
+                        if (data.user.role === 'admin' || data.user.role === 'organizer') {
+                            document.getElementById('dashboard-link').style.display = 'flex';
+                            document.getElementById('mobile-dashboard-link').style.display = 'flex';
+                        }
+
                         // Afficher le lien organisateur si l'utilisateur est organisateur
                         if (data.user.role === 'organizer') {
                             document.getElementById('organizer-link').style.display = 'flex';
                             document.getElementById('mobile-organizer-link').style.display = 'flex';
+                        }
+
+                        // Afficher le lien Mes Inscriptions si l'utilisateur est organisateur ou utilisateur
+                        if (data.user.role === 'organizer' || data.user.role === 'user') {
+                            document.getElementById('registrations-link').style.display = 'flex';
+                            document.getElementById('mobile-registrations-link').style.display = 'flex';
                         }
 
                         // Configurer les dropdowns

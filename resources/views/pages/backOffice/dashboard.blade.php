@@ -22,9 +22,13 @@
                 <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
                         <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                            Total Users
+                            @if($user->role === 'admin')
+                                Total Users
+                            @else
+                                Participants
+                            @endif
                         </div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800">40,000</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ number_format($totalUsers) }}</div>
                     </div>
                     <div class="col-auto">
                         <i class="fas fa-users fa-2x text-gray-300"></i>
@@ -40,12 +44,16 @@
                 <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
                         <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                            Revenue (Monthly)
+                            @if($user->role === 'admin')
+                                Total Events
+                            @else
+                                My Events
+                            @endif
                         </div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800">$215,000</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ number_format($totalEvents) }}</div>
                     </div>
                     <div class="col-auto">
-                        <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+                        <i class="fas fa-calendar-alt fa-2x text-gray-300"></i>
                     </div>
                 </div>
             </div>
@@ -57,22 +65,26 @@
             <div class="card-body">
                 <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
-                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Tasks</div>
+                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Registrations</div>
                         <div class="row no-gutters align-items-center">
                             <div class="col-auto">
-                                <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">50%</div>
+                                <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">{{ number_format($totalRegistrations) }}</div>
                             </div>
                             <div class="col">
                                 <div class="progress progress-sm mr-2">
+                                    @php
+                                        $registrationRate = $totalEvents > 0 ? ($totalRegistrations / ($totalEvents * 10)) * 100 : 0;
+                                        $registrationRate = min($registrationRate, 100);
+                                    @endphp
                                     <div class="progress-bar bg-info" role="progressbar"
-                                         style="width: 50%" aria-valuenow="50" aria-valuemin="0"
+                                         style="width: {{ $registrationRate }}%" aria-valuenow="{{ $registrationRate }}" aria-valuemin="0"
                                          aria-valuemax="100"></div>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="col-auto">
-                        <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
+                        <i class="fas fa-user-check fa-2x text-gray-300"></i>
                     </div>
                 </div>
             </div>
@@ -85,12 +97,12 @@
                 <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
                         <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                            Pending Requests
+                            Upcoming Events
                         </div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800">18</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ number_format($upcomingEvents) }}</div>
                     </div>
                     <div class="col-auto">
-                        <i class="fas fa-comments fa-2x text-gray-300"></i>
+                        <i class="fas fa-clock fa-2x text-gray-300"></i>
                     </div>
                 </div>
             </div>
@@ -283,30 +295,51 @@
             </div>
             <div class="card-body">
                 <div class="row">
-                    <div class="col-md-3 col-sm-6 mb-3">
-                        <a href="#" class="btn btn-primary btn-lg btn-block">
-                            <i class="fas fa-plus-circle"></i><br>
-                            Add New User
-                        </a>
-                    </div>
-                    <div class="col-md-3 col-sm-6 mb-3">
-                        <a href="#" class="btn btn-success btn-lg btn-block">
-                            <i class="fas fa-file-alt"></i><br>
-                            Create Post
-                        </a>
-                    </div>
-                    <div class="col-md-3 col-sm-6 mb-3">
-                        <a href="#" class="btn btn-warning btn-lg btn-block">
-                            <i class="fas fa-cog"></i><br>
-                            System Settings
-                        </a>
-                    </div>
-                    <div class="col-md-3 col-sm-6 mb-3">
-                        <a href="#" class="btn btn-info btn-lg btn-block">
-                            <i class="fas fa-chart-bar"></i><br>
-                            View Analytics
-                        </a>
-                    </div>
+                    @if($user->role === 'admin')
+                        <div class="col-md-3 col-sm-6 mb-3">
+                            <a href="{{ route('admin.categories.create') }}" class="btn btn-primary btn-lg btn-block">
+                                <i class="fas fa-plus-circle"></i><br>
+                                Nouvelle Catégorie
+                            </a>
+                        </div>
+                        <div class="col-md-3 col-sm-6 mb-3">
+                            <a href="{{ route('admin.events.create') }}" class="btn btn-success btn-lg btn-block">
+                                <i class="fas fa-calendar-plus"></i><br>
+                                Nouvel Événement
+                            </a>
+                        </div>
+                        <div class="col-md-3 col-sm-6 mb-3">
+                            <a href="{{ route('admin.categories.index') }}" class="btn btn-warning btn-lg btn-block">
+                                <i class="fas fa-tags"></i><br>
+                                Gérer Catégories
+                            </a>
+                        </div>
+                        <div class="col-md-3 col-sm-6 mb-3">
+                            <a href="{{ route('admin.events.index') }}" class="btn btn-info btn-lg btn-block">
+                                <i class="fas fa-calendar-alt"></i><br>
+                                Tous les Événements
+                            </a>
+                        </div>
+                    @else
+                        <div class="col-md-4 col-sm-6 mb-3">
+                            <a href="{{ route('admin.events.create') }}" class="btn btn-success btn-lg btn-block">
+                                <i class="fas fa-calendar-plus"></i><br>
+                                Créer un Événement
+                            </a>
+                        </div>
+                        <div class="col-md-4 col-sm-6 mb-3">
+                            <a href="{{ route('admin.events.index') }}" class="btn btn-primary btn-lg btn-block">
+                                <i class="fas fa-calendar-alt"></i><br>
+                                Mes Événements
+                            </a>
+                        </div>
+                        <div class="col-md-4 col-sm-6 mb-3">
+                            <a href="{{ route('registrations.index') }}" class="btn btn-info btn-lg btn-block">
+                                <i class="fas fa-user-check"></i><br>
+                                Mes Inscriptions
+                            </a>
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>

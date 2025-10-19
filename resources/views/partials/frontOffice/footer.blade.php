@@ -30,7 +30,9 @@
 		<div class="row add-footer-class">
 			<div class="col-lg-3 col-md-6 col-sm-6">
 				<div class="footer-logo">
-					<a href="index.html"><img src="assets/images/home1/logo.png" alt="logo"></a>
+					<a href="{{ url('/') }}">
+                        <img src="{{ asset('assets/images/home6/logo.png') }}" alt="logo">
+                    </a>
 				</div>
 				<p class="footer-desc">Proactively restore timely alignments after client environmentals</p>
 				<div class="footer-contect-info">
@@ -96,7 +98,7 @@
 			<div class="row footer-bottom">
 				<div class="col-md-12 text-center">
 					<div class="footer-bottom-content">
-						<h4>© Copyrights 2025 Echofy All rights reserved by <a href="#">Dream IT.</a></h4>
+						<h4>© Copyrights 2025 EcoEvents All rights reserved</h4>
 					</div>
 				</div>
 			</div>

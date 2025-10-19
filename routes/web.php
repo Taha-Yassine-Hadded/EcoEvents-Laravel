@@ -49,6 +49,11 @@ Route::get('/contact', function () {
     return view('pages.frontOffice.contact');
 });
 
+// Event Registration Route
+Route::post('/events/{event}/register', [RegistrationController::class, 'register'])
+    ->middleware(\App\Http\Middleware\VerifyJWT::class)
+    ->name('events.register');
+
 // Service page
 Route::get('/service', function () {
     return view('pages.frontOffice.service');
@@ -94,9 +99,9 @@ Route::get('/testimonial', function () {
     return view('pages.frontOffice.testimonial');
 });
 
-// Admin Dashboard
+// Admin Dashboard (accessible by admin and organizer)
 Route::get('/dashboard', [DashboardController::class, 'index'])
-    ->middleware([\App\Http\Middleware\VerifyJWT::class, \App\Http\Middleware\RoleGuard::class . ':admin'])
+    ->middleware([\App\Http\Middleware\VerifyJWT::class])
     ->name('admin.dashboard');
 
 /*Route::get('/dashboard', [DashboardController::class, 'index'])
@@ -381,9 +386,9 @@ Route::prefix('organizer/events')->middleware([\App\Http\Middleware\VerifyJWT::c
 // --------------------
 // BackOffice (Admin full CRUD for events and categories)
 // --------------------
-Route::prefix('admin')->middleware([\App\Http\Middleware\VerifyJWT::class, \App\Http\Middleware\RoleGuard::class . ':admin'])->name('admin.')->group(function () {
+Route::prefix('admin')->middleware([\App\Http\Middleware\VerifyJWT::class])->name('admin.')->group(function () {
 
-    // Events
+    // Events (accessible by admin and organizer)
     Route::get('/events', [EventController::class, 'backIndex'])->name('events.index');
     Route::get('/events/create', [EventController::class, 'createAdmin'])->name('events.create');
     Route::get('/events/{event}/details', [EventController::class, 'showAdmin'])->name('admin.events.show');
@@ -391,8 +396,15 @@ Route::prefix('admin')->middleware([\App\Http\Middleware\VerifyJWT::class, \App\
     Route::get('/events/{event}/edit', [EventController::class, 'editAdmin'])->name('events.edit');
     Route::put('/events/{event}', [EventController::class, 'updateAdmin'])->name('events.update');
     Route::delete('/events/{event}', [EventController::class, 'destroyAdmin'])->name('events.destroy');
+    
+    // Event Subscribers (for organizers to view their event subscribers)
+    Route::get('/events/{event}/subscribers', [EventController::class, 'eventSubscribers'])->name('events.subscribers');
 
-    // Categories
+});
+
+// Admin and Organizer routes (categories management)
+Route::prefix('admin')->middleware([\App\Http\Middleware\VerifyJWT::class])->name('admin.')->group(function () {
+    // Categories (admin and organizer)
     Route::get('/categories', [CategoryController::class, 'index'])->name('categories.index');
     Route::get('/categories/create', [CategoryController::class, 'create'])->name('categories.create');
     Route::post('/categories', [CategoryController::class, 'store'])->name('categories.store');
@@ -426,5 +438,19 @@ Route::get('/events/{event}/registration-status', [RegistrationController::class
     ->middleware(\App\Http\Middleware\VerifyJWT::class)
     ->name('events.registration.status');
 
-Route::get('/my-registrations', [RegistrationController::class, 'myRegistrations'])->name('registrations.index');
+Route::get('/my-registrations', [RegistrationController::class, 'myRegistrations'])
+    ->middleware(\App\Http\Middleware\VerifyJWT::class)
+    ->name('registrations.index');
 
+// Organizer Dashboard Routes
+Route::get('/organizer/dashboard', [EventController::class, 'organizerDashboard'])
+    ->middleware([\App\Http\Middleware\VerifyJWT::class, \App\Http\Middleware\RoleGuard::class . ':organizer'])
+    ->name('organizer.dashboard');
+
+Route::get('/organizer/events/{event}/subscribers', [EventController::class, 'eventSubscribers'])
+    ->middleware([\App\Http\Middleware\VerifyJWT::class, \App\Http\Middleware\RoleGuard::class . ':organizer'])
+    ->name('organizer.event.subscribers');
+
+Route::prefix('api')->group(function () {
+    Route::get('/events/{event}/registrations', [RegistrationController::class, 'getEventRegistrations'])->name('api.events.registrations');
+});

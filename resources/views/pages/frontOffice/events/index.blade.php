@@ -15,7 +15,7 @@
                         <ul>
                             <li>
                                 <a href="{{ url('/') }}">
-                                    <img src="{{ Vite::asset('resources/assets/images/inner-images/breadcumb-text-shape.png') }}" alt="">Echofy
+                                    <img src="{{ Vite::asset('resources/assets/images/inner-images/breadcumb-text-shape.png') }}" alt="">EcoEvents
                                 </a>
                             </li>
                             <li>Événements</li>
@@ -59,9 +59,9 @@
                                         <h4>Créer un événement</h4>
                                     </div>
                                     <div class="widget-body text-center">
-                                        <button class="btn btn-success w-100" onclick="openCreateModal()" style="border-radius: 25px; font-weight: 600; padding: 12px 20px; background: linear-gradient(135deg, #28a745, #20c997); border: none;">
+                                        <a href="{{ route('admin.events.create') }}" class="btn btn-success w-100" style="border-radius: 25px; font-weight: 600; padding: 12px 20px; background: linear-gradient(135deg, #28a745, #20c997); border: none;">
                                             <i class="fas fa-plus"></i> Nouveau événement
-                                        </button>
+                                        </a>
                                     </div>
                                 </div>
                             </div>
@@ -76,111 +76,6 @@
                             @include('pages.frontOffice.events.partials.status-filter')
                         </div>
                     </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Create Event Modal -->
-    <div class="modal fade" id="createEventModal" tabindex="-1" aria-labelledby="createEventModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="createEventModalLabel">
-                        <i class="fas fa-plus"></i> Créer un nouvel événement
-                    </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="createEventForm" enctype="multipart/form-data">
-                        @csrf
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label for="create_title" class="form-label">
-                                        <i class="fas fa-heading"></i> Titre de l'événement
-                                    </label>
-                                    <input type="text" class="form-control" id="create_title" name="title" required>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label for="create_category_id" class="form-label">
-                                        <i class="fas fa-tag"></i> Catégorie
-                                    </label>
-                                    <select class="form-select" id="create_category_id" name="category_id" required>
-                                        <option value="">Sélectionner une catégorie</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label for="create_date" class="form-label">
-                                        <i class="fas fa-calendar"></i> Date et heure
-                                    </label>
-                                    <input type="datetime-local" class="form-control" id="create_date" name="date" required min="{{ now()->format('Y-m-d\TH:i') }}">
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label for="create_location" class="form-label">
-                                        <i class="fas fa-map-marker-alt"></i> Lieu
-                                    </label>
-                                    <input type="text" class="form-control" id="create_location" name="location" required>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label for="create_capacity" class="form-label">
-                                        <i class="fas fa-users"></i> Capacité (optionnel)
-                                    </label>
-                                    <input type="number" class="form-control" id="create_capacity" name="capacity" min="1">
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label for="create_status" class="form-label">
-                                        <i class="fas fa-info-circle"></i> Statut
-                                    </label>
-                                    <select class="form-select" id="create_status" name="status" required>
-                                        <option value="upcoming">À venir</option>
-                                        <option value="ongoing">En cours</option>
-                                        <option value="completed">Terminé</option>
-                                        <option value="cancelled">Annulé</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="mb-3">
-                            <label for="create_description" class="form-label">
-                                <i class="fas fa-align-left"></i> Description
-                            </label>
-                            <textarea class="form-control" id="create_description" name="description" rows="4"></textarea>
-                        </div>
-                        
-                        <div class="mb-3">
-                            <label for="create_img" class="form-label">
-                                <i class="fas fa-image"></i> Image de l'événement
-                            </label>
-                            <input type="file" class="form-control" id="create_img" name="img" accept="image/*">
-                            <div class="form-text">Formats acceptés: JPG, PNG, GIF, WebP (max 2MB)</div>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                        <i class="fas fa-times"></i> Annuler
-                    </button>
-                    <button type="button" class="btn btn-success" onclick="submitCreateEvent()">
-                        <i class="fas fa-save"></i> Créer l'événement
-                    </button>
                 </div>
             </div>
         </div>

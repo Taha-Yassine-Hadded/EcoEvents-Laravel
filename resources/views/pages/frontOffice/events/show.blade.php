@@ -1,6 +1,8 @@
 @extends('layouts.app')
 
-@section('title', 'Echofy - Event Details')
+@section('title', 'Echofy - Détails de l\'Événement')
+
+@vite(['resources/js/app.js', 'resources/css/app.css'])
 
 @section('content')
     <!-- Breadcrumb Area -->
@@ -13,7 +15,6 @@
                             <h4>Détails de l'Événement</h4>
                         </div>
                         <ul>
-                            <li><a href="{{ url('/') }}"><img src="{{ Vite::asset('resources/assets/images/inner-images/breadcumb-text-shape.png') }}" alt="">Echofy</a></li>
                             <li><a href="{{ route('front.events.index') }}">Événements</a></li>
                             <li>{{ Str::limit($event->title, 30) }}</li>
                         </ul>
@@ -56,25 +57,20 @@
                         <div class="col-lg-12">
                             <div class="project-details-content">
                                 <h4>{{ $event->title }}</h4>
-                                <div class="event-basic-info mb-4">
-                                    <div class="event-info-item">
-                                        <i class="fas fa-calendar-alt"></i>
-                                        <span><strong>Date:</strong> {{ $event->date ? $event->date->format('d M Y à H:i') : 'Date non définie' }}</span>
-                                    </div>
-                                    <div class="event-info-item">
-                                        <i class="fas fa-map-marker-alt"></i>
-                                        <span><strong>Lieu:</strong> {{ $event->location }}</span>
-                                    </div>
-                                    @if ($event->capacity)
-                                        <div class="event-info-item">
-                                            <i class="fas fa-users"></i>
-                                            <span><strong>Capacité:</strong> {{ $event->capacity }} personnes</span>
-                                        </div>
-                                    @endif
-                                </div>
+                                <!-- Event basic info section removed (already shown in sidebar) -->
                                 
                                 <h3>Description</h3>
                                 <p class="project-details-desc">{{ $event->description ?? 'Aucune description disponible pour cet événement.' }}</p>
+                                
+                                @if ($event->latitude && $event->longitude)
+                                    <h3>Localisation</h3>
+                                    <div class="event-map-container">
+                                        <div id="eventMap" style="height: 400px; width: 100%; border-radius: 8px; border: 1px solid #ddd;"></div>
+                                        <div class="map-info">
+                                            <p><i class="fas fa-map-marker-alt"></i> {{ $event->location }}</p>
+                                        </div>
+                                    </div>
+                                @endif
                                 
                                 @if ($event->organizer)
                                     <h3>Organisateur</h3>
@@ -111,18 +107,15 @@
                                     <div id="authenticated-actions" style="display: none;">
                                         <!-- Organizer Actions (Event Owner) -->
                                         <div id="organizer-actions" style="display: none;">
-                                            <button class="btn btn-warning me-3" onclick="openEditModal()">
-                                                <i class="fas fa-edit"></i> Modifier l'événement
-                                            </button>
-                                            <button class="btn btn-danger" onclick="deleteEvent({{ $event->id }})">
-                                                <i class="fas fa-trash"></i> Supprimer
-                                            </button>
+                                            <a href="{{ route('admin.admin.events.show', $event->id) }}" class="btn btn-primary">
+                                                <i class="fas fa-cogs"></i> Gérer l'événement
+                                            </a>
                                         </div>
                                         
                                         <!-- Regular User Actions (Subscribe) -->
                                         <div id="regular-actions" style="display: none;">
                                             @if ($event->status === 'upcoming')
-                                                <button class="btn btn-success" onclick="subscribeToEvent({{ $event->id }})">
+                                                <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#registerModal">
                                                     <i class="fas fa-calendar-check"></i> S'inscrire
                                                 </button>
                                             @endif
@@ -130,8 +123,8 @@
                                         
                                         <!-- Admin Actions (Dashboard Management) -->
                                         <div id="admin-actions" style="display: none;">
-                                            <a href="/admin/events" class="btn btn-primary">
-                                                <i class="fas fa-cogs"></i> Gérer dans le tableau de bord
+                                            <a href="{{ route('admin.admin.events.show', $event->id) }}" class="btn btn-primary">
+                                                <i class="fas fa-cogs"></i> Gérer l'événement
                                             </a>
                                         </div>
                                     </div>
@@ -252,6 +245,90 @@
         </div>
     @endif
 
+    <!-- Registration Modal -->
+    <div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="registerModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title" id="registerModalLabel">
+                        <i class="fas fa-calendar-check"></i> Inscription à l'événement
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form method="POST" action="{{ route('events.register', $event) }}" id="registration-form">
+                        @csrf
+                        
+                        <div class="mb-1">
+                            <h5>Détails de l'événement</h5>
+                            <p><strong>Date:</strong> {{ $event->date ? $event->date->format('d M Y à H:i') : 'Date non définie' }}</p>
+                            <p><strong>Lieu:</strong> {{ $event->location }}</p>
+                        </div>                        
+                        <div class="mb-3">
+                            <label for="role" class="form-label">Rôle de bénévole <span class="text-danger">*</span></label>
+                            <select class="form-select @error('role') is-invalid @enderror" id="role" name="role" required>
+                                <option value="">Sélectionnez un rôle</option>
+                                <option value="Coordinateur" {{ old('role') == 'Coordinateur' ? 'selected' : '' }}>Coordinateur - Gestion des équipes de bénévoles</option>
+                                <option value="Guide" {{ old('role') == 'Guide' ? 'selected' : '' }}>Guide - Accompagnement des participants</option>
+                                <option value="Logistique" {{ old('role') == 'Logistique' ? 'selected' : '' }}>Logistique - Installation et organisation matérielle</option>
+                                <option value="Accueil" {{ old('role') == 'Accueil' ? 'selected' : '' }}>Accueil - Réception et orientation des participants</option>
+                                <option value="Communication" {{ old('role') == 'Communication' ? 'selected' : '' }}>Communication - Gestion des médias et réseaux sociaux</option>
+                            </select>
+                            @error('role')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="skills" class="form-label">Vos compétences <span class="text-danger">*</span></label>
+                            <select class="form-select @error('skills') is-invalid @enderror" id="skills" name="skills" required>
+                                <option value="">Sélectionnez votre compétence principale</option>
+                                <option value="Organisation" {{ old('skills') == 'Organisation' ? 'selected' : '' }}>Organisation - Planification et coordination</option>
+                                <option value="Communication" {{ old('skills') == 'Communication' ? 'selected' : '' }}>Communication - Aisance relationnelle et expression</option>
+                                <option value="Technique" {{ old('skills') == 'Technique' ? 'selected' : '' }}>Technique - Compétences en matériel et outils</option>
+                                <option value="Pédagogie" {{ old('skills') == 'Pédagogie' ? 'selected' : '' }}>Pédagogie - Transmission de connaissances</option>
+                                <option value="Premiers secours" {{ old('skills') == 'Premiers secours' ? 'selected' : '' }}>Premiers secours - Formation en secourisme</option>
+                            </select>
+                            @error('skills')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        
+                        <div class="mb-3">
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" id="has_transportation" name="has_transportation" value="1" {{ old('has_transportation') ? 'checked' : '' }}>
+                                <label class="form-check-label checkbox-label" for="has_transportation">
+                                    J'ai mon propre moyen de transport pour l'événement
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" id="has_participated_before" name="has_participated_before" value="1" {{ old('has_participated_before') ? 'checked' : '' }}>
+                                <label class="form-check-label checkbox-label" for="has_participated_before">
+                                    J'ai déjà participé à des éco-événements auparavant
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="emergency_contact" class="form-label">Contact d'urgence <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control @error('emergency_contact') is-invalid @enderror" id="emergency_contact" name="emergency_contact" value="{{ old('emergency_contact') }}" placeholder="Nom et numéro de téléphone" required>
+                            @error('emergency_contact')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-success btn-lg">S'inscrire à l'événement</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Edit Event Modal -->
     <div class="modal fade" id="editEventModal" tabindex="-1" aria-labelledby="editEventModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
@@ -364,6 +441,7 @@
             </div>
         </div>
     </div>
+@endsection
 
 @push('styles')
 <style>
@@ -531,12 +609,6 @@
         box-shadow: 0 8px 25px rgba(255, 193, 7, 0.4);
     }
     
-    .event-actions .btn-warning {
-        background: linear-gradient(135deg, #ffc107, #e0a800);
-        border: none;
-        color: #212529;
-    }
-    
     .event-actions .btn-danger {
         background: linear-gradient(135deg, #dc3545, #c82333);
         border: none;
@@ -657,6 +729,34 @@
         border-radius: 25px;
         font-weight: 600;
     }
+    
+    /* Checkbox text styling */
+    .checkbox-label {
+        color: #000 !important;
+        font-weight: 500;
+    }
+
+    /* Map styles */
+    .event-map-container {
+        margin: 20px 0;
+    }
+    
+    .map-info {
+        margin-top: 10px;
+        padding: 10px;
+        background-color: #f8f9fa;
+        border-radius: 5px;
+    }
+    
+    .map-info p {
+        margin: 0;
+        color: #666;
+    }
+    
+    .map-info i {
+        color: #ff0000;
+        margin-right: 8px;
+    }
 
     /* Responsive Design */
     @media (max-width: 768px) {
@@ -699,16 +799,71 @@
     const eventData = {
         id: {{ $event->id }},
         organizerId: {{ $event->organizer_id ?? 'null' }},
-        status: '{{ $event->status }}'
+        status: '{{ $event->status }}',
+        coordinates: @if($event->latitude && $event->longitude) { lat: {{ $event->latitude }}, lng: {{ $event->longitude }} } @else null @endif
     };
+
+    // Initialize map if coordinates are available
+    @if($event->latitude && $event->longitude)
+    function initEventMap() {
+        const map = new window.ol.Map({
+            target: 'eventMap',
+            layers: [
+                new window.ol.TileLayer({
+                    source: new window.ol.OSM({
+                        url: 'https://{a-c}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png'
+                    })
+                })
+            ],
+            controls: window.ol.defaultControls({
+                attribution: false,
+                rotate: false,
+                zoom: true
+            }),
+            view: new window.ol.View({
+                center: window.ol.fromLonLat([{{ $event->longitude }}, {{ $event->latitude }}]),
+                zoom: 15
+            })
+        });
+
+        // Add marker for event location
+        const marker = new window.ol.Feature({
+            geometry: new window.ol.Point(window.ol.fromLonLat([{{ $event->longitude }}, {{ $event->latitude }}]))
+        });
+
+        marker.setStyle(new window.ol.Style({
+            image: new window.ol.Icon({
+                anchor: [0.5, 1],
+                src: 'data:image/svg+xml;base64,' + btoa(`
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" fill="#ff0000"/>
+                    </svg>
+                `),
+                scale: 1.5
+            })
+        }));
+
+        const vectorSource = new window.ol.VectorSource({
+            features: [marker]
+        });
+
+        const vectorLayer = new window.ol.VectorLayer({
+            source: vectorSource
+        });
+
+        map.addLayer(vectorLayer);
+    }
+    @endif
 
     // JWT Authentication Check
     document.addEventListener('DOMContentLoaded', function() {
         checkAuthentication();
+        @if($event->latitude && $event->longitude)
+        initEventMap();
+        @endif
     });
 
     function checkAuthentication() {
-        // Check for JWT token in localStorage or sessionStorage
         const token = getJWTToken();
         
         if (!token) {
@@ -716,7 +871,6 @@
             return;
         }
         
-        // Verify token with server
         fetch('/user', {
             method: 'GET',
             headers: {
@@ -740,14 +894,12 @@
         })
         .catch(error => {
             console.error('Authentication error:', error);
-            // Remove invalid token
             clearJWTTokens();
             showGuestActions();
         });
     }
 
     function getJWTToken() {
-        // Check multiple possible token storage locations
         return localStorage.getItem('jwt_token') || 
                sessionStorage.getItem('jwt_token') ||
                localStorage.getItem('token') || 
@@ -766,52 +918,40 @@
     }
 
     function showGuestActions() {
-        // Hide authenticated actions
         const authActions = document.getElementById('authenticated-actions');
         if (authActions) authActions.style.display = 'none';
         
-        // Show guest actions (login button)
         const guestActions = document.getElementById('guest-actions');
         if (guestActions) guestActions.style.display = 'inline-flex';
     }
 
     function showAuthenticatedActions(user) {
-        // Hide guest actions
         const guestActions = document.getElementById('guest-actions');
         if (guestActions) guestActions.style.display = 'none';
         
-        // Show authenticated actions container
         const authActions = document.getElementById('authenticated-actions');
         if (authActions) authActions.style.display = 'inline-flex';
         
-        // Get action containers
         const organizerActions = document.getElementById('organizer-actions');
         const regularActions = document.getElementById('regular-actions');
         const adminActions = document.getElementById('admin-actions');
         
-        // Hide all action containers first
         if (organizerActions) organizerActions.style.display = 'none';
         if (regularActions) regularActions.style.display = 'none';
         if (adminActions) adminActions.style.display = 'none';
         
-        // Show appropriate actions based on user role and ownership
         if (user.role === 'admin') {
-            // Admins see no action buttons
             if (adminActions) adminActions.style.display = 'inline-flex';
         } else if (user.id == eventData.organizerId) {
-            // Event organizer/owner sees edit/delete buttons
             if (organizerActions) organizerActions.style.display = 'inline-flex';
         } else {
-            // Regular users and organizers who don't own this event see subscribe button
             if (regularActions) {
                 regularActions.style.display = 'inline-flex';
-                // Check registration status for non-organizers
                 checkRegistrationStatus(eventData.id);
             }
         }
     }
 
-    // Event Action Functions
     function checkRegistrationStatus(eventId) {
         const token = getJWTToken();
         if (!token) return;
@@ -839,21 +979,20 @@
         if (!subscribeBtn) return;
 
         if (registrationData.registered) {
-            // User is already registered - show cancel option
             subscribeBtn.innerHTML = '<i class="fas fa-times-circle"></i> Annuler inscription';
             subscribeBtn.classList.remove('btn-success', 'btn-outline-success');
             subscribeBtn.classList.add('btn-warning');
             subscribeBtn.disabled = false;
+            subscribeBtn.removeAttribute('data-bs-toggle');
+            subscribeBtn.removeAttribute('data-bs-target');
             subscribeBtn.onclick = function() { unsubscribeFromEvent(eventData.id); };
         } else if (registrationData.is_full) {
-            // Event is full
             subscribeBtn.innerHTML = '<i class="fas fa-times-circle"></i> Complet';
             subscribeBtn.classList.remove('btn-success', 'btn-warning');
             subscribeBtn.classList.add('btn-secondary');
             subscribeBtn.disabled = true;
             subscribeBtn.onclick = null;
         } else {
-            // Can register
             let capacityText = '';
             if (registrationData.capacity) {
                 const remaining = registrationData.capacity - registrationData.registration_count;
@@ -863,67 +1002,61 @@
             subscribeBtn.classList.remove('btn-warning', 'btn-secondary', 'btn-outline-success');
             subscribeBtn.classList.add('btn-success');
             subscribeBtn.disabled = false;
-            subscribeBtn.onclick = function() { subscribeToEvent(eventData.id); };
+            subscribeBtn.setAttribute('data-bs-toggle', 'modal');
+            subscribeBtn.setAttribute('data-bs-target', '#registerModal');
+            subscribeBtn.onclick = null;
         }
-    }
-
-    function subscribeToEvent(eventId) {
-        const token = getJWTToken();
-        if (!token) {
-            alert('Vous devez être connecté pour vous inscrire.');
-            window.location.href = '{{ route("login") }}';
-            return;
-        }
-
-        // Show loading state
-        const subscribeBtn = document.querySelector('#regular-actions button');
-        const originalContent = subscribeBtn.innerHTML;
-        subscribeBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Inscription...';
-        subscribeBtn.disabled = true;
-
-        fetch(`/events/${eventId}/subscribe`, {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                alert(data.message || 'Inscription réussie !');
-                // Update button to show cancel option
-                subscribeBtn.innerHTML = '<i class="fas fa-times-circle"></i> Annuler inscription';
-                subscribeBtn.classList.remove('btn-success');
-                subscribeBtn.classList.add('btn-warning');
-                subscribeBtn.disabled = false;
-                subscribeBtn.onclick = function() { unsubscribeFromEvent(eventData.id); };
-                
-                // Refresh registration status to get updated capacity info
-                checkRegistrationStatus(eventData.id);
-            } else {
-                alert(data.message || 'Erreur lors de l\'inscription.');
-                // Restore button
-                subscribeBtn.innerHTML = originalContent;
-                subscribeBtn.disabled = false;
-            }
-        })
-        .catch(error => {
-            console.error('Subscription error:', error);
-            alert('Erreur lors de l\'inscription. Veuillez réessayer.');
-            // Restore button
-            subscribeBtn.innerHTML = originalContent;
-            subscribeBtn.disabled = false;
-        });
     }
 
     function unsubscribeFromEvent(eventId) {
-        if (!confirm('Êtes-vous sûr de vouloir annuler votre inscription à cet événement ?')) {
-            return;
-        }
-
+        showUnsubscribeConfirmation(eventId);
+    }
+    
+    function showUnsubscribeConfirmation(eventId) {
+        const confirmationModal = document.createElement('div');
+        confirmationModal.className = 'modal fade';
+        confirmationModal.id = 'unsubscribeConfirmationModal';
+        confirmationModal.innerHTML = `
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content" style="border: none; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
+                    <div class="modal-body text-center p-4">
+                        <div class="mb-3">
+                            <i class="fas fa-exclamation-triangle text-warning" style="font-size: 3rem;"></i>
+                        </div>
+                        <h4 class="mb-3">Confirmer l'annulation</h4>
+                        <p class="text-muted mb-4">Êtes-vous sûr de vouloir annuler votre inscription à cet événement ?</p>
+                        <div class="d-flex gap-2 justify-content-center">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="border-radius: 25px; padding: 8px 20px;">
+                                <i class="fas fa-times me-2"></i>Annuler
+                            </button>
+                            <button type="button" class="btn btn-danger" id="confirmUnsubscribe" style="border-radius: 25px; padding: 8px 20px;">
+                                <i class="fas fa-check me-2"></i>Confirmer
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        document.body.appendChild(confirmationModal);
+        
+        const modal = new bootstrap.Modal(confirmationModal);
+        modal.show();
+        
+        document.getElementById('confirmUnsubscribe').addEventListener('click', function() {
+            modal.hide();
+            setTimeout(() => {
+                document.body.removeChild(confirmationModal);
+                proceedWithUnsubscribe(eventId);
+            }, 300);
+        });
+        
+        confirmationModal.addEventListener('hidden.bs.modal', function() {
+            document.body.removeChild(confirmationModal);
+        });
+    }
+    
+    function proceedWithUnsubscribe(eventId) {
         const token = getJWTToken();
         if (!token) {
             alert('Vous devez être connecté pour annuler votre inscription.');
@@ -931,7 +1064,6 @@
             return;
         }
 
-        // Show loading state
         const subscribeBtn = document.querySelector('#regular-actions button');
         const originalContent = subscribeBtn.innerHTML;
         subscribeBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Annulation...';
@@ -949,27 +1081,27 @@
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                alert(data.message || 'Inscription annulée avec succès !');
-                // Update button to show subscribe state
+                showToast('success', data.message || 'Inscription annulée avec succès !');
                 subscribeBtn.innerHTML = '<i class="fas fa-calendar-check"></i> S\'inscrire';
                 subscribeBtn.classList.remove('btn-warning', 'btn-outline-success');
                 subscribeBtn.classList.add('btn-success');
                 subscribeBtn.disabled = false;
-                subscribeBtn.onclick = function() { subscribeToEvent(eventData.id); };
+                subscribeBtn.setAttribute('data-bs-toggle', 'modal');
+                subscribeBtn.setAttribute('data-bs-target', '#registerModal');
+                subscribeBtn.onclick = null;
                 
-                // Refresh registration status to get updated capacity info
-                checkRegistrationStatus(eventData.id);
+                setTimeout(() => {
+                    checkRegistrationStatus(eventData.id);
+                }, 100);
             } else {
-                alert(data.message || 'Erreur lors de l\'annulation.');
-                // Restore button
+                showToast('error', data.message || 'Erreur lors de l\'annulation.');
                 subscribeBtn.innerHTML = originalContent;
                 subscribeBtn.disabled = false;
             }
         })
         .catch(error => {
             console.error('Unsubscribe error:', error);
-            alert('Erreur lors de l\'annulation. Veuillez réessayer.');
-            // Restore button
+            showToast('error', 'Erreur lors de l\'annulation. Veuillez réessayer.');
             subscribeBtn.innerHTML = originalContent;
             subscribeBtn.disabled = false;
         });
@@ -1010,7 +1142,6 @@
         });
     }
 
-    // Modal functions
     function openEditModal() {
         loadCategories();
         populateEventForm();
@@ -1048,26 +1179,22 @@
     }
 
     function populateEventForm() {
-        // Populate form with current event data
         document.getElementById('edit_title').value = '{{ $event->title }}';
         document.getElementById('edit_location').value = '{{ $event->location }}';
         document.getElementById('edit_capacity').value = '{{ $event->capacity ?? "" }}';
         document.getElementById('edit_status').value = '{{ $event->status }}';
         document.getElementById('edit_description').value = `{{ $event->description ?? "" }}`;
         
-        // Format date for datetime-local input
         @if($event->date)
             const eventDate = new Date('{{ $event->date->format("Y-m-d H:i:s") }}');
             const formattedDate = eventDate.toISOString().slice(0, 16);
             document.getElementById('edit_date').value = formattedDate;
         @endif
         
-        // Set category (will be set after categories are loaded)
         setTimeout(() => {
             document.getElementById('edit_category_id').value = '{{ $event->category_id }}';
         }, 500);
         
-        // Show current image if exists
         const imagePreview = document.getElementById('current-image-preview');
         @if($event->img && Storage::disk('public')->exists($event->img))
             imagePreview.innerHTML = `
@@ -1091,7 +1218,6 @@
         const form = document.getElementById('editEventForm');
         const formData = new FormData(form);
         
-        // Show loading state
         const saveBtn = document.querySelector('[onclick="saveEventChanges()"]');
         const originalText = saveBtn.innerHTML;
         saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enregistrement...';
@@ -1109,10 +1235,8 @@
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                // Close modal
                 const modal = bootstrap.Modal.getInstance(document.getElementById('editEventModal'));
                 modal.hide();
-                // Reload page to show updated data
                 window.location.reload();
             } else {
                 alert(data.message || 'Erreur lors de la mise à jour.');
@@ -1123,11 +1247,145 @@
             alert('Erreur lors de la mise à jour. Veuillez réessayer.');
         })
         .finally(() => {
-            // Restore button state
             saveBtn.innerHTML = originalText;
             saveBtn.disabled = false;
         });
     }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const registerModal = document.getElementById('registerModal');
+        if (registerModal) {
+            registerModal.addEventListener('show.bs.modal', function() {
+                const registrationForm = document.getElementById('registration-form');
+                if (registrationForm) {
+                    registrationForm.reset();
+                    const invalidElements = registrationForm.querySelectorAll('.is-invalid');
+                    invalidElements.forEach(element => element.classList.remove('is-invalid'));
+                }
+            });
+        }
+        
+        const registrationForm = document.getElementById('registration-form');
+        if (registrationForm) {
+            registrationForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const token = getJWTToken();
+                if (!token) {
+                    alert('Vous devez être connecté pour vous inscrire.');
+                    window.location.href = '{{ route("login") }}';
+                    return;
+                }
+                
+                const submitBtn = registrationForm.querySelector('button[type="submit"]');
+                const originalBtnText = submitBtn.innerHTML;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Inscription...';
+                submitBtn.disabled = true;
+                
+                const role = registrationForm.querySelector('#role').value;
+                const skills = registrationForm.querySelector('#skills').value;
+                const emergencyContact = registrationForm.querySelector('#emergency_contact').value;
+                
+                if (!role || !skills || !emergencyContact) {
+                    alert('Veuillez remplir tous les champs obligatoires.');
+                    submitBtn.innerHTML = originalBtnText;
+                    submitBtn.disabled = false;
+                    return;
+                }
+                
+                const formData = new FormData(registrationForm);
+                
+                fetch(registrationForm.action, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json'
+                    },
+                    body: formData
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        const modal = bootstrap.Modal.getInstance(document.getElementById('registerModal'));
+                        modal.hide();
+                        showToast('success', data.message || 'Inscription réussie !');
+                        
+                        const subscribeBtn = document.querySelector('#regular-actions button');
+                        if (subscribeBtn) {
+                            subscribeBtn.innerHTML = '<i class="fas fa-times-circle"></i> Annuler inscription';
+                            subscribeBtn.classList.remove('btn-success');
+                            subscribeBtn.classList.add('btn-warning');
+                            subscribeBtn.disabled = false;
+                            subscribeBtn.removeAttribute('data-bs-toggle');
+                            submitBtn.removeAttribute('data-bs-target');
+                            subscribeBtn.onclick = function() { unsubscribeFromEvent(eventData.id); };
+                        }
+                        
+                        checkRegistrationStatus(eventData.id);
+                    } else {
+                        showToast('error', data.message || 'Erreur lors de l\'inscription.');
+                        submitBtn.innerHTML = originalBtnText;
+                        submitBtn.disabled = false;
+                    }
+                })
+                .catch(error => {
+                    console.error('Erreur d\'inscription:', error);
+                    showToast('error', 'Erreur lors de l\'inscription. Veuillez réessayer.');
+                    submitBtn.innerHTML = originalBtnText;
+                    submitBtn.disabled = false;
+                });
+            });
+        }
+    });
+
+    function showToast(type, message) {
+        let toastContainer = document.getElementById('toast-container');
+        if (!toastContainer) {
+            toastContainer = document.createElement('div');
+            toastContainer.id = 'toast-container';
+            toastContainer.className = 'toast-container position-fixed top-0 end-0 p-3';
+            toastContainer.style.zIndex = '9999';
+            document.body.appendChild(toastContainer);
+        }
+        
+        const toastId = 'toast-' + Date.now();
+        const iconClass = type === 'success' ? 'fas fa-check-circle text-success' : 'fas fa-exclamation-circle text-danger';
+        const bgClass = type === 'success' ? 'bg-success' : 'bg-danger';
+        
+        const toastElement = document.createElement('div');
+        toastElement.id = toastId;
+        toastElement.className = `toast ${bgClass} text-white`;
+        toastElement.setAttribute('role', 'alert');
+        toastElement.innerHTML = `
+            <div class="toast-header ${bgClass} text-white border-0">
+                <i class="${iconClass} me-2"></i>
+                <strong class="me-auto">${type === 'success' ? 'Succès' : 'Erreur'}</strong>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
+            </div>
+            <div class="toast-body">
+                ${message}
+            </div>
+        `;
+        
+        toastContainer.appendChild(toastElement);
+        
+        const toast = new bootstrap.Toast(toastElement, {
+            autohide: true,
+            delay: 5000
+        });
+        toast.show();
+        
+        toastElement.addEventListener('hidden.bs.toast', function() {
+            if (toastContainer.contains(toastElement)) {
+                toastContainer.removeChild(toastElement);
+            }
+        });
+    }
 </script>
 @endpush
-@endsection
