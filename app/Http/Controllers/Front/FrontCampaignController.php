@@ -677,13 +677,15 @@ class FrontCampaignController extends Controller
         }
     }
 
+
+
     /**
      * Afficher les détails d'une campagne
      */
     public function show(Request $request, Campaign $campaign)
     {
         try {
-            // ✅ CORRECTION : Utiliser la même méthode que index()
+            // ✅ Récupérer l'utilisateur authentifié
             $user = $this->getAuthenticatedUser($request);
 
             if ($user) {
@@ -693,21 +695,29 @@ class FrontCampaignController extends Controller
                     'campaign_id' => $campaign->id,
                 ]);
 
+                // Vérifier si une vue existe déjà pour cet utilisateur et cette campagne
                 $existingView = CampaignView::where('campaign_id', $campaign->id)
                     ->where('user_id', $user->id)
-                    ->where('created_at', '>=', Carbon::now()->subDay())
-                    ->exists();
+                    ->first();
 
                 if (!$existingView) {
+                    // Créer une nouvelle vue si aucune n'existe
                     CampaignView::create([
                         'campaign_id' => $campaign->id,
                         'user_id' => $user->id,
+                        'created_at' => now(),
+                        'updated_at' => now(),
                     ]);
-                    $campaign->increment('views_count');
-
-                    // 🆕 Tracker vue pour recommandations
-                    $this->trackUserView($user->id, $campaign->id);
+                } else {
+                    // Mettre à jour la date de la vue existante
+                    $existingView->update(['updated_at' => now()]);
                 }
+
+                // Incrémenter le compteur de vues (si nécessaire, selon votre logique)
+                $campaign->increment('views_count');
+
+                // Tracker la vue pour les recommandations
+                $this->trackUserView($user->id, $campaign->id);
             }
 
             $campaign->load('comments.user', 'likes.user');
@@ -715,10 +725,15 @@ class FrontCampaignController extends Controller
 
             return view('pages.frontOffice.campaigns.Show', compact('campaign', 'user', 'sentimentStats'));
         } catch (\Exception $e) {
-            Log::error('Erreur lors du chargement des détails de la campagne: ' . $e->getMessage());
+            Log::error('Erreur lors du chargement des détails de la campagne: ' . $e->getMessage(), [
+                'campaign_id' => $campaign->id,
+                'user_id' => $user->id ?? 'N/A',
+                'trace' => $e->getTraceAsString(),
+            ]);
             return response()->json(['error' => 'Erreur serveur'], 500);
         }
     }
+
 
     /**
      * 🆕 Tracker vue utilisateur pour recommandations

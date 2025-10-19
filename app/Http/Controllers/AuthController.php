@@ -39,7 +39,8 @@ class AuthController extends Controller
                 'password' => ['required', 'confirmed', Password::min(8)->letters()->mixedCase()->numbers()->symbols()],
                 'phone' => ['nullable', 'string', 'regex:/^[+]?[0-9\s\-\(\)]{8,20}$/'],
                 'city' => ['nullable', 'string', 'min:2', 'max:100', 'regex:/^[a-zA-ZÀ-ÿ\s\-\']+$/'],
-                'role' => ['required', 'in:user,organizer'],
+
+                'role' => ['required', 'in:user,organizer,sponsor'],
                 'address' => ['nullable', 'string', 'min:5', 'max:255'],
                 'bio' => ['nullable', 'string', 'min:10', 'max:1000'],
                 'interests' => ['nullable', 'array', 'max:10'],
@@ -93,7 +94,7 @@ class AuthController extends Controller
             // Login user
             Auth::login($user);
 
-            return redirect()->route('login')->with('success', 
+            return redirect()->route('login')->with('success',
                 'Votre compte a été créé avec succès ! Un email de bienvenue vous a été envoyé à ' . $user->email
             );
         } catch (\Exception $e) {

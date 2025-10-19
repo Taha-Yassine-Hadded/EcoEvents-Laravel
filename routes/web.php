@@ -8,6 +8,9 @@ use App\Http\Controllers\Front\FrontCampaignController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\SponsorDashboardController;
+use App\Http\Controllers\SponsorProfileController;
+use App\Http\Controllers\SponsorManagementController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\RegistrationController;
@@ -15,6 +18,9 @@ use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\CommunityController;
 use App\Http\Controllers\PublicCommunityController;
 use App\Http\Controllers\CommunityMembershipController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ContractController;
+use App\Http\Middleware\VerifyJWT;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
@@ -105,6 +111,70 @@ Route::get('/dashboard', [DashboardController::class, 'index'])
     ->middleware([\App\Http\Middleware\VerifyJWT::class, \App\Http\Middleware\RoleGuard::class . ':admin'])
     ->name('admin.dashboard');
 
+// ==================== SPONSOR MANAGEMENT ROUTES ====================
+
+// Sponsor Dashboard
+Route::get('/sponsor-dashboard', [SponsorDashboardController::class, 'index'])
+    ->middleware([\App\Http\Middleware\VerifyJWT::class, \App\Http\Middleware\RoleGuard::class . ':sponsor'])
+    ->name('sponsor.dashboard');
+
+// ==================== PROFILE MANAGEMENT ====================
+Route::get('/sponsor/profile', [SponsorManagementController::class, 'showProfile'])
+    ->middleware([\App\Http\Middleware\VerifyJWT::class, \App\Http\Middleware\RoleGuard::class . ':sponsor'])
+    ->name('sponsor.profile');
+
+Route::put('/sponsor/profile', [SponsorManagementController::class, 'updateProfile'])
+    ->middleware([\App\Http\Middleware\VerifyJWT::class, \App\Http\Middleware\RoleGuard::class . ':sponsor'])
+    ->name('sponsor.profile.update');
+
+Route::put('/sponsor/profile/password', [SponsorManagementController::class, 'updatePassword'])
+    ->middleware([\App\Http\Middleware\VerifyJWT::class, \App\Http\Middleware\RoleGuard::class . ':sponsor'])
+    ->name('sponsor.profile.password');
+
+Route::delete('/sponsor/profile', [SponsorManagementController::class, 'deleteProfile'])
+    ->middleware([\App\Http\Middleware\VerifyJWT::class, \App\Http\Middleware\RoleGuard::class . ':sponsor'])
+    ->name('sponsor.profile.delete');
+
+// ==================== COMPANY MANAGEMENT ====================
+Route::get('/sponsor/company', [SponsorManagementController::class, 'showCompany'])
+    ->middleware([\App\Http\Middleware\VerifyJWT::class, \App\Http\Middleware\RoleGuard::class . ':sponsor'])
+    ->name('sponsor.company');
+
+Route::put('/sponsor/company', [SponsorManagementController::class, 'updateCompany'])
+    ->middleware([\App\Http\Middleware\VerifyJWT::class, \App\Http\Middleware\RoleGuard::class . ':sponsor'])
+    ->name('sponsor.company.update');
+
+// ==================== CAMPAIGNS MANAGEMENT ====================
+Route::get('/sponsor/campaigns', [SponsorDashboardController::class, 'campaigns'])
+    ->middleware([\App\Http\Middleware\VerifyJWT::class, \App\Http\Middleware\RoleGuard::class . ':sponsor'])
+    ->name('sponsor.campaigns');
+
+Route::get('/sponsor/campaigns/{id}', [SponsorManagementController::class, 'showCampaignDetails'])
+    ->middleware([\App\Http\Middleware\VerifyJWT::class, \App\Http\Middleware\RoleGuard::class . ':sponsor'])
+    ->name('sponsor.campaign.details');
+
+// ==================== SPONSORSHIPS MANAGEMENT ====================
+Route::get('/sponsor/sponsorships', [SponsorManagementController::class, 'showSponsorships'])
+    ->middleware([\App\Http\Middleware\VerifyJWT::class, \App\Http\Middleware\RoleGuard::class . ':sponsor'])
+    ->name('sponsor.sponsorships');
+
+Route::get('/sponsor/all-sponsorships', [SponsorManagementController::class, 'showAllSponsorships'])
+    ->middleware([\App\Http\Middleware\VerifyJWT::class, \App\Http\Middleware\RoleGuard::class . ':sponsor'])
+    ->name('sponsor.all-sponsorships');
+
+Route::post('/sponsor/sponsorships', [SponsorManagementController::class, 'createSponsorship'])
+    ->middleware([\App\Http\Middleware\VerifyJWT::class, \App\Http\Middleware\RoleGuard::class . ':sponsor'])
+    ->name('sponsor.sponsorships.create');
+
+Route::put('/sponsor/sponsorships/{id}/cancel', [SponsorManagementController::class, 'cancelSponsorship'])
+    ->middleware([\App\Http\Middleware\VerifyJWT::class, \App\Http\Middleware\RoleGuard::class . ':sponsor'])
+    ->name('sponsor.sponsorships.cancel');
+
+// ==================== STATISTICS ====================
+Route::get('/sponsor/statistics', [SponsorManagementController::class, 'showStatistics'])
+    ->middleware([\App\Http\Middleware\VerifyJWT::class, \App\Http\Middleware\RoleGuard::class . ':sponsor'])
+    ->name('sponsor.statistics');
+
 // Test route
 Route::get('/test', function () {
     return 'Test route works!';
@@ -149,6 +219,16 @@ Route::post('/verify-reset-code', [PasswordResetController::class, 'verifyResetC
 Route::get('/reset-password', [PasswordResetController::class, 'showResetPasswordForm'])->name('password.reset.form');
 Route::post('/reset-password', [PasswordResetController::class, 'resetPassword'])->name('password.update');
 
+// Page Blade publique (le JS enverra Authorization: Bearer <token>)
+Route::view('/profile', 'pages.frontOffice.profile-edit')->name('profile.edit');
+
+// Actions protégées par JWT (appels fetch depuis la page)
+Route::middleware([VerifyJWT::class])->group(function () {
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::post('/profile/avatar', [ProfileController::class, 'updateAvatar'])->name('profile.avatar.update');
+    Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password.update');
+});
+
 // Route temporaire pour vérifier l'utilisateur connecté
 Route::get('/check-user', function () {
     $user = Auth::user();
@@ -166,6 +246,54 @@ Route::get('/check-user', function () {
         return response()->json(['connected' => false, 'message' => 'Aucun utilisateur connecté']);
     }
 })->middleware(\App\Http\Middleware\VerifyJWT::class);
+
+// ==================== ADMIN ROUTES ====================
+
+// Admin Dashboard
+Route::get('/admin', [DashboardController::class, 'index'])
+    ->middleware([\App\Http\Middleware\VerifyJWT::class, \App\Http\Middleware\RoleGuard::class . ':admin'])
+    ->name('admin.dashboard');
+
+// Admin Sponsors Management
+Route::prefix('admin/sponsors')->middleware([\App\Http\Middleware\VerifyJWT::class, \App\Http\Middleware\RoleGuard::class . ':admin'])->group(function () {
+    Route::get('/', [\App\Http\Controllers\AdminSponsorController::class, 'index'])->name('admin.sponsors.index');
+    Route::get('/data', [\App\Http\Controllers\AdminSponsorController::class, 'getSponsorsData'])->name('admin.sponsors.data');
+    Route::get('/pending-sponsorships', [\App\Http\Controllers\AdminSponsorController::class, 'pendingSponsorships'])->name('admin.sponsors.pending-sponsorships');
+    Route::get('/approved-sponsorships', [\App\Http\Controllers\AdminSponsorController::class, 'approvedSponsorships'])->name('admin.sponsors.approved-sponsorships');
+    Route::post('/sponsorships/{id}/approve', [\App\Http\Controllers\AdminSponsorController::class, 'approveSponsorship'])->name('admin.sponsors.sponsorships.approve');
+    Route::post('/sponsorships/{id}/reject', [\App\Http\Controllers\AdminSponsorController::class, 'rejectSponsorship'])->name('admin.sponsors.sponsorships.reject');
+    Route::post('/sponsorships/{id}/complete', [\App\Http\Controllers\AdminSponsorController::class, 'completeSponsorship'])->name('admin.sponsors.sponsorships.complete');
+    Route::get('/sponsorships/{id}/contract', [\App\Http\Controllers\AdminSponsorController::class, 'viewContract'])->name('admin.sponsors.contract.view');
+    Route::get('/{id}', [\App\Http\Controllers\AdminSponsorController::class, 'show'])->name('admin.sponsors.show');
+    Route::put('/{id}', [\App\Http\Controllers\AdminSponsorController::class, 'update'])->name('admin.sponsors.update');
+    Route::post('/{id}/approve', [\App\Http\Controllers\AdminSponsorController::class, 'approve'])->name('admin.sponsors.approve');
+    Route::post('/{id}/reject', [\App\Http\Controllers\AdminSponsorController::class, 'reject'])->name('admin.sponsors.reject');
+    Route::post('/{id}/toggle-status', [\App\Http\Controllers\AdminSponsorController::class, 'toggleStatus'])->name('admin.sponsors.toggle-status');
+    Route::delete('/{id}', [\App\Http\Controllers\AdminSponsorController::class, 'destroy'])->name('admin.sponsors.destroy');
+});
+
+// Admin Contracts shortcut (read-only list of approved sponsorships with contracts)
+Route::get('/admin/contracts', [\App\Http\Controllers\AdminSponsorController::class, 'approvedSponsorships'])
+    ->middleware([\App\Http\Middleware\VerifyJWT::class, \App\Http\Middleware\RoleGuard::class . ':admin'])
+    ->name('admin.contracts.index');
+
+// Routes pour les contrats PDF
+Route::prefix('contracts')->middleware([\App\Http\Middleware\VerifyJWT::class])->group(function () {
+    Route::get('/sponsorship/{id}/download', [ContractController::class, 'downloadContract'])->name('contracts.sponsorship.download');
+    Route::get('/sponsorship/{id}/view', [ContractController::class, 'viewContract'])->name('contracts.sponsorship.view');
+});
+
+/*
+ * // Admin Campaigns Management
+Route::prefix('admin/campaigns')->middleware([\App\Http\Middleware\VerifyJWT::class, \App\Http\Middleware\RoleGuard::class . ':admin'])->group(function () {
+    Route::get('/', [\App\Http\Controllers\AdminCampaignController::class, 'index'])->name('admin.campaigns.index');
+    Route::get('/data', [\App\Http\Controllers\AdminCampaignController::class, 'getCampaignsData'])->name('admin.campaigns.data');
+    Route::post('/', [\App\Http\Controllers\AdminCampaignController::class, 'store'])->name('admin.campaigns.store');
+    Route::get('/{id}', [\App\Http\Controllers\AdminCampaignController::class, 'show'])->name('admin.campaigns.show');
+    Route::put('/{id}', [\App\Http\Controllers\AdminCampaignController::class, 'update'])->name('admin.campaigns.update');
+    Route::post('/{id}/toggle-status', [\App\Http\Controllers\AdminCampaignController::class, 'toggleStatus'])->name('admin.campaigns.toggle-status');
+    Route::delete('/{id}', [\App\Http\Controllers\AdminCampaignController::class, 'destroy'])->name('admin.campaigns.destroy');
+});*/
 
 // ========================================
 // ROUTES COMMUNAUTÉS - INTERFACE ORGANISATEUR
@@ -187,7 +315,6 @@ Route::get('/test-user', function() {
     $token = request()->bearerToken();
     $headerToken = request()->header('Authorization');
     $sessionToken = session('jwt_token');
-
     return response()->json([
         'bearer_token' => $token,
         'header_auth' => $headerToken,
@@ -254,19 +381,28 @@ Route::get('/switch-to-organizer', function() {
 
 // Route pour forcer la déconnexion complète
 Route::get('/force-logout', function() {
+    // Déconnexion Laravel
     Auth::logout();
+
+    // Vider toutes les sessions
     session()->flush();
     session()->regenerate();
+
+    // Supprimer le token JWT du localStorage (via JavaScript)
     return "
     <h3>🚪 Déconnexion forcée</h3>
     <p>Toutes les sessions ont été supprimées.</p>
     <script>
+        // Supprimer le token JWT
         localStorage.removeItem('jwt_token');
         sessionStorage.clear();
+
+        // Redirection après nettoyage
         setTimeout(function() {
             window.location.href = '/login';
         }, 2000);
     </script>
+    <p>Redirection vers la page de connexion...</p>
     ";
 })->middleware('web');
 
@@ -293,7 +429,7 @@ Route::prefix('organizer')->name('organizer.')->middleware([\App\Http\Middleware
     Route::post('/membership-requests/{membership}/reject', [CommunityController::class, 'rejectMembership'])->name('membership.reject');
 });
 
-// Routes pour la gestion des campagnes ADMIN - ✅ CORRIGÉ
+// Routes pour la gestion des campagnes
 Route::prefix('admin/campaigns')->middleware([\App\Http\Middleware\VerifyJWT::class, \App\Http\Middleware\RoleGuard::class . ':admin'])->group(function () {
     Route::get('/create', [CampaignController::class, 'create'])->name('admin.campaigns.create');
     Route::post('/store', [CampaignController::class, 'store'])->name('admin.campaigns.store');
@@ -301,16 +437,18 @@ Route::prefix('admin/campaigns')->middleware([\App\Http\Middleware\VerifyJWT::cl
     Route::get('/stats/api', [CampaignAnalyticsController::class, 'apiStats'])->name('admin.campaigns.stats.api');
     Route::get('/', [CampaignController::class, 'index'])->name('admin.campaigns.index');
     Route::delete('/{id}', [CampaignController::class, 'destroy'])->name('admin.campaigns.destroy');
-    Route::get('/{id}', [CampaignController::class, 'show'])->name('admin.campaigns.show');
     Route::post('/{id}', [CampaignController::class, 'update'])->name('admin.campaigns.update');
     Route::post('/{id}/duplicate', [CampaignController::class, 'duplicate'])->name('admin.campaigns.duplicate');
     Route::get('/{id}/export', [CampaignController::class, 'export'])->name('admin.campaigns.export');
     Route::post('/{id}/notify', [CampaignController::class, 'notify'])->name('admin.campaigns.notify');
     Route::get('/{id}/comments', [CampaignController::class, 'comments'])->name('admin.campaigns.comments');
     Route::delete('/{id}/comments/{comment}', [CampaignController::class, 'deleteComment'])->name('admin.campaigns.comments.delete');
-}); // ✅ Fermeture correcte du groupe admin/campaigns
+    Route::get('/{id}', [CampaignController::class, 'show'])->name('admin.campaigns.show');
 
-// Routes pour la gestion des campagnes FRONT - ✅ CORRIGÉ
+
+
+});
+
 Route::prefix('campaigns')->group(function () {
     Route::get('/{campaign}/sentiments', [FrontCampaignController::class, 'getCampaignSentiments'])
         ->middleware(\App\Http\Middleware\VerifyJWT::class)
@@ -475,7 +613,7 @@ Route::get('/debug/python-test', function() {
             'response_time' => $response->header('X-Response-Time') ?? 'N/A',
             'body' => $response->body(),
             'json' => $response->json(),
-            'headers' => $response->headers()->all()
+            'headers' => $response->headers->all()
         ];
 
         Log::info('📡 RÉSULTAT PYTHON', $result);
@@ -513,3 +651,26 @@ Route::post('/debug/sentiment-laravel', function(Request $request) {
         return response()->json(['error' => $e->getMessage()], 500);
     }
 })->middleware(\App\Http\Middleware\VerifyJWT::class);
+
+// API route pour récupérer les détails d'un événement (pour les modales)
+Route::get('/api/events/{event}', function($eventId) {
+    try {
+        $event = \App\Models\Event::with(['category', 'organizer'])->find($eventId);
+
+        if (!$event) {
+            return response()->json(['success' => false, 'error' => 'Événement non trouvé'], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'event' => $event
+        ]);
+    } catch (\Exception $e) {
+        return response()->json(['success' => false, 'error' => 'Erreur lors du chargement de l\'événement'], 500);
+    }
+})->name('api.events.show');
+
+// Route pour créer une proposition de sponsoring
+Route::post('/sponsor/sponsorships', [SponsorDashboardController::class, 'createSponsorship'])
+    ->middleware([\App\Http\Middleware\VerifyJWT::class, \App\Http\Middleware\RoleGuard::class . ':sponsor'])
+    ->name('sponsor.sponsorships.create');

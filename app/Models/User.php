@@ -22,6 +22,9 @@ class User extends Authenticatable implements JWTSubject
         'name',
         'email',
         'password',
+        'company_name',
+        'website',
+        'logo',
         'phone',
         'address',
         'city',
@@ -62,6 +65,7 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->role === 'admin';
     }
+
 
     /**
      * Check if user is organizer
@@ -116,6 +120,22 @@ class User extends Authenticatable implements JWTSubject
     {
         return !empty($this->profile_image) &&
             file_exists(storage_path('app/public/' . $this->profile_image));
+    }
+
+    /**
+     * Check if user is sponsor
+     */
+    public function isSponsor(): bool
+    {
+        return $this->role === 'sponsor';
+    }
+
+    /**
+     * Relation avec Sponsor
+     */
+    public function sponsor()
+    {
+        return $this->hasOne(Sponsor::class);
     }
 
     /**

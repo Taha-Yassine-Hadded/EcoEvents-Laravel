@@ -44,9 +44,12 @@
                             </div>
                             <div class="dropdown-menu" id="user-dropdown">
                                 <div class="dropdown-arrow"></div>
-                                <a href="#" class="profile-link">
-                                    <i class="bi bi-person"></i>
-                                    Profile
+                                <a href="{{ route('profile.edit') }}" class="profile-link">
+                                    <i class="bi bi-person"></i> Modifier le profil
+                                </a>
+                                <a href="{{ route('organizer.communities.index') }}" class="organizer-link" id="organizer-link" style="display: none;">
+                                    <i class="bi bi-people"></i>
+                                    Mes Communautés
                                 </a>
                                 <a href="{{ route('organizer.communities.index') }}" class="organizer-link" id="organizer-link" style="display: none;">
                                     <i class="bi bi-people"></i>
