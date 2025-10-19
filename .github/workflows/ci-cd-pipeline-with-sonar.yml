@@ -80,14 +80,14 @@ jobs:
           npm --version
 
       - name: 💾 Upload vendor artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: vendor
           path: vendor
           retention-days: 1
 
       - name: 💾 Upload node_modules artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: node_modules
           path: node_modules
@@ -107,7 +107,7 @@ jobs:
           fetch-depth: 0
 
       - name: 📥 Download vendor artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: vendor
           path: vendor
@@ -120,7 +120,7 @@ jobs:
           coverage: xdebug
 
       - name: 📥 Download coverage
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: coverage
           path: .
@@ -181,12 +181,18 @@ jobs:
           echo "DB_DATABASE=ecoEvent_test" >> .env
           echo "DB_USERNAME=root" >> .env
           echo "DB_PASSWORD=password" >> .env
-          echo "CACHE_STORE=file" >> .env
-          echo "CACHE_DRIVER=file" >> .env
-          echo "SESSION_DRIVER=file" >> .env
+          echo "CACHE_DRIVER=array" >> .env
+          echo "SESSION_DRIVER=array" >> .env
           php artisan key:generate
           php artisan config:clear
           # Do NOT clear cache here to avoid touching DB cache table before migrations
+
+      - name: 🧰 Prepare storage and cache directories
+        run: |
+          mkdir -p storage/framework/cache/data
+          mkdir -p storage/framework/sessions
+          mkdir -p storage/framework/views
+          mkdir -p bootstrap/cache
 
       - name: 🗄️ Run migrations
         env:
@@ -217,10 +223,10 @@ jobs:
           DB_DATABASE: ecoEvent_test
           DB_USERNAME: root
           DB_PASSWORD: password
-        run: vendor/bin/phpunit --coverage-text --coverage-clover=coverage.xml
+        run: php vendor/bin/phpunit --coverage-text --coverage-clover=coverage.xml
 
       - name: 💾 Upload coverage artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: coverage
           path: coverage.xml
@@ -244,13 +250,13 @@ jobs:
         uses: actions/checkout@v4
 
       - name: 📥 Download artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: vendor
           path: vendor
 
       - name: 📥 Download node_modules
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: node_modules
           path: node_modules
@@ -324,7 +330,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: 📥 Download build artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: public-build
           path: public/build
