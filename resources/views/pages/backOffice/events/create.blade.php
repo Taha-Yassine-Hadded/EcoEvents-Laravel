@@ -57,10 +57,23 @@
                             </div>
 
                             <div class="form-group">
+                                <label for="category_id">Catégorie <span class="required">*</span></label>
+                                <select id="category_id" name="category_id" class="form-control" required>
+                                    @foreach ($categories as $category)
+                                        <option value="{{ $category->id }}" {{ old('category_id') == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
+                                    @endforeach
+                                </select>
+                                <div class="error-message" id="category_idError"></div>
+                            </div>
+
+                            <div class="form-group">
                                 <label for="description">Description</label>
                                 <textarea id="description" name="description" class="form-control" rows="4" placeholder="Décrivez brièvement l'événement...">{{ old('description') }}</textarea>
                                 <div class="character-count"><span id="descriptionCount">0</span>/1000 caractères</div>
                                 <div class="error-message" id="descriptionError"></div>
+                                <button type="button" id="generateDescriptionBtn" class="btn btn-outline-success mt-2">
+                                    <i class="fas fa-robot"></i> Générer automatiquement
+                                </button>
                             </div>
 
                             <div class="form-group">
@@ -111,16 +124,6 @@
                                     <option value="ongoing" {{ old('status') === 'ongoing' ? 'selected' : '' }}>Actif</option>
                                 </select>
                                 <div class="error-message" id="statusError"></div>
-                            </div>
-
-                            <div class="form-group">
-                                <label for="category_id">Catégorie <span class="required">*</span></label>
-                                <select id="category_id" name="category_id" class="form-control" required>
-                                    @foreach ($categories as $category)
-                                        <option value="{{ $category->id }}" {{ old('category_id') == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
-                                    @endforeach
-                                </select>
-                                <div class="error-message" id="category_idError"></div>
                             </div>
 
                             <div class="form-group">
@@ -690,5 +693,47 @@
         document.addEventListener('DOMContentLoaded', function() {
             setupCharacterCounters();
         });
+
+        document.getElementById('generateDescriptionBtn').addEventListener('click', function() {
+        const title = document.getElementById('title').value.trim();
+        const categorySelect = document.getElementById('category_id');
+        const category = categorySelect.options[categorySelect.selectedIndex].text;
+
+        if (!title || !category) {
+            alert('Veuillez remplir le titre et choisir une catégorie avant de générer la description.');
+            return;
+        }
+
+        const btn = this;
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Génération en cours...';
+
+        fetch('{{ route("admin.events.generate-description") }}', {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ title: title, category: category })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.description) {
+                document.getElementById('description').value = data.description;
+                const count = data.description.length;
+                document.getElementById('descriptionCount').textContent = count;
+            } else if (data.error) {
+                alert('Erreur: ' + data.error);
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            alert('Une erreur est survenue lors de la génération.');
+        })
+        .finally(() => {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-robot"></i> Générer automatiquement';
+        });
+    });
     </script>
 @endpush

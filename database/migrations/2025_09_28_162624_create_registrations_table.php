@@ -14,10 +14,6 @@ return new class extends Migration {
             $table->foreignId('event_id')->constrained('events')->onDelete('cascade');
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             
-<<<<<<< HEAD
-            $table->enum('status', ['registered', 'attended', 'cancelled', 'no-show'])->default('registered');
-            $table->timestamp('registered_at')->useCurrent();
-=======
             // Basic registration info
             $table->enum('status', ['registered', 'attended', 'cancelled', 'no-show'])->default('registered');
             $table->timestamp('registered_at')->useCurrent();
@@ -28,7 +24,6 @@ return new class extends Migration {
             $table->boolean('has_transportation')->default(false); // If they have transportation
             $table->boolean('has_participated_before')->default(false); // Previous participation
             $table->string('emergency_contact')->nullable(); // Emergency contact info
->>>>>>> main
 
             $table->timestamps();
         });

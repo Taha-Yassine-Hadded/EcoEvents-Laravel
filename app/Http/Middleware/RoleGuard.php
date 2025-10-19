@@ -8,47 +8,25 @@ use Illuminate\Support\Facades\Log;
 
 class RoleGuard
 {
-<<<<<<< HEAD
-    public function handle(Request $request, Closure $next, $role = 'admin')
-=======
     public function handle(Request $request, Closure $next, $roles = 'admin,organizer')
->>>>>>> main
     {
         try {
             // Récupérer l'utilisateur depuis la requête (défini par VerifyJWT)
             $user = $request->auth;
 
-<<<<<<< HEAD
-=======
             // Parse les rôles autorisés (séparés par des virgules)
             $allowedRoles = array_map('trim', explode(',', $roles));
 
->>>>>>> main
             // Log pour déboguer l'état de l'utilisateur
             Log::info('RoleGuard: Vérification du rôle', [
                 'user_exists' => !is_null($user),
                 'user_id' => $user ? $user->id : null,
                 'user_role' => $user ? $user->role : null,
-<<<<<<< HEAD
-                'required_role' => $role,
-=======
                 'allowed_roles' => $allowedRoles,
->>>>>>> main
                 'url' => $request->url(),
                 'headers' => $request->headers->all(),
             ]);
 
-<<<<<<< HEAD
-            // Vérifier si l'utilisateur a le rôle admin
-            if (!$user || $user->role !== $role) {
-                Log::warning('RoleGuard: Accès non autorisé, rôle insuffisant', [
-                    'user_id' => $user ? $user->id : null,
-                    'user_role' => $user ? $user->role : null,
-                    'required_role' => $role,
-                    'url' => $request->url(),
-                ]);
-                return redirect()->route('home')->with('error', 'Accès non autorisé : réservé aux administrateurs.');
-=======
             // Vérifier si l'utilisateur a un des rôles autorisés
             if (!$user || !in_array($user->role, $allowedRoles)) {
                 Log::warning('RoleGuard: Accès non autorisé, rôle insuffisant', [
@@ -58,7 +36,6 @@ class RoleGuard
                     'url' => $request->url(),
                 ]);
                 return redirect()->route('home')->with('error', 'Accès non autorisé : rôle insuffisant.');
->>>>>>> main
             }
 
             Log::info('RoleGuard: Autorisation réussie', [

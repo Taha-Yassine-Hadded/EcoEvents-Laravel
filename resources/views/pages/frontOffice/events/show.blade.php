@@ -51,133 +51,119 @@
                 </div>
             </div>
             
-            <div class="row">
-                <div class="col-lg-8">
-                    <div class="row">
-                        <div class="col-lg-12">
-                            <div class="project-details-content">
-                                <h4>{{ $event->title }}</h4>
-                                <!-- Event basic info section removed (already shown in sidebar) -->
+            {{-- Replace the problematic section (starting from line 55 to line 102) with this: --}}
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="project-details-content">
+                    <h4>{{ $event->title }}</h4>
+                    
+                    {{-- ML Classification Labels --}}
+                    @if($mlLabels)
+                        <div class="ml-classification-badges mb-4">
+                            <div class="d-flex align-items-center gap-2 flex-wrap">
+                                <span class="badge-label-text">
+                                    <i class="fas fa-robot"></i> Classification IA:
+                                </span>
                                 
-                                <h3>Description</h3>
-                                <p class="project-details-desc">{{ $event->description ?? 'Aucune description disponible pour cet événement.' }}</p>
-                                
-                                @if ($event->latitude && $event->longitude)
-                                    <h3>Localisation</h3>
-                                    <div class="event-map-container">
-                                        <div id="eventMap" style="height: 400px; width: 100%; border-radius: 8px; border: 1px solid #ddd;"></div>
-                                        <div class="map-info">
-                                            <p><i class="fas fa-map-marker-alt"></i> {{ $event->location }}</p>
-                                        </div>
+                                {{-- Primary Label --}}
+                                @if($mlLabels['primary_label']['name'])
+                                    <div class="ml-badge ml-badge-primary" 
+                                         style="background: {{ App\Services\EventClassificationService::getLabelColor($mlLabels['primary_label']['name']) }}">
+                                        <i class="fas {{ App\Services\EventClassificationService::getLabelIcon($mlLabels['primary_label']['name']) }}"></i>
+                                        <span class="ml-badge-name">{{ $mlLabels['primary_label']['name'] }}</span>
+                                        <span class="ml-badge-confidence">{{ number_format($mlLabels['primary_label']['confidence'] * 100, 0) }}%</span>
                                     </div>
                                 @endif
                                 
-                                @if ($event->organizer)
-                                    <h3>Organisateur</h3>
-                                    <div class="organizer-info">
-                                        <div class="organizer-avatar">
-                                            <span>{{ strtoupper(substr($event->organizer->name, 0, 1)) }}</span>
-                                        </div>
-                                        <div class="organizer-details">
-                                            <h5>{{ $event->organizer->name }}</h5>
-                                            @if ($event->organizer->email)
-                                                <p><i class="fas fa-envelope"></i> {{ $event->organizer->email }}</p>
-                                            @endif
-                                        </div>
+                                {{-- Secondary Label --}}
+                                @if($mlLabels['secondary_label']['name'])
+                                    <div class="ml-badge ml-badge-secondary" 
+                                         style="background: {{ App\Services\EventClassificationService::getLabelColor($mlLabels['secondary_label']['name']) }}">
+                                        <i class="fas {{ App\Services\EventClassificationService::getLabelIcon($mlLabels['secondary_label']['name']) }}"></i>
+                                        <span class="ml-badge-name">{{ $mlLabels['secondary_label']['name'] }}</span>
+                                        <span class="ml-badge-confidence">{{ number_format($mlLabels['secondary_label']['confidence'] * 100, 0) }}%</span>
                                     </div>
                                 @endif
-                                
-                                <!-- Event Actions - Initially Hidden -->
-                                <div class="event-actions mt-4 d-flex flex-wrap align-items-center gap-3">
-                                    <!-- Back Button - Always Visible -->
-                                    <a href="{{ route('front.events.index') }}" class="btn btn-outline-secondary">
-                                        <i class="fas fa-arrow-left"></i> Retour aux événements
-                                    </a>
-                                    
-                                    <!-- Guest Actions - Show login button -->
-                                    <div id="guest-actions" style="display: none;">
-                                        @if ($event->status === 'upcoming')
-                                            <a href="{{ route('login') }}" class="btn btn-success">
-                                                <i class="fas fa-sign-in-alt"></i> Se connecter pour s'inscrire
-                                            </a>
-                                        @endif
-                                    </div>
-                                    
-                                    <!-- Authenticated User Actions -->
-                                    <div id="authenticated-actions" style="display: none;">
-                                        <!-- Organizer Actions (Event Owner) -->
-                                        <div id="organizer-actions" style="display: none;">
-                                            <a href="{{ route('admin.admin.events.show', $event->id) }}" class="btn btn-primary">
-                                                <i class="fas fa-cogs"></i> Gérer l'événement
-                                            </a>
-                                        </div>
-                                        
-                                        <!-- Regular User Actions (Subscribe) -->
-                                        <div id="regular-actions" style="display: none;">
-                                            @if ($event->status === 'upcoming')
-                                                <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#registerModal">
-                                                    <i class="fas fa-calendar-check"></i> S'inscrire
-                                                </button>
-                                            @endif
-                                        </div>
-                                        
-                                        <!-- Admin Actions (Dashboard Management) -->
-                                        <div id="admin-actions" style="display: none;">
-                                            <a href="{{ route('admin.admin.events.show', $event->id) }}" class="btn btn-primary">
-                                                <i class="fas fa-cogs"></i> Gérer l'événement
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
+                            </div>
+                            
+                            {{-- Optional: Show all scores tooltip --}}
+                            <div class="ml-info-tooltip">
+                                <i class="fas fa-info-circle text-muted" data-bs-toggle="tooltip" data-bs-placement="right" 
+                                   title="Classification automatique basée sur l'intelligence artificielle"></i>
                             </div>
                         </div>
-                    </div>
-                </div>
-                
-                <div class="col-lg-4">
-                    <div class="row">
-                        <div class="col-lg-12">
-                            <div class="project-details-right">
-                                <h5 class="sidebar-title">Informations sur l'Événement</h5>
-                                
-                                <div class="project-details-info">
-                                    <p>Organisateur:</p>
-                                    <h6>{{ $event->organizer->name ?? 'Non spécifié' }}</h6>
-                                </div>
-                                <div class="project-details-info">
-                                    <p>Catégorie:</p>
-                                    <h6>
-                                        <i class="fas fa-leaf text-success"></i>
-                                        {{ $event->category->name ?? 'Non catégorisé' }}
-                                    </h6>
-                                </div>
-                                <div class="project-details-info">
-                                    <p>Date & Heure:</p>
-                                    <h6>{{ $event->date ? $event->date->format('d M Y à H:i') : 'Date non définie' }}</h6>
-                                </div>
-                                <div class="project-details-info">
-                                    <p>Lieu:</p>
-                                    <h6>{{ $event->location }}</h6>
-                                </div>
-                                @if ($event->capacity)
-                                    <div class="project-details-info">
-                                        <p>Capacité:</p>
-                                        <h6>{{ $event->capacity }} personnes</h6>
-                                    </div>
+                    @endif
+                    
+                    <h3>Description</h3>
+                    <p class="project-details-desc">{{ $event->description ?? 'Aucune description disponible pour cet événement.' }}</p>
+                    
+                    @if ($event->latitude && $event->longitude)
+                        <h3>Localisation</h3>
+                        <div class="event-map-container">
+                            <div id="eventMap" style="height: 400px; width: 100%; border-radius: 8px; border: 1px solid #ddd;"></div>
+                            <div class="map-info">
+                                <p><i class="fas fa-map-marker-alt"></i> {{ $event->location }}</p>
+                            </div>
+                        </div>
+                    @endif
+                    
+                    @if ($event->organizer)
+                        <h3>Organisateur</h3>
+                        <div class="organizer-info">
+                            <div class="organizer-avatar">
+                                <span>{{ strtoupper(substr($event->organizer->name, 0, 1)) }}</span>
+                            </div>
+                            <div class="organizer-details">
+                                <h5>{{ $event->organizer->name }}</h5>
+                                @if ($event->organizer->email)
+                                    <p><i class="fas fa-envelope"></i> {{ $event->organizer->email }}</p>
                                 @endif
-                                <div class="project-details-info">
-                                    <p>Statut:</p>
-                                    <h6>
-                                        <span class="event-status-badge status-{{ $event->status }}">
-                                            @switch($event->status)
-                                                @case('upcoming') À venir @break
-                                                @case('ongoing') En cours @break
-                                                @case('completed') Terminé @break
-                                                @default Annulé
-                                            @endswitch
-                                        </span>
-                                    </h6>
-                                </div>
+                            </div>
+                        </div>
+                    @endif
+                    
+                    {{-- Event Actions - Initially Hidden --}}
+                    <div class="event-actions mt-4 d-flex flex-wrap align-items-center gap-3">
+                        {{-- Back Button - Always Visible --}}
+                        <a href="{{ route('front.events.index') }}" class="btn btn-outline-secondary">
+                            <i class="fas fa-arrow-left"></i> Retour aux événements
+                        </a>
+                        
+                        {{-- Guest Actions - Show login button --}}
+                        <div id="guest-actions" style="display: none;">
+                            @if ($event->status === 'upcoming')
+                                <a href="{{ route('login') }}" class="btn btn-success">
+                                    <i class="fas fa-sign-in-alt"></i> Se connecter pour s'inscrire
+                                </a>
+                            @endif
+                        </div>
+                        
+                        {{-- Authenticated User Actions --}}
+                        <div id="authenticated-actions" style="display: none;">
+                            {{-- Organizer Actions (Event Owner) --}}
+                            <div id="organizer-actions" style="display: none;">
+                                <a href="{{ route('admin.admin.events.show', $event->id) }}" class="btn btn-primary">
+                                    <i class="fas fa-cogs"></i> Gérer l'événement
+                                </a>
+                            </div>
+                            
+                            {{-- Regular User Actions (Subscribe) --}}
+                            <div id="regular-actions" style="display: none;">
+                                @if ($event->status === 'upcoming')
+                                    <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#registerModal">
+                                        <i class="fas fa-calendar-check"></i> S'inscrire
+                                    </button>
+                                @endif
+                            </div>
+                            
+                            {{-- Admin Actions (Dashboard Management) --}}
+                            <div id="admin-actions" style="display: none;">
+                                <a href="{{ route('admin.admin.events.show', $event->id) }}" class="btn btn-primary">
+                                    <i class="fas fa-cogs"></i> Gérer l'événement
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -185,6 +171,56 @@
             </div>
         </div>
     </div>
+    
+    <div class="col-lg-4">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="project-details-right">
+                    <h5 class="sidebar-title">Informations sur l'Événement</h5>
+                    
+                    <div class="project-details-info">
+                        <p>Organisateur:</p>
+                        <h6>{{ $event->organizer->name ?? 'Non spécifié' }}</h6>
+                    </div>
+                    <div class="project-details-info">
+                        <p>Catégorie:</p>
+                        <h6>
+                            <i class="fas fa-leaf text-success"></i>
+                            {{ $event->category->name ?? 'Non catégorisé' }}
+                        </h6>
+                    </div>
+                    <div class="project-details-info">
+                        <p>Date & Heure:</p>
+                        <h6>{{ $event->date ? $event->date->format('d M Y à H:i') : 'Date non définie' }}</h6>
+                    </div>
+                    <div class="project-details-info">
+                        <p>Lieu:</p>
+                        <h6>{{ $event->location }}</h6>
+                    </div>
+                    @if ($event->capacity)
+                        <div class="project-details-info">
+                            <p>Capacité:</p>
+                            <h6>{{ $event->capacity }} personnes</h6>
+                        </div>
+                    @endif
+                    <div class="project-details-info">
+                        <p>Statut:</p>
+                        <h6>
+                            <span class="event-status-badge status-{{ $event->status }}">
+                                @switch($event->status)
+                                    @case('upcoming') À venir @break
+                                    @case('ongoing') En cours @break
+                                    @case('completed') Terminé @break
+                                    @default Annulé
+                                @endswitch
+                            </span>
+                        </h6>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
     <!-- Similar Events Area -->
     @if ($similarEvents->count() > 0)
@@ -445,6 +481,203 @@
 
 @push('styles')
 <style>
+    /* ML Classification Badges Styling */
+.ml-classification-badges {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    padding: 20px;
+    border-radius: 15px;
+    border-left: 5px solid #6c63ff;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    position: relative;
+    animation: fadeInUp 0.6s ease-out;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.badge-label-text {
+    font-weight: 600;
+    color: #495057;
+    font-size: 0.95rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.badge-label-text i {
+    color: #6c63ff;
+    font-size: 1.1rem;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+}
+
+.ml-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    border-radius: 25px;
+    color: white;
+    font-weight: 600;
+    font-size: 0.9rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.ml-badge::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: left 0.5s;
+}
+
+.ml-badge:hover::before {
+    left: 100%;
+}
+
+.ml-badge:hover {
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+}
+
+.ml-badge-primary {
+    animation: slideInLeft 0.5s ease-out;
+}
+
+.ml-badge-secondary {
+    animation: slideInLeft 0.7s ease-out;
+    opacity: 0.95;
+}
+
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.ml-badge i {
+    font-size: 1.1rem;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+}
+
+.ml-badge-name {
+    font-weight: 700;
+    letter-spacing: 0.3px;
+}
+
+.ml-badge-confidence {
+    background: rgba(255, 255, 255, 0.3);
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+.ml-info-tooltip {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+}
+
+.ml-info-tooltip i {
+    font-size: 1rem;
+    cursor: help;
+    transition: all 0.3s ease;
+}
+
+.ml-info-tooltip i:hover {
+    color: #6c63ff !important;
+    transform: scale(1.2);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .ml-classification-badges {
+        padding: 15px;
+    }
+    
+    .ml-badge {
+        font-size: 0.85rem;
+        padding: 8px 12px;
+        gap: 6px;
+    }
+    
+    .ml-badge-confidence {
+        font-size: 0.75rem;
+        padding: 2px 8px;
+    }
+    
+    .badge-label-text {
+        font-size: 0.85rem;
+        width: 100%;
+        margin-bottom: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .ml-badge {
+        font-size: 0.8rem;
+        padding: 6px 10px;
+    }
+    
+    .ml-badge-name {
+        display: none;
+    }
+    
+    .ml-badge i {
+        font-size: 1rem;
+    }
+}
+
+/* Loading state (optional - for future enhancement) */
+.ml-badge-skeleton {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite;
+    height: 40px;
+    width: 150px;
+    border-radius: 25px;
+}
+
+@keyframes loading {
+    0% {
+        background-position: 200% 0;
+    }
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+
     /* Event Image Styling */
     .event-image-container {
         position: relative;

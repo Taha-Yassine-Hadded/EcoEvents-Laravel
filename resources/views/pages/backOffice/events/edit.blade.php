@@ -58,6 +58,16 @@
                             </div>
 
                             <div class="form-group">
+                                <label for="category_id">Catégorie <span class="required">*</span></label>
+                                <select id="category_id" name="category_id" class="form-control" required>
+                                    @foreach ($categories as $category)
+                                        <option value="{{ $category->id }}" {{ old('category_id', $event->category_id) == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
+                                    @endforeach
+                                </select>
+                                <div class="error-message" id="category_idError"></div>
+                            </div>
+
+                            <div class="form-group">
                                 <label for="description">Description</label>
                                 <textarea id="description" name="description" class="form-control" rows="4" placeholder="Décrivez brièvement l'événement...">{{ old('description', $event->description) }}</textarea>
                                 <div class="character-count"><span id="descriptionCount">0</span>/1000 caractères</div>
@@ -114,16 +124,6 @@
                                     <option value="cancelled" {{ old('status', $event->status) === 'cancelled' ? 'selected' : '' }}>Annulé</option>
                                 </select>
                                 <div class="error-message" id="statusError"></div>
-                            </div>
-
-                            <div class="form-group">
-                                <label for="category_id">Catégorie <span class="required">*</span></label>
-                                <select id="category_id" name="category_id" class="form-control" required>
-                                    @foreach ($categories as $category)
-                                        <option value="{{ $category->id }}" {{ old('category_id', $event->category_id) == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
-                                    @endforeach
-                                </select>
-                                <div class="error-message" id="category_idError"></div>
                             </div>
 
                             <div class="form-group">

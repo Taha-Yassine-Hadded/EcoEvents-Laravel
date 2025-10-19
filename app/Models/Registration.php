@@ -14,8 +14,6 @@ class Registration extends Model
         'user_id',
         'status',
         'registered_at',
-<<<<<<< HEAD
-=======
         'role',
         'skills',
         'has_transportation',
@@ -27,7 +25,6 @@ class Registration extends Model
         'registered_at' => 'datetime',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
->>>>>>> main
     ];
 
     /**

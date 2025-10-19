@@ -63,9 +63,6 @@ class VerifyJWT
                     'cookies' => $request->cookies->all(),
                     'raw_cookies' => $request->header('cookie'),
                 ]);
-<<<<<<< HEAD
-                return response()->json(['error' => 'Token non fourni'], 401);
-=======
                 
                 // For web requests, redirect to login instead of JSON response
                 if ($request->expectsJson() || $request->is('api/*')) {
@@ -73,7 +70,6 @@ class VerifyJWT
                 }
                 
                 return redirect()->route('login')->with('error', 'Veuillez vous connecter pour accéder à cette page.');
->>>>>>> main
             }
 
             $user = JWTAuth::setToken($token)->authenticate();
@@ -82,9 +78,6 @@ class VerifyJWT
                     'token' => substr($token, 0, 20) . '...',
                     'url' => $request->url(),
                 ]);
-<<<<<<< HEAD
-                return response()->json(['error' => 'Utilisateur non trouvé'], 401);
-=======
                 
                 // For web requests, redirect to login instead of JSON response
                 if ($request->expectsJson() || $request->is('api/*')) {
@@ -92,7 +85,6 @@ class VerifyJWT
                 }
                 
                 return redirect()->route('login')->with('error', 'Session invalide. Veuillez vous reconnecter.');
->>>>>>> main
             }
 
             $request->auth = $user;
@@ -106,15 +98,6 @@ class VerifyJWT
             return $next($request);
         } catch (TokenExpiredException $e) {
             Log::error('VerifyJWT: Token expiré', ['error' => $e->getMessage()]);
-<<<<<<< HEAD
-            return response()->json(['error' => 'Token expiré'], 401);
-        } catch (TokenInvalidException $e) {
-            Log::error('VerifyJWT: Token invalide', ['error' => $e->getMessage()]);
-            return response()->json(['error' => 'Token invalide'], 401);
-        } catch (\Exception $e) {
-            Log::error('VerifyJWT: Erreur inattendue', ['error' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
-            return response()->json(['error' => 'Erreur d\'authentification: ' . $e->getMessage()], 500);
-=======
             
             // For web requests, redirect to login instead of JSON response
             if ($request->expectsJson() || $request->is('api/*')) {
@@ -140,7 +123,6 @@ class VerifyJWT
             }
             
             return redirect()->route('login')->with('error', 'Erreur d\'authentification. Veuillez vous reconnecter.');
->>>>>>> main
         }
     }
 }

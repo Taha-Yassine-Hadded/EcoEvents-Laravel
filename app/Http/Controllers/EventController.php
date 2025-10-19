@@ -10,9 +10,19 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Tymon\JWTAuth\Facades\JWTAuth;
+use GuzzleHttp\Client;
+use App\Services\EventClassificationService;
 
 class EventController extends Controller
 {
+    // ADD THIS: Inject the classification service
+    protected EventClassificationService $classificationService;
+
+    public function __construct(EventClassificationService $classificationService)
+    {
+        $this->classificationService = $classificationService;
+    }
+
     // -------------------
     // FrontOffice: Public events (all roles)
     // -------------------
@@ -132,6 +142,7 @@ class EventController extends Controller
         }
     }
 
+    // UPDATED: Add ML classification to show method
     public function show($id)
     {
         try {
@@ -145,9 +156,25 @@ class EventController extends Controller
                 ->take(6)
                 ->get();
 
-            return view('pages.frontOffice.events.show', compact('event', 'similarEvents'));
+            // ADDED: Get ML classification labels
+            $mlLabels = null;
+            try {
+                $mlLabels = $this->classificationService->classifyEvent(
+                    title: $event->title,
+                    description: $event->description,
+                    category: $event->category?->name,
+                    keywords: null // Add keywords field if you have it
+                );
+            } catch (\Exception $e) {
+                Log::warning('ML classification unavailable for event ' . $event->id, [
+                    'error' => $e->getMessage()
+                ]);
+                // Continue without ML labels - graceful degradation
+            }
+
+            return view('pages.frontOffice.events.show', compact('event', 'similarEvents', 'mlLabels'));
         } catch (\Exception $e) {
-            \Log::error('Error loading event details: ' . $e->getMessage());
+            Log::error('Error loading event details: ' . $e->getMessage());
             return redirect()->route('front.events.index')->with('error', 'Événement introuvable.');
         }
     }
@@ -201,7 +228,7 @@ class EventController extends Controller
             ]);
             
         } catch (\Exception $e) {
-            \Log::error('Error creating event: ' . $e->getMessage());
+            Log::error('Error creating event: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
                 'message' => 'Erreur lors de la création de l\'événement'
@@ -224,41 +251,41 @@ class EventController extends Controller
 
     public function storeAdmin(Request $request)
     {
-    $this->authorizeRole($request, 'admin,organizer');
+        $this->authorizeRole($request, 'admin,organizer');
 
-    try {
-        Log::info('StoreAdmin Request Data: ', $request->all());
+        try {
+            Log::info('StoreAdmin Request Data: ', $request->all());
 
-        $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'date' => ['required', 'date', 'after_or_equal:' . now()->toDateString()],
-            'location' => 'required|string|max:255',
-            'latitude' => 'nullable|numeric|between:-90,90',
-            'longitude' => 'nullable|numeric|between:-180,180',
-            'category_id' => 'required|exists:categories,id',
-            'status' => 'required|in:ongoing,upcoming',
-            'img' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
-            'capacity' => 'nullable|integer|min:0',
-        ]);
+            $validated = $request->validate([
+                'title' => 'required|string|max:255',
+                'description' => 'nullable|string',
+                'date' => ['required', 'date', 'after_or_equal:' . now()->toDateString()],
+                'location' => 'required|string|max:255',
+                'latitude' => 'nullable|numeric|between:-90,90',
+                'longitude' => 'nullable|numeric|between:-180,180',
+                'category_id' => 'required|exists:categories,id',
+                'status' => 'required|in:ongoing,upcoming',
+                'img' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+                'capacity' => 'nullable|integer|min:0',
+            ]);
 
-        $event = new Event($validated);
-        $event->organizer_id = $request->auth->id;
-        if ($request->hasFile('img')) {
-            $path = $request->file('img')->store('events', 'public');
-            $event->img = $path;
+            $event = new Event($validated);
+            $event->organizer_id = $request->auth->id;
+            if ($request->hasFile('img')) {
+                $path = $request->file('img')->store('events', 'public');
+                $event->img = $path;
+            }
+            $event->save();
+
+            return response()->json(['success' => true, 'redirect' => route('admin.events.index')]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            Log::error('Validation Errors: ', $e->validator->errors()->toArray());
+            throw $e;
+        } catch (\Exception $e) {
+            Log::error('Erreur lors de la création de l\'événement admin: ' . $e->getMessage(), ['exception' => $e]);
+            return response()->json(['error' => 'Erreur lors de la création: ' . $e->getMessage()], 500);
         }
-        $event->save();
-
-        return response()->json(['success' => true, 'redirect' => route('admin.events.index')]);
-    } catch (\Illuminate\Validation\ValidationException $e) {
-        Log::error('Validation Errors: ', $e->validator->errors()->toArray());
-        throw $e;
-    } catch (\Exception $e) {
-        Log::error('Erreur lors de la création de l\'événement admin: ' . $e->getMessage(), ['exception' => $e]);
-        return response()->json(['error' => 'Erreur lors de la création: ' . $e->getMessage()], 500);
     }
-}
 
     // -------------------
     // BackOffice: Admin event details
@@ -276,55 +303,68 @@ class EventController extends Controller
         }
     }
 
-public function editAdmin(Request $request, Event $event)
-{
-    $this->authorizeRole($request, 'admin,organizer');
-    $this->authorizeOrganizerEvent($request, $event);
+    public function editAdmin(Request $request, Event $event)
+    {
+        $this->authorizeRole($request, 'admin,organizer');
+        $this->authorizeOrganizerEvent($request, $event);
 
-    try {
-        $categories = Category::all();
-        return view('pages.backOffice.events.edit', compact('event', 'categories'));
-    } catch (\Exception $e) {
-        Log::error('Erreur lors du chargement du formulaire d\'édition admin pour l\'événement ID ' . $event->id . ': ' . $e->getMessage());
-        return response()->json(['error' => 'Erreur serveur'], 500);
-    }
-}
-
-public function updateAdmin(Request $request, Event $event)
-{
-    $this->authorizeRole($request, 'admin,organizer');
-    $this->authorizeOrganizerEvent($request, $event);
-    try {
-        Log::info('UpdateAdmin Request Data: ', $request->all());
-        $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'date' => ['required', 'date', 'after_or_equal:' . now()->toDateString()],
-            'location' => 'required|string|max:255',
-            'latitude' => 'nullable|numeric|between:-90,90',
-            'longitude' => 'nullable|numeric|between:-180,180',
-            'category_id' => 'required|exists:categories,id',
-            'status' => 'required|in:completed,cancelled,ongoing,upcoming',
-            'img' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
-            'capacity' => 'nullable|integer|min:0',
-        ]);
-        if ($request->hasFile('img')) {
-            if ($event->img && Storage::disk('public')->exists($event->img)) {
-                Storage::disk('public')->delete($event->img);
-            }
-            $path = $request->file('img')->store('events', 'public');
-            $validated['img'] = $path;
+        try {
+            $categories = Category::all();
+            return view('pages.backOffice.events.edit', compact('event', 'categories'));
+        } catch (\Exception $e) {
+            Log::error('Erreur lors du chargement du formulaire d\'édition admin pour l\'événement ID ' . $event->id . ': ' . $e->getMessage());
+            return response()->json(['error' => 'Erreur serveur'], 500);
         }
-        $event->update($validated);
-        return response()->json(['success' => true, 'redirect' => route('admin.events.index')]);
-    } catch (\Illuminate\Validation\ValidationException $e) {
-        Log::error('Validation Errors: ', $e->validator->errors()->toArray());
-        throw $e;
-    } catch (\Exception $e) {
-        Log::error('Erreur lors de la mise à jour de l\'événement ID ' . $event->id . ': ' . $e->getMessage(), ['exception' => $e]);
-        return response()->json(['error' => 'Erreur lors de la mise à jour: ' . $e->getMessage()], 500);
     }
-}
+
+    public function updateAdmin(Request $request, Event $event)
+    {
+        $this->authorizeRole($request, 'admin,organizer');
+        $this->authorizeOrganizerEvent($request, $event);
+        try {
+            Log::info('UpdateAdmin Request Data: ', $request->all());
+            $validated = $request->validate([
+                'title' => 'required|string|max:255',
+                'description' => 'nullable|string',
+                'date' => ['required', 'date', 'after_or_equal:' . now()->toDateString()],
+                'location' => 'required|string|max:255',
+                'latitude' => 'nullable|numeric|between:-90,90',
+                'longitude' => 'nullable|numeric|between:-180,180',
+                'category_id' => 'required|exists:categories,id',
+                'status' => 'required|in:completed,cancelled,ongoing,upcoming',
+                'img' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+                'capacity' => 'nullable|integer|min:0',
+            ]);
+            if ($request->hasFile('img')) {
+                if ($event->img && Storage::disk('public')->exists($event->img)) {
+                    Storage::disk('public')->delete($event->img);
+                }
+                $path = $request->file('img')->store('events', 'public');
+                $validated['img'] = $path;
+            }
+            $event->update($validated);
+            
+            // ADDED: Clear ML classification cache after update
+            try {
+                $this->classificationService->clearCache(
+                    $event->title,
+                    $event->description,
+                    $event->category?->name,
+                    null
+                );
+            } catch (\Exception $e) {
+                Log::warning('Failed to clear ML classification cache', ['error' => $e->getMessage()]);
+            }
+            
+            return response()->json(['success' => true, 'redirect' => route('admin.events.index')]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            Log::error('Validation Errors: ', $e->validator->errors()->toArray());
+            throw $e;
+        } catch (\Exception $e) {
+            Log::error('Erreur lors de la mise à jour de l\'événement ID ' . $event->id . ': ' . $e->getMessage(), ['exception' => $e]);
+            return response()->json(['error' => 'Erreur lors de la mise à jour: ' . $e->getMessage()], 500);
+        }
+    }
 
     public function destroyAdmin(Request $request, Event $event)
     {
@@ -388,6 +428,18 @@ public function updateAdmin(Request $request, Event $event)
             
             $event->save();
             
+            // ADDED: Clear ML classification cache after update
+            try {
+                $this->classificationService->clearCache(
+                    $event->title,
+                    $event->description,
+                    $event->category?->name,
+                    null
+                );
+            } catch (\Exception $e) {
+                Log::warning('Failed to clear ML classification cache', ['error' => $e->getMessage()]);
+            }
+            
             return response()->json([
                 'success' => true,
                 'message' => 'Événement mis à jour avec succès',
@@ -395,7 +447,7 @@ public function updateAdmin(Request $request, Event $event)
             ]);
             
         } catch (\Exception $e) {
-            \Log::error('Error updating event: ' . $e->getMessage());
+            Log::error('Error updating event: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
                 'message' => 'Erreur lors de la mise à jour de l\'événement'
@@ -427,7 +479,7 @@ public function updateAdmin(Request $request, Event $event)
             ]);
             
         } catch (\Exception $e) {
-            \Log::error('Error deleting event: ' . $e->getMessage());
+            Log::error('Error deleting event: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
                 'message' => 'Erreur lors de la suppression de l\'événement'
@@ -549,6 +601,55 @@ public function updateAdmin(Request $request, Event $event)
         } catch (\Exception $e) {
             Log::error('Erreur lors du chargement des abonnés: ' . $e->getMessage());
             return redirect()->back()->with('error', 'Erreur lors du chargement des abonnés.');
+        }
+    }
+
+    public function generateDescription(Request $request)
+    {
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'category' => 'required|string|max:100',
+        ]);
+
+        $client = new \GuzzleHttp\Client();
+        $apiKey = env('OPENROUTER_API_KEY');
+
+        $prompt = "Écris immédiatement une description simple, en français, pour un événement écologique intitulé '{$request->title}' dans la catégorie '{$request->category}'. Commence directement par du texte, sans aucun espace ni saut de ligne au début, et n'utilise pas '\\n' ni icônes. Assure-toi que la réponse soit complète, jamais vide, contienne au minimum 4 lignes distinctes, et termine toujours toutes les phrases.";
+
+        try {
+            $response = $client->post('https://openrouter.ai/api/v1/chat/completions', [
+                'headers' => [
+                    'Authorization' => "Bearer $apiKey",
+                    'Content-Type' => 'application/json',
+                ],
+                'json' => [
+                    "model" => "tngtech/deepseek-r1t2-chimera",
+                    "messages" => [
+                        ["role" => "user", "content" => $prompt]
+                    ],
+                    "max_tokens" => 600
+                ],
+            ]);
+
+            $data = json_decode($response->getBody(), true);
+
+            $choices = $data['choices'] ?? [];
+            $longestText = '';
+
+            foreach ($choices as $choice) {
+                $text = $choice['message']['content'] ?? '';
+                if (strlen($text) > strlen($longestText)) {
+                    $longestText = $text;
+                }
+            }
+
+            // Remove leading whitespace / newline
+            $longestText = ltrim($longestText);
+
+            return response()->json(['description' => $longestText]);
+
+        } catch (\Exception $e) {
+            return response()->json(['description' => '', 'error' => $e->getMessage()], 500);
         }
     }
 }

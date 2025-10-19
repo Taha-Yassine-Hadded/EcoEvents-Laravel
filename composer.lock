@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b92df717f266ebb767e151498268a813",
+    "content-hash": "a3afb991e51cba23ec5697665daa7e1a",
     "packages": [
         {
             "name": "brick/math",
@@ -1508,11 +1508,7 @@
             "description": "Yet another clock abstraction",
             "support": {
                 "issues": "https://github.com/lcobucci/clock/issues",
-<<<<<<< HEAD
-                "source": "https://github.com/lcobucci/clock/tree/2.2.0"
-=======
                 "source": "https://github.com/lcobucci/clock/tree/2.3.0"
->>>>>>> main
             },
             "funding": [
                 {
@@ -1524,11 +1520,7 @@
                     "type": "patreon"
                 }
             ],
-<<<<<<< HEAD
-            "time": "2022-04-19T19:34:17+00:00"
-=======
             "time": "2022-12-19T14:38:11+00:00"
->>>>>>> main
         },
         {
             "name": "lcobucci/jwt",

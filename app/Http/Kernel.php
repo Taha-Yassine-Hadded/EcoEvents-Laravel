@@ -1,11 +1,12 @@
 <?php
-/*
+
 namespace App\Http;
 
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
 class Kernel extends HttpKernel
 {
+    /*
     protected $middleware = [
         \App\Http\Middleware\TrustProxies::class,
         \Fruitcake\Cors\HandleCors::class,
@@ -45,5 +46,12 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'jwt.verify' => \App\Http\Middleware\VerifyJWT::class,
     ];
-}*/
+    */
+
+    protected $middlewareGroups = [
+        'web' => [
+            \App\Http\Middleware\VerifyCsrfToken::class,
+        ]
+    ];
+}
 ?>

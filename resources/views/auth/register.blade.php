@@ -415,8 +415,6 @@
 }
 </style>
 @endpush
-<<<<<<< HEAD
-=======
 
 @push('scripts')
 <script>
@@ -638,4 +636,3 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 @endpush
->>>>>>> main

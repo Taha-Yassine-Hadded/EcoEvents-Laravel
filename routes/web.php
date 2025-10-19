@@ -453,3 +453,6 @@ Route::get('/organizer/events/{event}/subscribers', [EventController::class, 'ev
 Route::prefix('api')->group(function () {
     Route::get('/events/{event}/registrations', [RegistrationController::class, 'getEventRegistrations'])->name('api.events.registrations');
 });
+
+Route::post('/generate-description', [EventController::class, 'generateDescription'])
+    ->name('admin.events.generate-description');
