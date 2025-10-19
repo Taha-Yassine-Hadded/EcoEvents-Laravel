@@ -1,6 +1,9 @@
 # --- Composer dependencies stage ---
 FROM composer:2 AS vendor
 WORKDIR /app
+# Ensure Composer resolves deps against PHP 8.2 to match runtime and lock constraints
+ENV COMPOSER_ALLOW_SUPERUSER=1 \
+    COMPOSER_PLATFORM_PHP=8.2.0
 COPY composer.json composer.lock ./
 RUN composer install --no-dev --prefer-dist --no-progress --no-interaction --optimize-autoloader
 
