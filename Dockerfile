@@ -21,10 +21,11 @@ COPY . .
 # Copy vendor from builder stage
 COPY --from=vendor /app/vendor ./vendor
 
-# Ensure correct permissions for runtime dirs
-RUN chown -R www-data:www-data storage bootstrap/cache \
-    && find storage -type d -exec chmod 775 {} + \
-    && find storage -type f -exec chmod 664 {} + \
+# Ensure correct permissions for runtime dirs (create if missing)
+RUN mkdir -p storage bootstrap/cache \
+    && chown -R www-data:www-data storage bootstrap/cache \
+    && (find storage -type d -exec chmod 775 {} + || true) \
+    && (find storage -type f -exec chmod 664 {} + || true) \
     && chmod -R 775 bootstrap/cache
 
 # Expose PHP-FPM port
