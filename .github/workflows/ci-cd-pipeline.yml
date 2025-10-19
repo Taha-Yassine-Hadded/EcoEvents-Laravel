@@ -201,10 +201,20 @@ jobs:
           echo "DB_DATABASE=ecoEvent_test" >> .env
           echo "DB_USERNAME=root" >> .env
           echo "DB_PASSWORD=password" >> .env
-          echo "CACHE_DRIVER=file" >> .env
-          echo "SESSION_DRIVER=file" >> .env
+          echo "CACHE_DRIVER=array" >> .env
+          echo "SESSION_DRIVER=array" >> .env
           echo "QUEUE_CONNECTION=sync" >> .env
           php artisan key:generate
+
+      - name: 🧰 Prepare storage and cache directories
+        run: |
+          mkdir -p storage/framework/cache/data
+          mkdir -p storage/framework/sessions
+          mkdir -p storage/framework/views
+          mkdir -p bootstrap/cache
+          php artisan config:clear || true
+          php artisan cache:clear || true
+          php artisan view:clear || true
 
       - name: 🗄️ Run migrations
         env:
