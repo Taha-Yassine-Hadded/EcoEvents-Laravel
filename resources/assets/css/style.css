@@ -296,7 +296,7 @@ Tags: consulting, finance, corporate, business, consultant, multipurpose, techno
    <!--Echofy Hero Area Css-->
 ==================================---*/
 .hero-area {
-    background: url(../images/home1/hero-bg-1.jpg);
+    background: url(../images/home1/hero-bg.jpg);
     background-repeat: no-repeat;
     background-position: center center;
     background-size: cover;
@@ -306,7 +306,7 @@ Tags: consulting, finance, corporate, business, consultant, multipurpose, techno
 }
 
 .hero-style.hero-area{
-    background: url(../images/home1/hero-bg2.jpg);
+    background: url(../images/home1/hero-bg.jpg);
 }
 
 .hero-content h4 {
@@ -2086,7 +2086,7 @@ p.footer-desc {
    <!--Echofy Hero Area Home Two-->
 ==================================---*/
 .hero-area.home-two {
-    background: url(../images/home2/hero-bg.jpg);
+    background: url(../images/home1/hero-bg.jpg);
     background-repeat: no-repeat;
     background-size: cover;
     height: 860px;
@@ -3278,7 +3278,7 @@ span.price {
 ==================================---*/
 
 .home-three.hero-area {
-    background: url(../images/home3/hero-bg.jpg);
+    background: url(../images/home1/hero-bg.jpg);
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center center;
@@ -4204,7 +4204,7 @@ span.price {
 ===================================================---*/
 
 .home-four.hero-area {
-    background: url(../images/home4/hero-bg.jpg);
+    background: url(../images/home1/hero-bg.jpg);
     background-repeat: no-repeat;
     background-position: center center;
     background-size: cover;
@@ -4989,7 +4989,7 @@ span.price {
 =========================================================---*/
 
 .home-five.hero-area {
-    background: url(../images/home5/hero-bg.jpg);
+    background: url(../images/home1/hero-bg.jpg);
     background-repeat: no-repeat;
     background-position: center center;
     background-size: cover;
@@ -5000,7 +5000,7 @@ span.price {
 }
 
 .home-five.hero-area.style-two {
-  background: url(../images/home5/hero-bg-2.jpg);
+  background: url(../images/home1/hero-bg.jpg);
 }
 
 
@@ -7710,7 +7710,7 @@ p.blog-list-desc {
 ======================================================---*/
 
 .hero-area.home-six {
-    background: url(../images/home6/hero-bg.png);
+    background: url(../images/home1/hero-bg.png);
     background-repeat: no-repeat;
     background-size: cover;
     height: 960px;
@@ -8803,7 +8803,7 @@ p.blog-list-desc {
    <!--Echofy Strat Hero Area home Seven  Css-->
 =========================================================---*/
 .hero-area.home-seven {
-    background: url(../images/home7/hero-bg.jpg);
+    background: url(../images/home1/hero-bg.jpg);
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center center;

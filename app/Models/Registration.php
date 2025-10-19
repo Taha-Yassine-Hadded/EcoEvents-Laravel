@@ -14,6 +14,20 @@ class Registration extends Model
         'user_id',
         'status',
         'registered_at',
+<<<<<<< HEAD
+=======
+        'role',
+        'skills',
+        'has_transportation',
+        'has_participated_before',
+        'emergency_contact',
+    ];
+
+    protected $casts = [
+        'registered_at' => 'datetime',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+>>>>>>> main
     ];
 
     /**

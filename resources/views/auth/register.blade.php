@@ -415,3 +415,227 @@
 }
 </style>
 @endpush
+<<<<<<< HEAD
+=======
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.querySelector('.registration-form');
+    const nameInput = document.getElementById('name');
+    const emailInput = document.getElementById('email');
+    const passwordInput = document.getElementById('password');
+    const passwordConfirmInput = document.getElementById('password_confirmation');
+    const phoneInput = document.getElementById('phone');
+    const cityInput = document.getElementById('city');
+    const addressInput = document.getElementById('address');
+    const bioInput = document.getElementById('bio');
+
+    // Validation en temps réel
+    function validateField(input, validationFn, errorMessage) {
+        const isValid = validationFn(input.value);
+        const feedback = input.parentNode.querySelector('.invalid-feedback') || createFeedback(input);
+        
+        if (isValid) {
+            input.classList.remove('is-invalid');
+            input.classList.add('is-valid');
+            feedback.style.display = 'none';
+        } else {
+            input.classList.remove('is-valid');
+            input.classList.add('is-invalid');
+            feedback.textContent = errorMessage;
+            feedback.style.display = 'block';
+        }
+        return isValid;
+    }
+
+    function createFeedback(input) {
+        const feedback = document.createElement('div');
+        feedback.className = 'invalid-feedback';
+        input.parentNode.appendChild(feedback);
+        return feedback;
+    }
+
+    // Validations spécifiques
+    const validations = {
+        name: (value) => value.length >= 2 && /^[a-zA-ZÀ-ÿ\s\-']+$/.test(value),
+        email: (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value),
+        password: (value) => {
+            return value.length >= 8 && 
+                   /[a-z]/.test(value) && 
+                   /[A-Z]/.test(value) && 
+                   /[0-9]/.test(value) && 
+                   /[^a-zA-Z0-9]/.test(value);
+        },
+        passwordConfirm: (value) => value === passwordInput.value,
+        phone: (value) => !value || /^[+]?[0-9\s\-\(\)]{8,20}$/.test(value),
+        city: (value) => !value || (value.length >= 2 && /^[a-zA-ZÀ-ÿ\s\-']+$/.test(value)),
+        address: (value) => !value || value.length >= 5,
+        bio: (value) => !value || (value.length >= 10 && value.length <= 1000)
+    };
+
+    const errorMessages = {
+        name: 'Le nom doit contenir au moins 2 caractères et uniquement des lettres.',
+        email: 'Veuillez saisir une adresse email valide.',
+        password: 'Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule, un chiffre et un symbole.',
+        passwordConfirm: 'La confirmation ne correspond pas au mot de passe.',
+        phone: 'Le numéro de téléphone n\'est pas valide.',
+        city: 'La ville doit contenir au moins 2 caractères et uniquement des lettres.',
+        address: 'L\'adresse doit contenir au moins 5 caractères.',
+        bio: 'La biographie doit contenir entre 10 et 1000 caractères.'
+    };
+
+    // Ajouter les écouteurs d'événements
+    if (nameInput) {
+        nameInput.addEventListener('blur', () => validateField(nameInput, validations.name, errorMessages.name));
+        nameInput.addEventListener('input', () => {
+            if (nameInput.classList.contains('is-invalid')) {
+                validateField(nameInput, validations.name, errorMessages.name);
+            }
+        });
+    }
+
+    if (emailInput) {
+        emailInput.addEventListener('blur', () => validateField(emailInput, validations.email, errorMessages.email));
+        emailInput.addEventListener('input', () => {
+            if (emailInput.classList.contains('is-invalid')) {
+                validateField(emailInput, validations.email, errorMessages.email);
+            }
+        });
+    }
+
+    if (passwordInput) {
+        passwordInput.addEventListener('blur', () => validateField(passwordInput, validations.password, errorMessages.password));
+        passwordInput.addEventListener('input', () => {
+            if (passwordInput.classList.contains('is-invalid')) {
+                validateField(passwordInput, validations.password, errorMessages.password);
+            }
+            // Revalider la confirmation si elle existe
+            if (passwordConfirmInput && passwordConfirmInput.value) {
+                validateField(passwordConfirmInput, validations.passwordConfirm, errorMessages.passwordConfirm);
+            }
+        });
+    }
+
+    if (passwordConfirmInput) {
+        passwordConfirmInput.addEventListener('blur', () => validateField(passwordConfirmInput, validations.passwordConfirm, errorMessages.passwordConfirm));
+        passwordConfirmInput.addEventListener('input', () => {
+            if (passwordConfirmInput.classList.contains('is-invalid')) {
+                validateField(passwordConfirmInput, validations.passwordConfirm, errorMessages.passwordConfirm);
+            }
+        });
+    }
+
+    if (phoneInput) {
+        phoneInput.addEventListener('blur', () => validateField(phoneInput, validations.phone, errorMessages.phone));
+    }
+
+    if (cityInput) {
+        cityInput.addEventListener('blur', () => validateField(cityInput, validations.city, errorMessages.city));
+    }
+
+    if (addressInput) {
+        addressInput.addEventListener('blur', () => validateField(addressInput, validations.address, errorMessages.address));
+    }
+
+    if (bioInput) {
+        bioInput.addEventListener('blur', () => validateField(bioInput, validations.bio, errorMessages.bio));
+        bioInput.addEventListener('input', () => {
+            const charCount = bioInput.value.length;
+            let counter = bioInput.parentNode.querySelector('.char-counter');
+            if (!counter) {
+                counter = document.createElement('small');
+                counter.className = 'char-counter text-muted';
+                bioInput.parentNode.appendChild(counter);
+            }
+            counter.textContent = `${charCount}/1000 caractères`;
+            counter.style.color = charCount > 1000 ? '#dc3545' : '#6c757d';
+        });
+    }
+
+    // Validation avant soumission
+    form.addEventListener('submit', function(e) {
+        let isFormValid = true;
+        
+        // Valider tous les champs requis
+        if (nameInput && !validateField(nameInput, validations.name, errorMessages.name)) {
+            isFormValid = false;
+        }
+        if (emailInput && !validateField(emailInput, validations.email, errorMessages.email)) {
+            isFormValid = false;
+        }
+        if (passwordInput && !validateField(passwordInput, validations.password, errorMessages.password)) {
+            isFormValid = false;
+        }
+        if (passwordConfirmInput && !validateField(passwordConfirmInput, validations.passwordConfirm, errorMessages.passwordConfirm)) {
+            isFormValid = false;
+        }
+        
+        // Valider les champs optionnels s'ils sont remplis
+        if (phoneInput && phoneInput.value && !validateField(phoneInput, validations.phone, errorMessages.phone)) {
+            isFormValid = false;
+        }
+        if (cityInput && cityInput.value && !validateField(cityInput, validations.city, errorMessages.city)) {
+            isFormValid = false;
+        }
+        if (addressInput && addressInput.value && !validateField(addressInput, validations.address, errorMessages.address)) {
+            isFormValid = false;
+        }
+        if (bioInput && bioInput.value && !validateField(bioInput, validations.bio, errorMessages.bio)) {
+            isFormValid = false;
+        }
+
+        if (!isFormValid) {
+            e.preventDefault();
+            // Faire défiler vers le premier champ invalide
+            const firstInvalid = form.querySelector('.is-invalid');
+            if (firstInvalid) {
+                firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                firstInvalid.focus();
+            }
+        }
+    });
+
+    // Indicateur de force du mot de passe
+    if (passwordInput) {
+        const strengthIndicator = document.createElement('div');
+        strengthIndicator.className = 'password-strength mt-2';
+        passwordInput.parentNode.appendChild(strengthIndicator);
+
+        passwordInput.addEventListener('input', function() {
+            const password = this.value;
+            let strength = 0;
+            let feedback = [];
+
+            if (password.length >= 8) strength++;
+            else feedback.push('Au moins 8 caractères');
+
+            if (/[a-z]/.test(password)) strength++;
+            else feedback.push('Une minuscule');
+
+            if (/[A-Z]/.test(password)) strength++;
+            else feedback.push('Une majuscule');
+
+            if (/[0-9]/.test(password)) strength++;
+            else feedback.push('Un chiffre');
+
+            if (/[^a-zA-Z0-9]/.test(password)) strength++;
+            else feedback.push('Un symbole');
+
+            const colors = ['#dc3545', '#fd7e14', '#ffc107', '#20c997', '#28a745'];
+            const labels = ['Très faible', 'Faible', 'Moyen', 'Fort', 'Très fort'];
+
+            strengthIndicator.innerHTML = `
+                <div class="progress" style="height: 5px;">
+                    <div class="progress-bar" style="width: ${strength * 20}%; background-color: ${colors[strength - 1] || '#dc3545'};"></div>
+                </div>
+                <small style="color: ${colors[strength - 1] || '#dc3545'};">
+                    ${labels[strength - 1] || 'Très faible'} ${feedback.length ? '- Manque: ' + feedback.join(', ') : ''}
+                </small>
+            `;
+        });
+    }
+});
+</script>
+@endpush
+>>>>>>> main

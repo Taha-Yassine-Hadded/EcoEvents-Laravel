@@ -36,6 +36,15 @@
                                 @enderror
                             </div>
 
+<<<<<<< HEAD
+=======
+                            <div class="form-group text-right mb-3">
+                                <a href="{{ route('password.request') }}" class="forgot-password-link">
+                                    <i class="bi bi-key"></i> Mot de passe oublié ?
+                                </a>
+                            </div>
+
+>>>>>>> main
                             <div class="form-group text-center">
                                 <div class="echofy-button style-five">
                                     <button type="submit">Se connecter<i class="bi bi-arrow-right-short"></i></button>
@@ -128,6 +137,25 @@
         .text-center a:hover {
             color: #218838;
         }
+<<<<<<< HEAD
+=======
+
+        .forgot-password-link {
+            color: #6c757d;
+            font-size: 14px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .forgot-password-link:hover {
+            color: #28a745;
+            text-decoration: underline;
+        }
+
+        .forgot-password-link i {
+            margin-right: 5px;
+        }
+>>>>>>> main
     </style>
 @endpush
 
@@ -168,10 +196,29 @@
                     // Stocker le token dans un cookie
                     document.cookie = `jwt_token=${data.token}; path=/; max-age=86400; SameSite=Lax`;
 
+<<<<<<< HEAD
                     // Rediriger sans token dans l'URL
                     if (data.user.role === 'admin') {
                         window.location.href = '{{ route("admin.dashboard") }}';
                     } else {
+=======
+                    // Rediriger selon le rôle avec messages personnalisés
+                    if (data.user.role === 'admin') {
+                        // Stocker le message de bienvenue pour l'admin
+                        localStorage.setItem('welcome_message', 'Bienvenue Admin ! Vous avez accès au panneau d\'administration.');
+                        window.location.href = '{{ route("admin.dashboard") }}';
+                    } else if (data.user.role === 'organisateur') {
+                        // Stocker le message de bienvenue pour l'organisateur
+                        localStorage.setItem('welcome_message', 'Bienvenue Organisateur ! Vous pouvez maintenant gérer vos événements.');
+                        window.location.href = '{{ route("organizer.home") }}';
+                    } else if (data.user.role === 'participant') {
+                        // Stocker le message de bienvenue pour le participant
+                        localStorage.setItem('welcome_message', 'Bienvenue Participant ! Découvrez les événements écologiques près de chez vous.');
+                        window.location.href = '{{ route("participant.home") }}';
+                    } else {
+                        // Utilisateur par défaut
+                        localStorage.setItem('welcome_message', 'Bienvenue ! Explorez notre plateforme EcoEvents.');
+>>>>>>> main
                         window.location.href = '{{ route("home") }}';
                     }
                 } else {

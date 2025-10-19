@@ -11,7 +11,12 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        //
+        $middleware->alias([
+            'jwt.optional' => \App\Http\Middleware\OptionalJWT::class,
+            'role.admin' => \App\Http\Middleware\RoleGuard::class . ':admin',
+            'role.organizer' => \App\Http\Middleware\RoleGuard::class . ':organizer',
+            'role.admin,organizer' => \App\Http\Middleware\RoleGuard::class . ':admin,organizer',
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

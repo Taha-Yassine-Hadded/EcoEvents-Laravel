@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Event;
 use App\Models\Category;
+use App\Models\Registration;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
@@ -89,12 +91,20 @@ class EventController extends Controller
         }
     }
 
-    public function backIndex()
+    public function backIndex(Request $request)
     {
         try {
-            $events = Event::with('category', 'organizer')
-                ->orderBy('created_at', 'desc')
-                ->paginate(10);
+            $this->authorizeRole($request, 'admin,organizer');
+            
+            $user = $request->auth;
+            $query = Event::with('category', 'organizer');
+            
+            // If user is organizer, only show their events
+            if ($user->role === 'organizer') {
+                $query->where('organizer_id', $user->id);
+            }
+            
+            $events = $query->orderBy('created_at', 'desc')->paginate(10);
 
             // Prepare JS-friendly data
             $eventsForJs = $events->map(function($event) {
@@ -201,7 +211,7 @@ class EventController extends Controller
 
     public function createAdmin(Request $request)
     {
-        $this->authorizeRole($request, 'admin'); // Changed to allow admins
+        $this->authorizeRole($request, 'admin,organizer'); // Allow both admins and organizers
 
         try {
             $categories = Category::all();
@@ -214,7 +224,7 @@ class EventController extends Controller
 
     public function storeAdmin(Request $request)
     {
-    $this->authorizeRole($request, 'admin');
+    $this->authorizeRole($request, 'admin,organizer');
 
     try {
         Log::info('StoreAdmin Request Data: ', $request->all());
@@ -224,6 +234,8 @@ class EventController extends Controller
             'description' => 'nullable|string',
             'date' => ['required', 'date', 'after_or_equal:' . now()->toDateString()],
             'location' => 'required|string|max:255',
+            'latitude' => 'nullable|numeric|between:-90,90',
+            'longitude' => 'nullable|numeric|between:-180,180',
             'category_id' => 'required|exists:categories,id',
             'status' => 'required|in:ongoing,upcoming',
             'img' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
@@ -251,10 +263,11 @@ class EventController extends Controller
     // -------------------
     // BackOffice: Admin event details
     // -------------------
-    public function showAdmin(Event $event)
+    public function showAdmin(Request $request, Event $event)
     {
         try {
-            $this->authorizeRole(request(), 'admin'); // Ensure only admins can view
+            $this->authorizeRole($request, 'admin,organizer'); // Allow both admins and organizers
+            $this->authorizeOrganizerEvent($request, $event); // Check if organizer owns the event
 
             return view('pages.backOffice.events.show', compact('event'));
         } catch (\Exception $e) {
@@ -265,7 +278,8 @@ class EventController extends Controller
 
 public function editAdmin(Request $request, Event $event)
 {
-    $this->authorizeRole($request, 'admin');
+    $this->authorizeRole($request, 'admin,organizer');
+    $this->authorizeOrganizerEvent($request, $event);
 
     try {
         $categories = Category::all();
@@ -278,22 +292,22 @@ public function editAdmin(Request $request, Event $event)
 
 public function updateAdmin(Request $request, Event $event)
 {
-    $this->authorizeRole($request, 'admin');
-
+    $this->authorizeRole($request, 'admin,organizer');
+    $this->authorizeOrganizerEvent($request, $event);
     try {
         Log::info('UpdateAdmin Request Data: ', $request->all());
-
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
             'date' => ['required', 'date', 'after_or_equal:' . now()->toDateString()],
             'location' => 'required|string|max:255',
+            'latitude' => 'nullable|numeric|between:-90,90',
+            'longitude' => 'nullable|numeric|between:-180,180',
             'category_id' => 'required|exists:categories,id',
             'status' => 'required|in:completed,cancelled,ongoing,upcoming',
             'img' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
             'capacity' => 'nullable|integer|min:0',
         ]);
-
         if ($request->hasFile('img')) {
             if ($event->img && Storage::disk('public')->exists($event->img)) {
                 Storage::disk('public')->delete($event->img);
@@ -301,9 +315,7 @@ public function updateAdmin(Request $request, Event $event)
             $path = $request->file('img')->store('events', 'public');
             $validated['img'] = $path;
         }
-
         $event->update($validated);
-
         return response()->json(['success' => true, 'redirect' => route('admin.events.index')]);
     } catch (\Illuminate\Validation\ValidationException $e) {
         Log::error('Validation Errors: ', $e->validator->errors()->toArray());
@@ -316,7 +328,8 @@ public function updateAdmin(Request $request, Event $event)
 
     public function destroyAdmin(Request $request, Event $event)
     {
-        $this->authorizeRole($request, 'admin'); // Changed to allow admins
+        $this->authorizeRole($request, 'admin,organizer');
+        $this->authorizeOrganizerEvent($request, $event);
 
         try {
             if ($event->img && Storage::disk('public')->exists($event->img)) {
@@ -427,10 +440,16 @@ public function updateAdmin(Request $request, Event $event)
     // -------------------
     // Authorization helpers using JWT user
     // -------------------
-    private function authorizeRole(Request $request, $role)
+    private function authorizeRole(Request $request, $roles)
     {
-        if ($request->auth->role !== 'admin' && $request->auth->role !== $role) {
-            abort(403, 'Accès interdit');
+        $user = $request->auth;
+        if (!$user) {
+            abort(401, 'Non authentifié');
+        }
+
+        $allowedRoles = array_map('trim', explode(',', $roles));
+        if (!in_array($user->role, $allowedRoles)) {
+            abort(403, 'Accès interdit : rôle insuffisant');
         }
     }
 
@@ -440,5 +459,96 @@ public function updateAdmin(Request $request, Event $event)
             abort(403, 'Accès interdit');
         }
         // Admins can bypass this check
+    }
+
+    /**
+     * Organizer Dashboard - View and manage events
+     */
+    public function organizerDashboard(Request $request)
+    {
+        try {
+            $user = $request->auth ?? JWTAuth::user() ?? auth()->user();
+            
+            if (!$user || $user->role !== 'organizer') {
+                return redirect()->route('login')->with('error', 'Accès non autorisé.');
+            }
+
+            // Get organizer's events with pagination and search
+            $query = Event::with(['category', 'registrations'])
+                ->where('organizer_id', $user->id);
+            
+            // Add search functionality
+            if ($request->has('search') && !empty($request->search)) {
+                $searchTerm = $request->search;
+                $query->where(function($q) use ($searchTerm) {
+                    $q->where('title', 'like', "%{$searchTerm}%")
+                      ->orWhere('description', 'like', "%{$searchTerm}%")
+                      ->orWhere('location', 'like', "%{$searchTerm}%");
+                });
+            }
+            
+            // Add status filter
+            if ($request->has('status') && !empty($request->status)) {
+                $query->where('status', $request->status);
+            }
+            
+            $events = $query->orderBy('created_at', 'desc')->paginate(6);
+            
+            // Get statistics
+            $totalEvents = Event::where('organizer_id', $user->id)->count();
+            $upcomingEvents = Event::where('organizer_id', $user->id)->where('status', 'upcoming')->count();
+            $ongoingEvents = Event::where('organizer_id', $user->id)->where('status', 'ongoing')->count();
+            $completedEvents = Event::where('organizer_id', $user->id)->where('status', 'completed')->count();
+            $totalSubscribers = Registration::whereHas('event', function($q) use ($user) {
+                $q->where('organizer_id', $user->id);
+            })->count();
+
+            return view('pages.frontOffice.organizer.dashboard', compact(
+                'events', 'totalEvents', 'upcomingEvents', 'ongoingEvents', 
+                'completedEvents', 'totalSubscribers'
+            ));
+        } catch (\Exception $e) {
+            Log::error('Erreur lors du chargement du tableau de bord organisateur: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Erreur lors du chargement du tableau de bord.');
+        }
+    }
+
+    /**
+     * View subscribers for a specific event
+     */
+    public function eventSubscribers(Request $request, Event $event)
+    {
+        try {
+            $user = $request->auth ?? JWTAuth::user() ?? auth()->user();
+            
+            if (!$user || $user->role !== 'organizer') {
+                return redirect()->route('login')->with('error', 'Accès non autorisé.');
+            }
+
+            // Check if the event belongs to the organizer
+            if ($event->organizer_id !== $user->id) {
+                abort(403, 'Accès interdit à cet événement.');
+            }
+
+            // Get subscribers with pagination and search
+            $query = Registration::with(['user', 'event'])
+                ->where('event_id', $event->id);
+            
+            // Add search functionality
+            if ($request->has('search') && !empty($request->search)) {
+                $searchTerm = $request->search;
+                $query->whereHas('user', function($q) use ($searchTerm) {
+                    $q->where('name', 'like', "%{$searchTerm}%")
+                      ->orWhere('email', 'like', "%{$searchTerm}%");
+                });
+            }
+            
+            $subscribers = $query->orderBy('created_at', 'desc')->paginate(10);
+            
+            return view('pages.frontOffice.organizer.event-subscribers', compact('event', 'subscribers'));
+        } catch (\Exception $e) {
+            Log::error('Erreur lors du chargement des abonnés: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Erreur lors du chargement des abonnés.');
+        }
     }
 }

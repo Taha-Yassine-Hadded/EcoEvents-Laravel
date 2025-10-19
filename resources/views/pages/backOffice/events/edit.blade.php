@@ -2,6 +2,8 @@
 
 @section('title', 'Modifier un Événement - Echofy')
 
+@vite(['resources/js/app.js', 'resources/css/app.css'])
+
 @section('content')
     <!-- Content Header -->
     <div class="content-header">
@@ -63,16 +65,38 @@
                             </div>
 
                             <div class="form-group">
-                                <label for="date">Date <span class="required">*</span></label>
-                                <input type="date" id="date" name="date" class="form-control" value="{{ old('date', $event->date?->toDateString()) }}" required>
+                                <label for="date">Date et Heure <span class="required">*</span></label>
+                                <input type="datetime-local" id="date" name="date" class="form-control" value="{{ old('date', $event->date ? $event->date->format('Y-m-d\TH:i') : '') }}" required>
                                 <div class="error-message" id="dateError"></div>
                             </div>
 
                             <div class="form-group">
                                 <label for="location">Lieu <span class="required">*</span></label>
-                                <input type="text" id="location" name="location" class="form-control" value="{{ old('location', $event->location) }}" required>
+                                <div class="location-input-container">
+                                    <input type="text" id="location" name="location" class="form-control" value="{{ old('location', $event->location) }}" required placeholder="Saisissez l'adresse ou utilisez la carte">
+                                    <button type="button" id="useMapBtn" class="btn btn-outline-secondary btn-sm">
+                                        <i class="fas fa-map-marker-alt"></i> Utiliser la carte
+                                    </button>
+                                </div>
                                 <div class="character-count"><span id="locationCount">0</span>/255 caractères</div>
                                 <div class="error-message" id="locationError"></div>
+                                
+                                <!-- Hidden fields for coordinates -->
+                                <input type="hidden" id="latitude" name="latitude" value="{{ old('latitude', $event->latitude) }}">
+                                <input type="hidden" id="longitude" name="longitude" value="{{ old('longitude', $event->longitude) }}">
+                                
+                                <!-- Map container -->
+                                <div id="mapContainer" class="map-container" style="display: none;">
+                                    <div id="map" style="height: 300px; width: 100%;"></div>
+                                    <div class="map-controls">
+                                        <button type="button" id="confirmLocationBtn" class="btn btn-primary btn-sm">
+                                            <i class="fas fa-check"></i> Confirmer l'emplacement
+                                        </button>
+                                        <button type="button" id="cancelMapBtn" class="btn btn-secondary btn-sm">
+                                            <i class="fas fa-times"></i> Annuler
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
 
                             <div class="form-group">
@@ -87,7 +111,7 @@
                                     <option value="upcoming" {{ old('status', $event->status) === 'upcoming' ? 'selected' : '' }}>À venir</option>
                                     <option value="ongoing" {{ old('status', $event->status) === 'ongoing' ? 'selected' : '' }}>Actif</option>
                                     <option value="completed" {{ old('status', $event->status) === 'completed' ? 'selected' : '' }}>Terminé</option>
-                                    <option value="cancelled" {{ old('status', $event->status) === 'cancelled' ? 'selected' : '' }}>Cancelled</option>
+                                    <option value="cancelled" {{ old('status', $event->status) === 'cancelled' ? 'selected' : '' }}>Annulé</option>
                                 </select>
                                 <div class="error-message" id="statusError"></div>
                             </div>
@@ -191,6 +215,35 @@
             display: none;
         }
 
+        .location-input-container {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .location-input-container input {
+            flex: 1;
+        }
+
+        .map-container {
+            margin-top: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .map-controls {
+            padding: 10px;
+            background-color: #f8f9fa;
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        #map {
+            border-radius: 0;
+        }
+
         .current-image {
             margin-bottom: 1rem;
         }
@@ -281,6 +334,10 @@
 @push('scripts')
     <script>
         let uploadedFiles = [];
+        let map = null;
+        let marker;
+        let vectorSource;
+        let vectorLayer;
 
         // Compteurs de caractères
         function setupCharacterCounters() {
@@ -299,6 +356,9 @@
                     counterElement.textContent = count;
                     counterElement.parentElement.classList.toggle('limit', count > max);
                 });
+
+                // Initialize counter on page load
+                counterElement.textContent = inputElement.value.length;
             });
         }
 
@@ -306,7 +366,6 @@
         function validateForm() {
             let isValid = true;
 
-            // Validation du titre
             const title = document.getElementById('title');
             if (!title.value.trim()) {
                 showError('titleError', 'Le titre est requis');
@@ -318,7 +377,6 @@
                 hideError('titleError');
             }
 
-            // Validation de la description
             const description = document.getElementById('description');
             if (description.value.length > 1000) {
                 showError('descriptionError', 'La description ne peut pas dépasser 1000 caractères');
@@ -327,22 +385,21 @@
                 hideError('descriptionError');
             }
 
-            // Validation de la date
             const date = document.getElementById('date');
             if (!date.value) {
-                showError('dateError', 'La date est requise');
+                showError('dateError', 'La date et l\'heure sont requises');
                 isValid = false;
             } else {
-                const today = new Date().toISOString().split('T')[0];
-                if (date.value < today) {
-                    showError('dateError', 'La date doit être aujourd\'hui ou après');
+                const selectedDateTime = new Date(date.value);
+                const now = new Date();
+                if (selectedDateTime < now) {
+                    showError('dateError', 'La date et l\'heure doivent être dans le futur');
                     isValid = false;
                 } else {
                     hideError('dateError');
                 }
             }
 
-            // Validation du lieu
             const location = document.getElementById('location');
             if (!location.value.trim()) {
                 showError('locationError', 'Le lieu est requis');
@@ -354,7 +411,6 @@
                 hideError('locationError');
             }
 
-            // Validation de la capacité
             const capacity = document.getElementById('capacity');
             if (capacity.value < 0) {
                 showError('capacityError', 'La capacité ne peut pas être négative');
@@ -363,16 +419,14 @@
                 hideError('capacityError');
             }
 
-            // Validation du statut
             const status = document.getElementById('status');
             if (!status.value) {
-                showError('statusError', 'Le statut est requise');
+                showError('statusError', 'Le statut est requis');
                 isValid = false;
             } else {
                 hideError('statusError');
             }
 
-            // Validation de la catégorie
             const category_id = document.getElementById('category_id');
             if (!category_id.value) {
                 showError('category_idError', 'La catégorie est requise');
@@ -381,7 +435,6 @@
                 hideError('category_idError');
             }
 
-            // Validation de l'image
             const img = document.getElementById('img');
             if (img.files.length > 0 && !['image/jpeg', 'image/png', 'image/jpg', 'image/gif', 'image/webp'].includes(img.files[0].type)) {
                 showError('imgError', 'Format d\'image invalide (JPEG, PNG, JPG, GIF, WEBP uniquement)');
@@ -399,7 +452,7 @@
         function showError(elementId, message) {
             const errorElement = document.getElementById(elementId);
             if (errorElement) {
-                errorElement.textContent = message; // Overwrite with the latest error
+                errorElement.textContent = message;
                 errorElement.style.display = 'block';
                 const input = document.getElementById(elementId.replace('Error', ''));
                 if (input) input.classList.add('error');
@@ -419,7 +472,6 @@
         document.getElementById('eventForm').addEventListener('submit', function(e) {
             e.preventDefault();
 
-            // Clear existing server-side errors before validation
             ['title', 'description', 'date', 'location', 'capacity', 'status', 'category_id', 'img'].forEach(field => {
                 hideError(`${field}Error`);
             });
@@ -443,11 +495,13 @@
             }
 
             const formData = new FormData();
-            formData.append('_method', 'PUT'); // Simulate PUT request
+            formData.append('_method', 'PUT');
             formData.append('title', document.getElementById('title').value);
             formData.append('description', document.getElementById('description').value);
             formData.append('date', document.getElementById('date').value);
             formData.append('location', document.getElementById('location').value);
+            formData.append('latitude', document.getElementById('latitude').value || '');
+            formData.append('longitude', document.getElementById('longitude').value || '');
             formData.append('capacity', document.getElementById('capacity').value || '');
             formData.append('status', document.getElementById('status').value);
             formData.append('category_id', document.getElementById('category_id').value);
@@ -481,11 +535,10 @@
             })
             .catch(error => {
                 if (error.status === 422 && error.data && error.data.messages) {
-                    // Display all validation errors for each field
                     Object.keys(error.data.messages).forEach(field => {
                         const errorElement = document.getElementById(`${field}Error`);
                         if (errorElement) {
-                            errorElement.textContent = error.data.messages[field].join('\n'); // Show all errors with newlines
+                            errorElement.textContent = error.data.messages[field].join('\n');
                             errorElement.style.display = 'block';
                             const input = document.getElementById(field);
                             if (input) input.classList.add('error');
@@ -507,6 +560,149 @@
             if (confirm('Êtes-vous sûr de vouloir annuler ? Vos modifications seront perdues.')) {
                 window.location.href = '{{ route("admin.events.index") }}';
             }
+        }
+
+        // Initialize map when use map button is clicked
+        document.getElementById('useMapBtn').addEventListener('click', function() {
+            document.getElementById('mapContainer').style.display = 'block';
+            setTimeout(() => initMap(), 0); // Ensure DOM is ready
+        });
+
+        // Cancel map
+        document.getElementById('cancelMapBtn').addEventListener('click', function() {
+            document.getElementById('mapContainer').style.display = 'none';
+            if (map) {
+                map.setTarget(null); // Unbind map from DOM
+                map = null;
+                vectorSource = null;
+                vectorLayer = null;
+                marker = null;
+                document.getElementById('map').innerHTML = ''; // Clear map container
+            }
+        });
+
+        // Confirm location
+        document.getElementById('confirmLocationBtn').addEventListener('click', function() {
+            if (marker) {
+                const coordinates = marker.getGeometry().getCoordinates();
+                const [lon, lat] = window.ol.toLonLat(coordinates); // Transform to EPSG:4326
+                document.getElementById('latitude').value = lat;
+                document.getElementById('longitude').value = lon;
+                reverseGeocode(lat, lon);
+            } else {
+                alert('Veuillez sélectionner un emplacement sur la carte.');
+            }
+        });
+
+        function initMap() {
+            if (map) {
+                map.setTarget(null);
+                document.getElementById('map').innerHTML = '';
+            }
+
+            // Create vector source and layer for markers
+            vectorSource = new window.ol.VectorSource();
+            vectorLayer = new window.ol.VectorLayer({
+                source: vectorSource
+            });
+
+            // Check for existing coordinates (for edit mode)
+            const latitudeInput = document.getElementById('latitude').value;
+            const longitudeInput = document.getElementById('longitude').value;
+            let center = [10.1936, 36.8663]; // Default to Ariana, Tunis, Tunisia
+
+            if (latitudeInput && longitudeInput && !isNaN(latitudeInput) && !isNaN(longitudeInput)) {
+                center = [parseFloat(longitudeInput), parseFloat(latitudeInput)];
+            }
+
+            // Create map with French OSM tiles
+            map = new window.ol.Map({
+                target: 'map',
+                layers: [
+                    new window.ol.TileLayer({
+                        source: new window.ol.OSM({
+                            url: 'https://{a-c}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png' // French OSM tile server
+                        })
+                    }),
+                    vectorLayer
+                ],
+                controls: window.ol.defaultControls({
+                    attribution: false,
+                    rotate: false,
+                    zoom: true
+                }),
+                view: new window.ol.View({
+                    center: window.ol.fromLonLat(center),
+                    zoom: 13
+                })
+            });
+
+            // Place marker if editing with existing coordinates
+            if (latitudeInput && longitudeInput && !isNaN(latitudeInput) && !isNaN(longitudeInput)) {
+                const coordinates = window.ol.fromLonLat([parseFloat(longitudeInput), parseFloat(latitudeInput)]);
+                marker = new window.ol.Feature({
+                    geometry: new window.ol.Point(coordinates)
+                });
+                marker.setStyle(new window.ol.Style({
+                    image: new window.ol.Icon({
+                        anchor: [0.5, 1],
+                        src: 'data:image/svg+xml;base64,' + btoa(`
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" fill="#ff0000"/>
+                            </svg>
+                        `),
+                        scale: 1.5
+                    })
+                }));
+                vectorSource.addFeature(marker);
+            }
+
+            // Add click event to map
+            map.on('singleclick', function(event) {
+                const coordinates = event.coordinate;
+                vectorSource.clear();
+                marker = new window.ol.Feature({
+                    geometry: new window.ol.Point(coordinates)
+                });
+                marker.setStyle(new window.ol.Style({
+                    image: new window.ol.Icon({
+                        anchor: [0.5, 1],
+                        src: 'data:image/svg+xml;base64,' + btoa(`
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" fill="#ff0000"/>
+                            </svg>
+                        `),
+                        scale: 1.5
+                    })
+                }));
+                vectorSource.addFeature(marker);
+            });
+        }
+
+        function reverseGeocode(lat, lon) {
+            fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&accept-language=fr`)
+                .then(response => response.json())
+                .then(data => {
+                    const locationInput = document.getElementById('location');
+                    if (data.display_name) {
+                        locationInput.value = data.display_name;
+                    } else {
+                        locationInput.value = `Lat: ${lat.toFixed(6)}, Lon: ${lon.toFixed(6)}`;
+                    }
+                    document.getElementById('mapContainer').style.display = 'none';
+                    const count = locationInput.value.length;
+                    document.getElementById('locationCount').textContent = count;
+                    document.getElementById('locationCount').parentElement.classList.toggle('limit', count > 255);
+                })
+                .catch(error => {
+                    console.error('Reverse geocoding failed:', error);
+                    const locationInput = document.getElementById('location');
+                    locationInput.value = `Lat: ${lat.toFixed(6)}, Lon: ${lon.toFixed(6)}`;
+                    document.getElementById('mapContainer').style.display = 'none';
+                    const count = locationInput.value.length;
+                    document.getElementById('locationCount').textContent = count;
+                    document.getElementById('locationCount').parentElement.classList.toggle('limit', count > 255);
+                });
         }
 
         // Initialisation
