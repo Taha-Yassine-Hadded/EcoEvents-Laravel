@@ -5,7 +5,7 @@ WORKDIR /app
 ENV COMPOSER_ALLOW_SUPERUSER=1 \
     COMPOSER_PLATFORM_PHP=8.2.0
 COPY composer.json composer.lock ./
-RUN composer install --no-dev --prefer-dist --no-progress --no-interaction --optimize-autoloader --ignore-platform-req=php
+RUN composer install --no-dev --prefer-dist --no-progress --no-interaction --optimize-autoloader --ignore-platform-req=php --no-scripts
 
 # --- Application runtime stage ---
 FROM php:8.2-fpm-alpine
