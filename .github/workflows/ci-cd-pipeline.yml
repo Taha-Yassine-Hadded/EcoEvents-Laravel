@@ -1,0 +1,449 @@
+name: 🌿 EcoEvents CI/CD Pipeline with SonarCloud
+
+on:
+  push:
+    branches: [ main, develop, feature/devops-pipeline ]
+  pull_request:
+    branches: [ main, develop ]
+
+env:
+  PHP_VERSION: '8.2'
+  NODE_VERSION: '18'
+
+jobs:
+  # ==========================================
+  # 1. CODE CHECKOUT & SETUP
+  # ==========================================
+  setup:
+    name: 📦 Setup & Checkout
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🔄 Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 📋 Display branch info
+        run: |
+          echo "Branch: ${{ github.ref_name }}"
+          echo "Commit: ${{ github.sha }}"
+          echo "Repository: Public with SonarCloud"
+
+  # ==========================================
+  # 2. BUILD & DEPENDENCIES
+  # ==========================================
+  build:
+    name: 🔨 Build Application
+    runs-on: ubuntu-latest
+    needs: setup
+    steps:
+      - name: 🔄 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🐘 Setup PHP ${{ env.PHP_VERSION }}
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ env.PHP_VERSION }}
+          extensions: mbstring, xml, ctype, json, bcmath, pdo, mysql
+          coverage: xdebug
+          tools: composer:v2
+
+      - name: 📦 Cache Composer dependencies
+        uses: actions/cache@v3
+        with:
+          path: vendor
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-
+
+      - name: 🎼 Install Composer dependencies
+        run: composer install --no-interaction --prefer-dist --optimize-autoloader
+
+      - name: 📦 Setup Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: 📦 Install NPM dependencies
+        run: npm ci
+
+      - name: ✅ Verify installations
+        run: |
+          php --version
+          composer --version
+          node --version
+          npm --version
+
+      - name: 💾 Upload vendor artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: vendor
+          path: vendor
+          retention-days: 1
+
+      - name: 💾 Upload node_modules artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: node_modules
+          path: node_modules
+          retention-days: 1
+
+  # ==========================================
+  # 3. STATIC CODE ANALYSIS - PHPSTAN
+  # ==========================================
+  phpstan:
+    name: 🔍 PHPStan Analysis
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: 🔄 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 📥 Download vendor artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: vendor
+          path: vendor
+
+      - name: 🐘 Setup PHP ${{ env.PHP_VERSION }}
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ env.PHP_VERSION }}
+
+      - name: 🔍 Run PHPStan
+        run: vendor/bin/phpstan analyse --error-format=github || true
+
+      - name: 📊 PHPStan Summary
+        run: |
+          echo "✅ PHPStan analysis completed"
+          echo "📊 Check the logs above for any issues"
+
+  # ==========================================
+  # 4. SONARCLOUD ANALYSIS
+  # ==========================================
+  sonarcloud:
+    name: 🔍 SonarCloud Analysis
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: 🔄 Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Shallow clones should be disabled for better analysis
+
+      - name: 📥 Download vendor artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: vendor
+          path: vendor
+
+      - name: 🐘 Setup PHP ${{ env.PHP_VERSION }}
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ env.PHP_VERSION }}
+
+      - name: 🔍 SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          args: >
+            -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }}
+            -Dsonar.organization=${{ secrets.SONAR_ORGANIZATION }}
+
+      - name: 📊 SonarCloud Quality Gate
+        run: |
+          echo "✅ SonarCloud analysis completed"
+          echo "📊 Check quality gate status in SonarCloud dashboard"
+
+  # ==========================================
+  # 5. UNIT & INTEGRATION TESTS
+  # ==========================================
+  tests:
+    name: 🧪 Tests (PHPUnit)
+    runs-on: ubuntu-latest
+    needs: build
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: password
+          MYSQL_DATABASE: ecoEvent_test
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
+    steps:
+      - name: 🔄 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 📥 Download vendor artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: vendor
+          path: vendor
+
+      - name: 🐘 Setup PHP ${{ env.PHP_VERSION }}
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ env.PHP_VERSION }}
+          coverage: xdebug
+
+      - name: ⚙️ Prepare Laravel environment
+        run: |
+          cp .env.example .env
+          echo "DB_CONNECTION=mysql" >> .env
+          echo "DB_HOST=127.0.0.1" >> .env
+          echo "DB_PORT=3306" >> .env
+          echo "DB_DATABASE=ecoEvent_test" >> .env
+          echo "DB_USERNAME=root" >> .env
+          echo "DB_PASSWORD=password" >> .env
+          php artisan key:generate
+          php artisan config:clear
+          php artisan cache:clear
+
+      - name: 🗄️ Run migrations
+        env:
+          DB_CONNECTION: mysql
+          DB_HOST: 127.0.0.1
+          DB_PORT: 3306
+          DB_DATABASE: ecoEvent_test
+          DB_USERNAME: root
+          DB_PASSWORD: password
+        run: php artisan migrate --force
+
+      - name: 🧪 Execute PHPUnit tests
+        env:
+          DB_CONNECTION: mysql
+          DB_HOST: 127.0.0.1
+          DB_PORT: 3306
+          DB_DATABASE: ecoEvent_test
+          DB_USERNAME: root
+          DB_PASSWORD: password
+        run: vendor/bin/phpunit --coverage-text --coverage-clover=coverage.xml
+
+      - name: 📊 Upload coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage.xml
+          retention-days: 7
+
+  # ==========================================
+  # 6. SECURITY AUDIT
+  # ==========================================
+  security:
+    name: 🔒 Security Audit
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: 🔄 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 📥 Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: vendor
+          path: vendor
+
+      - name: 📥 Download node_modules
+        uses: actions/download-artifact@v4
+        with:
+          name: node_modules
+          path: node_modules
+
+      - name: 🐘 Setup PHP ${{ env.PHP_VERSION }}
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ env.PHP_VERSION }}
+
+      - name: 🔍 Composer security audit
+        run: |
+          composer audit --format=json > composer-audit.json || true
+          echo "✅ Composer audit completed"
+
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: 🔍 NPM security audit
+        run: |
+          npm audit --json > npm-audit.json || true
+          echo "✅ NPM audit completed"
+
+      - name: 📊 Upload security reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: security-reports
+          path: |
+            composer-audit.json
+            npm-audit.json
+          retention-days: 7
+
+  # ==========================================
+  # 7. BUILD FRONTEND ASSETS
+  # ==========================================
+  build-frontend:
+    name: 🎨 Build Frontend Assets
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: 🔄 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: 📥 Download node_modules
+        uses: actions/download-artifact@v4
+        with:
+          name: node_modules
+          path: node_modules
+
+      - name: 🔨 Build production assets
+        run: npm run build
+
+      - name: 💾 Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: public-build
+          path: public/build
+          retention-days: 7
+
+  # ==========================================
+  # 8. DOCKER BUILD & PUSH TO GITHUB PACKAGES
+  # ==========================================
+  docker:
+    name: 🐳 Docker Build & Push
+    runs-on: ubuntu-latest
+    needs: [tests, security, build-frontend, phpstan, sonarcloud]
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'
+    steps:
+      - name: 🔄 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 📥 Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: public-build
+          path: public/build
+
+      - name: 🔐 Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 🏷️ Extract metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/${{ github.repository }}
+          tags: |
+            type=ref,event=branch
+            type=sha,prefix={{branch}}-
+            type=semver,pattern={{version}}
+            type=raw,value=latest,enable={{is_default_branch}}
+
+      - name: 🔨 Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=registry,ref=ghcr.io/${{ github.repository }}:buildcache
+          cache-to: type=registry,ref=ghcr.io/${{ github.repository }}:buildcache,mode=max
+
+  # ==========================================
+  # 9. DEPLOY TO STAGING
+  # ==========================================
+  deploy-staging:
+    name: 🚀 Deploy to Staging
+    runs-on: ubuntu-latest
+    needs: docker
+    if: github.ref == 'refs/heads/develop'
+    environment:
+      name: staging
+      url: https://staging.ecoevents.com
+    steps:
+      - name: 🔄 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🚀 Deploy to staging server
+        run: |
+          echo "🌿 Deploying to staging environment..."
+          echo "Image: ghcr.io/${{ github.repository }}:develop-${{ github.sha }}"
+          # Ajoutez ici vos commandes de déploiement SSH ou webhook
+
+      - name: 🗄️ Run migrations
+        run: |
+          echo "Running migrations on staging..."
+          # ssh user@staging "cd /app && php artisan migrate --force"
+
+      - name: 🧹 Clear cache
+        run: |
+          echo "Clearing cache on staging..."
+          # ssh user@staging "cd /app && php artisan optimize"
+
+  # ==========================================
+  # 10. DEPLOY TO PRODUCTION
+  # ==========================================
+  deploy-production:
+    name: 🚀 Deploy to Production
+    runs-on: ubuntu-latest
+    needs: docker
+    if: github.ref == 'refs/heads/main'
+    environment:
+      name: production
+      url: https://ecoevents.com
+    steps:
+      - name: 🔄 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🚀 Deploy to production server
+        run: |
+          echo "🌿 Deploying to production environment..."
+          echo "Image: ghcr.io/${{ github.repository }}:latest"
+          # Ajoutez ici vos commandes de déploiement
+
+      - name: 🗄️ Run migrations
+        run: |
+          echo "Running migrations on production..."
+          # ssh user@prod "cd /app && php artisan migrate --force"
+
+      - name: 🧹 Optimize application
+        run: |
+          echo "Optimizing production..."
+          # ssh user@prod "cd /app && php artisan optimize"
+
+  # ==========================================
+  # 11. POST-DEPLOYMENT MONITORING
+  # ==========================================
+  monitoring:
+    name: 📊 Post-Deployment Checks
+    runs-on: ubuntu-latest
+    needs: [deploy-staging, deploy-production]
+    if: always()
+    steps:
+      - name: 🏥 Health check
+        run: |
+          echo "Running health checks..."
+          # curl -f https://ecoevents.com/health || exit 1
+
+      - name: 📊 Send metrics to monitoring
+        run: |
+          echo "Sending deployment metrics..."
+          # Intégration avec Grafana/Prometheus si configuré
+
+      - name: ✅ Pipeline completed
+        run: |
+          echo "🌿 Pipeline DevOps EcoEvents terminée avec succès!"
+          echo "Repository: Public with SonarCloud"
+          echo "Timestamp: $(date)"

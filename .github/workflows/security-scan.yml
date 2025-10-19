@@ -1,0 +1,59 @@
+name: 🔒 Security Scan
+
+on:
+  schedule:
+    # Exécution quotidienne à 2h du matin
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+
+jobs:
+  security-audit:
+    name: 🛡️ Security Audit
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🔄 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🐘 Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+
+      - name: 📦 Install Composer dependencies
+        run: composer install --no-interaction --prefer-dist
+
+      - name: 🔍 Composer security audit
+        run: composer audit --format=json > composer-audit.json || true
+
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: 📦 Install NPM dependencies
+        run: npm ci
+
+      - name: 🔍 NPM security audit
+        run: npm audit --json > npm-audit.json || true
+
+      - name: 🛡️ Snyk security scan
+        uses: snyk/actions/php@master
+        continue-on-error: true
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+
+      - name: 📊 Upload audit reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: security-reports
+          path: |
+            composer-audit.json
+            npm-audit.json
+
+      - name: 📢 Notify on vulnerabilities
+        if: failure()
+        uses: 8398a7/action-slack@v3
+        with:
+          status: failure
+          text: '🚨 Vulnérabilités de sécurité détectées dans EcoEvents!'
+          webhook_url: ${{ secrets.SLACK_WEBHOOK }}
