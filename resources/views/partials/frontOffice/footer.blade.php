@@ -31,7 +31,7 @@
 			<div class="col-lg-3 col-md-6 col-sm-6">
 				<div class="footer-logo">
 					<a href="{{ url('/') }}">
-                        <img src="{{ asset('assets/images/home6/logo.png') }}" alt="logo">
+                        <img src="{{ asset('assets/images/home1/logo.png') }}" alt="logo">
                     </a>
 				</div>
 				<p class="footer-desc">Proactively restore timely alignments after client environmentals</p>
