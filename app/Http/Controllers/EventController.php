@@ -604,52 +604,117 @@ class EventController extends Controller
         }
     }
 
-    public function generateDescription(Request $request)
-    {
-        $request->validate([
-            'title' => 'required|string|max:255',
-            'category' => 'required|string|max:100',
+   public function generateDescription(Request $request)
+{
+    $request->validate([
+        'title' => 'required|string|max:255',
+        'category' => 'required|string|max:100',
+    ]);
+
+    // Verify API key exists
+    $apiKey = env('OPENROUTER_API_KEY');
+    
+    if (empty($apiKey)) {
+        Log::error('OPENROUTER_API_KEY is not set in environment');
+        return response()->json([
+            'description' => '', 
+            'error' => 'Configuration error: API key not found'
+        ], 500);
+    }
+
+    $client = new \GuzzleHttp\Client();
+    
+    $prompt = "Écris immédiatement une description simple, en français, pour un événement écologique intitulé '{$request->title}' dans la catégorie '{$request->category}'. Commence directement par du texte, sans aucun espace ni saut de ligne au début, et n'utilise pas '\\n' ni icônes. Assure-toi que la réponse soit complète, jamais vide, contienne au minimum 4 lignes distinctes, et termine toujours toutes les phrases.";
+
+    try {
+        Log::info('Calling OpenRouter API', [
+            'model' => 'tngtech/deepseek-r1t2-chimera',
+            'prompt_length' => strlen($prompt),
+            'has_api_key' => !empty($apiKey)
         ]);
 
-        $client = new \GuzzleHttp\Client();
-        $apiKey = env('OPENROUTER_API_KEY');
-
-        $prompt = "Écris immédiatement une description simple, en français, pour un événement écologique intitulé '{$request->title}' dans la catégorie '{$request->category}'. Commence directement par du texte, sans aucun espace ni saut de ligne au début, et n'utilise pas '\\n' ni icônes. Assure-toi que la réponse soit complète, jamais vide, contienne au minimum 4 lignes distinctes, et termine toujours toutes les phrases.";
-
-        try {
-            $response = $client->post('https://openrouter.ai/api/v1/chat/completions', [
-                'headers' => [
-                    'Authorization' => "Bearer $apiKey",
-                    'Content-Type' => 'application/json',
+        $response = $client->post('https://openrouter.ai/api/v1/chat/completions', [
+            'headers' => [
+                'Authorization' => "Bearer {$apiKey}",
+                'Content-Type' => 'application/json',
+                'HTTP-Referer' => config('app.url', 'http://localhost'), // Optional
+                'X-Title' => config('app.name', 'EcoEvents'), // Optional
+            ],
+            'json' => [
+                'model' => 'tngtech/deepseek-r1t2-chimera',
+                'messages' => [
+                    ['role' => 'user', 'content' => $prompt]
                 ],
-                'json' => [
-                    "model" => "tngtech/deepseek-r1t2-chimera",
-                    "messages" => [
-                        ["role" => "user", "content" => $prompt]
-                    ],
-                    "max_tokens" => 600
-                ],
-            ]);
+                'max_tokens' => 600,
+                'temperature' => 0.7,
+            ],
+            'timeout' => 30,
+        ]);
 
-            $data = json_decode($response->getBody(), true);
+        $data = json_decode($response->getBody(), true);
 
-            $choices = $data['choices'] ?? [];
-            $longestText = '';
+        Log::info('OpenRouter API Response', [
+            'status' => $response->getStatusCode(),
+            'has_choices' => isset($data['choices']),
+            'choices_count' => count($data['choices'] ?? [])
+        ]);
 
-            foreach ($choices as $choice) {
-                $text = $choice['message']['content'] ?? '';
-                if (strlen($text) > strlen($longestText)) {
-                    $longestText = $text;
-                }
+        $choices = $data['choices'] ?? [];
+        $longestText = '';
+
+        foreach ($choices as $choice) {
+            $text = $choice['message']['content'] ?? '';
+            if (strlen($text) > strlen($longestText)) {
+                $longestText = $text;
             }
-
-            // Remove leading whitespace / newline
-            $longestText = ltrim($longestText);
-
-            return response()->json(['description' => $longestText]);
-
-        } catch (\Exception $e) {
-            return response()->json(['description' => '', 'error' => $e->getMessage()], 500);
         }
+
+        // Remove leading whitespace/newlines
+        $longestText = ltrim($longestText);
+
+        if (empty($longestText)) {
+            Log::warning('OpenRouter returned empty description');
+            return response()->json([
+                'description' => '', 
+                'error' => 'No description generated'
+            ], 500);
+        }
+
+        return response()->json(['description' => $longestText]);
+
+    } catch (\GuzzleHttp\Exception\ClientException $e) {
+        $response = $e->getResponse();
+        $statusCode = $response->getStatusCode();
+        $body = $response->getBody()->getContents();
+        
+        Log::error('OpenRouter API Client Error', [
+            'status' => $statusCode,
+            'body' => $body,
+            'message' => $e->getMessage()
+        ]);
+
+        if ($statusCode === 401) {
+            return response()->json([
+                'description' => '', 
+                'error' => 'Invalid API key. Please check your OPENROUTER_API_KEY in .env file'
+            ], 500);
+        }
+
+        return response()->json([
+            'description' => '', 
+            'error' => "API error: {$body}"
+        ], 500);
+
+    } catch (\Exception $e) {
+        Log::error('Description Generation Error', [
+            'message' => $e->getMessage(),
+            'trace' => $e->getTraceAsString()
+        ]);
+
+        return response()->json([
+            'description' => '', 
+            'error' => 'Une erreur est survenue: ' . $e->getMessage()
+        ], 500);
     }
+}
 }
