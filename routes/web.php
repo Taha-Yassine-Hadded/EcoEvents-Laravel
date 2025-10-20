@@ -523,7 +523,7 @@ Route::prefix('organizer/events')->middleware([\App\Http\Middleware\VerifyJWT::c
 // --------------------
 // BackOffice (Admin full CRUD for events and categories)
 // --------------------
-Route::prefix('admin')->middleware([\App\Http\Middleware\VerifyJWT::class, \App\Http\Middleware\RoleGuard::class . ':admin'])->name('admin.')->group(function () {
+Route::prefix('admin')->middleware([\App\Http\Middleware\VerifyJWT::class])->name('admin.')->group(function () {
     // Events
     Route::get('/events', [EventController::class, 'backIndex'])->name('events.index');
     Route::get('/events/create', [EventController::class, 'createAdmin'])->name('events.create');
@@ -594,6 +594,8 @@ Route::prefix('admin')->middleware([\App\Http\Middleware\VerifyJWT::class, \App\
             ->get();
     })->name('sentiments.stats');
 });
+
+Route::post('/generate-description', [EventController::class, 'generateDescription'])->name('admin.events.generate-description');
 
 // ✅ ROUTE DEBUG PYTHON DIRECT
 Route::get('/debug/python-test', function() {
