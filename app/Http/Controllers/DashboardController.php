@@ -69,6 +69,10 @@ class DashboardController extends Controller
             $recentSponsorships = 0;
             $monthlySponsorships = collect();
             
+            // Statistiques des contrats
+            $totalContracts = 0;
+            $contractsAmount = 0;
+            
             try {
                 $totalSponsorships = SponsorshipTemp::count();
                 $pendingSponsorships = SponsorshipTemp::where('status', 'pending')->count();
@@ -86,6 +90,14 @@ class DashboardController extends Controller
                     ->groupBy('month')
                     ->orderBy('month')
                     ->get();
+                
+                // Statistiques des contrats
+                $totalContracts = SponsorshipTemp::where('status', 'approved')
+                    ->whereNotNull('contract_pdf')
+                    ->count();
+                $contractsAmount = SponsorshipTemp::where('status', 'approved')
+                    ->whereNotNull('contract_pdf')
+                    ->sum('amount') ?? 0;
             } catch (\Exception $sponsorshipError) {
                 \Illuminate\Support\Facades\Log::error('DashboardController: Erreur stats sponsoring', ['error' => $sponsorshipError->getMessage()]);
             }
@@ -105,6 +117,10 @@ class DashboardController extends Controller
                     'approved_amount' => $approvedSponsorshipAmount,
                     'recent_sponsorships' => $recentSponsorships,
                 ],
+                'contracts' => [
+                    'total_contracts' => $totalContracts,
+                    'contracts_amount' => $contractsAmount,
+                ],
                 'monthly_data' => $monthlySponsorships,
             ];
         } catch (\Exception $e) {
@@ -123,6 +139,10 @@ class DashboardController extends Controller
                     'pending_amount' => 0,
                     'approved_amount' => 0,
                     'recent_sponsorships' => 0,
+                ],
+                'contracts' => [
+                    'total_contracts' => 0,
+                    'contracts_amount' => 0,
                 ],
                 'monthly_data' => collect(),
             ];

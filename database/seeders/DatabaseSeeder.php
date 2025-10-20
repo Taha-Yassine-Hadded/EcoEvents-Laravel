@@ -21,6 +21,8 @@ class DatabaseSeeder extends Seeder
             PackageSeeder::class,
             SponsorSeeder::class,
             SponsorshipSeeder::class,
+            SponsorshipFeedbackSeeder::class,
+            NotificationTemplateSeeder::class,
         ]);
     }
 }

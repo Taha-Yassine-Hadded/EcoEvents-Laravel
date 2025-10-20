@@ -130,9 +130,9 @@ class ContractController extends Controller
     }
 
     /**
-     * Générer le HTML du contrat
+     * Générer le HTML du contrat (méthode publique pour l'admin)
      */
-    private function generateContractHTML($sponsorship)
+    public function generateContractHTML($sponsorship)
     {
         $contractData = $this->prepareContractData($sponsorship);
         
@@ -445,11 +445,11 @@ class ContractController extends Controller
             'sponsor_company' => $sponsor->company_name ?? 'Entreprise non spécifiée',
             'sponsor_email' => $sponsor->email ?? 'Non spécifié',
             'sponsor_phone' => $sponsor->phone ?? 'Non spécifié',
-            'event_title' => $event->title ?? 'Événement non spécifié',
-            'event_date' => ($event && $event->date)
-                ? \Carbon\Carbon::parse($event->date)->format('d/m/Y à H:i')
+            'event_title' => $sponsorship->event_title ?? 'Événement non spécifié',
+            'event_date' => $sponsorship->event_date 
+                ? \Carbon\Carbon::parse($sponsorship->event_date)->format('d/m/Y à H:i')
                 : 'Date non spécifiée',
-            'event_location' => $event->location ?? 'Lieu non spécifié',
+            'event_location' => $sponsorship->event_location ?? 'Lieu non spécifié',
             'package_name' => $sponsorship->package_name ?? 'Package non spécifié',
             'amount' => number_format($sponsorship->amount, 2, ',', ' '),
             'package_benefits' => $packageBenefits,

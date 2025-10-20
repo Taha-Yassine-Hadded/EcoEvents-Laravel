@@ -266,9 +266,42 @@
             background-color: #f8f9fa !important;
             border-color: #dee2e6 !important;
         }
+        
+        /* Style pour le bouton de notifications */
+        .btn-notification {
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .btn-notification:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .btn-notification .badge {
+            font-size: 0.7rem;
+            min-width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .btn-notification.has-notifications {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
     </style>
     
     @stack('styles')
+    
+    <!-- CSRF Token -->
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
 <body>
     <!-- Sponsor Header -->
@@ -283,7 +316,7 @@
                         <div class="d-flex align-items-center justify-content-end">
                             <div class="me-3 text-end">
                                 <div class="d-flex align-items-center justify-content-end mb-1">
-                                    @if($user->profile_image)
+                                    @if(isset($user) && $user->profile_image)
                                         <img src="{{ asset('storage/' . $user->profile_image) }}" alt="{{ $user->name }}" class="rounded-circle me-2 profile-image" style="width: 40px; height: 40px; object-fit: cover; border: 2px solid rgba(255,255,255,0.3);">
                                     @else
                                         <div class="rounded-circle bg-white bg-opacity-20 d-flex align-items-center justify-content-center me-2 profile-image" style="width: 40px; height: 40px;">
@@ -292,10 +325,26 @@
                                     @endif
                                     <div class="user-info">
                                         <small class="d-block">Connecté en tant que</small>
-                                        <strong class="text-white">{{ $user->name ?? 'Sponsor' }}</strong>
+                                        <strong class="text-white">{{ isset($user) ? $user->name : 'Sponsor' }}</strong>
                                     </div>
                                 </div>
                             </div>
+                            
+                            <!-- Bouton Notifications -->
+                            <div class="me-3">
+                                <a href="{{ route('sponsor.notifications') }}" 
+                                   class="btn btn-outline-light btn-sm position-relative btn-notification" 
+                                   id="navbar-notification-btn"
+                                   data-bs-toggle="tooltip" 
+                                   data-bs-placement="bottom" 
+                                   title="Consulter mes notifications">
+                                    <i class="fas fa-bell"></i>
+                                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="navbar-notification-count" style="display: none;">
+                                        0
+                                    </span>
+                                </a>
+                            </div>
+                            
                             <button class="btn btn-outline-light btn-sm" onclick="logout()">
                                 <i class="fas fa-sign-out-alt"></i> Déconnexion
                             </button>
@@ -311,6 +360,21 @@
             <nav class="nav">
                 <a class="nav-link {{ request()->routeIs('sponsor.dashboard') ? 'active' : '' }}" href="{{ route('sponsor.dashboard') }}">
                     <i class="fas fa-tachometer-alt"></i> Dashboard
+                </a>
+                <a class="nav-link {{ request()->routeIs('sponsor.analytics') ? 'active' : '' }}" href="{{ route('sponsor.analytics') }}">
+                    <i class="fas fa-chart-bar"></i> Analytics
+                </a>
+                <a class="nav-link {{ request()->routeIs('sponsor.ai.recommendations') ? 'active' : '' }}" href="{{ route('sponsor.ai.recommendations') }}">
+                    <i class="fas fa-brain"></i> Recommander pour vous
+                    <span class="badge bg-primary ms-2">Nouveau</span>
+                </a>
+                <a class="nav-link {{ request()->routeIs('sponsor.stories.*') ? 'active' : '' }}" href="{{ route('sponsor.stories.my-stories') }}">
+                    <i class="fas fa-camera"></i> Mes Stories
+                    <span class="badge bg-success ms-2">24h</span>
+                </a>
+                <a class="nav-link {{ request()->routeIs('sponsor.feedback') ? 'active' : '' }}" href="{{ route('sponsor.feedback') }}">
+                    <i class="fas fa-comments"></i> Feedback & Commentaires
+                    <span class="badge bg-success ms-2">Nouveau</span>
                 </a>
                     <a class="nav-link {{ request()->routeIs('sponsor.campaigns') ? 'active' : '' }}" href="{{ route('sponsor.campaigns') }}">
                         <i class="fas fa-calendar-alt"></i> Campagnes
@@ -355,6 +419,9 @@
     <!-- Bootstrap JS -->
     <script src="{{ asset('assets/js/bootstrap.min.js') }}"></script>
     
+    <!-- Notification Manager -->
+    <script src="{{ asset('assets/js/notification-manager.js') }}"></script>
+    
     <script>
         function logout() {
             if (confirm('Êtes-vous sûr de vouloir vous déconnecter ?')) {
@@ -368,3 +435,4 @@
     @stack('scripts')
 </body>
 </html>
+

@@ -48,6 +48,13 @@
                 </li>
 
                 <li class="nav-item">
+                    <a href="{{ route('admin.packages.index') }}" class="nav-link {{ request()->routeIs('admin.packages.*') ? 'active' : '' }}">
+                        <i class="fas fa-box"></i>
+                        <span class="nav-text">Packages</span>
+                    </a>
+                </li>
+
+                <li class="nav-item">
                     <a href="{{ route('admin.categories.index') }}" class="nav-link {{ request()->routeIs('admin.categories.*') ? 'active' : '' }}">
                         <i class="fas fa-tags"></i> <!-- tags icon for categories -->
                         <span class="nav-text">Categories</span>
@@ -80,9 +87,44 @@
 
                 <!-- Analytics -->
                 <li class="nav-item">
-                    <a href="#" class="nav-link">
+                    <a href="{{ route('sponsor.analytics') }}" class="nav-link">
                         <i class="fas fa-chart-bar"></i>
                         <span class="nav-text">Analytics</span>
+                    </a>
+                </li>
+
+                <!-- AI Recommendations -->
+                <li class="nav-item">
+                    <a href="{{ route('sponsor.ai.recommendations') }}" class="nav-link">
+                        <i class="fas fa-brain"></i>
+                        <span class="nav-text">Recommander pour vous</span>
+                        <span class="badge bg-primary ms-2">Nouveau</span>
+                    </a>
+                </li>
+
+                <!-- Stories -->
+                <li class="nav-item">
+                    <a href="{{ route('sponsor.stories.my-stories') }}" class="nav-link {{ request()->routeIs('sponsor.stories.*') ? 'active' : '' }}">
+                        <i class="fas fa-camera"></i>
+                        <span class="nav-text">Mes Stories</span>
+                        <span class="badge bg-success ms-2">24h</span>
+                    </a>
+                </li>
+
+                <!-- Notifications -->
+                <li class="nav-item">
+                    <a href="{{ route('sponsor.notifications') }}" class="nav-link">
+                        <i class="fas fa-bell"></i>
+                        <span class="nav-text">Notifications</span>
+                        <span class="badge bg-danger ms-2" id="notification-count">0</span>
+                    </a>
+                </li>
+
+                <!-- Profil -->
+                <li class="nav-item">
+                    <a href="{{ route('sponsor.profile') }}" class="nav-link">
+                        <i class="fas fa-user-circle"></i>
+                        <span class="nav-text">Mon Profil</span>
                     </a>
                 </li>
 

@@ -33,7 +33,31 @@
                     <div class="card-header py-3 d-flex justify-content-between align-items-center">
                         <h6 class="card-title mb-0">
                             <i class="fas fa-calendar-alt text-primary"></i>
-                            {{ $sponsorship->event->title ?? 'Événement supprimé' }}
+                            @php
+                                // Logique améliorée pour l'affichage du nom de l'événement
+                                $eventName = 'Événement non spécifié';
+                                
+                                // Priorité 1: Relation event chargée
+                                if ($sponsorship->event && !empty($sponsorship->event->title)) {
+                                    $eventName = $sponsorship->event->title;
+                                }
+                                // Priorité 2: Champ event_title dans la table
+                                elseif (!empty($sponsorship->event_title)) {
+                                    $eventName = $sponsorship->event_title;
+                                }
+                                // Priorité 3: Essayer de charger l'événement si event_id existe
+                                elseif (!empty($sponsorship->event_id)) {
+                                    try {
+                                        $event = \App\Models\Event::find($sponsorship->event_id);
+                                        if ($event) {
+                                            $eventName = $event->title;
+                                        }
+                                    } catch (Exception $e) {
+                                        // En cas d'erreur, garder le nom par défaut
+                                    }
+                                }
+                            @endphp
+                            {{ $eventName }}
                         </h6>
                         <span class="badge badge-{{ 
                             $sponsorship->status === 'approved' ? 'success' : 
@@ -60,7 +84,7 @@
                             <div class="row mb-2">
                                 <div class="col-6">
                                     <small class="text-muted">Date de l'événement</small>
-                                    <div>{{ \Carbon\Carbon::parse($sponsorship->event->date ?? now())->format('d/m/Y') }}</div>
+                                    <div>{{ $sponsorship->event_date ? \Carbon\Carbon::parse($sponsorship->event_date)->format('d/m/Y') : 'Date non spécifiée' }}</div>
                                 </div>
                                 <div class="col-6">
                                     <small class="text-muted">Date de proposition</small>

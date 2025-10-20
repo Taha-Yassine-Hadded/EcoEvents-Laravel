@@ -124,7 +124,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
-                <button type="button" class="btn btn-success" onclick="showSponsorshipModal()">
+                <button type="button" class="btn btn-success" onclick="showSponsorshipModal(currentEventId)">
                     <i class="fas fa-handshake"></i> Sponsoriser cet événement
                 </button>
             </div>
@@ -312,6 +312,7 @@
 let selectedPackageId = null;
 let selectedPackagePrice = 0;
 let selectedPackageName = '';
+let currentEventId = null; // Stocker l'ID de l'événement actuel
 
 // Animation et effets visuels
 document.addEventListener('DOMContentLoaded', function() {
@@ -363,6 +364,9 @@ function validateForm() {
 }
 
 function showEventDetails(eventId) {
+    // Stocker l'ID de l'événement actuel
+    currentEventId = eventId;
+    
     // Afficher un indicateur de chargement
     const modal = document.getElementById('eventDetailsModal');
     const modalBody = modal.querySelector('.modal-body');

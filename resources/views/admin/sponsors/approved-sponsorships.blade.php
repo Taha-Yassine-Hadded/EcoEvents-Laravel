@@ -112,9 +112,41 @@
                                         </div>
                                     </td>
                                     <td>
-                                        <div class="fw-bold">{{ $sponsorship->event->title ?? 'Événement non spécifié' }}</div>
+                                        @php
+                                            // Logique améliorée pour l'affichage du nom de l'événement
+                                            $eventName = 'Événement non spécifié';
+                                            $eventDate = null;
+                                            
+                                            // Priorité 1: Relation event chargée
+                                            if ($sponsorship->event && !empty($sponsorship->event->title)) {
+                                                $eventName = $sponsorship->event->title;
+                                                $eventDate = $sponsorship->event->date;
+                                            }
+                                            // Priorité 2: Champ event_title dans la table
+                                            elseif (!empty($sponsorship->event_title)) {
+                                                $eventName = $sponsorship->event_title;
+                                                $eventDate = $sponsorship->event_date;
+                                            }
+                                            // Priorité 3: Essayer de charger l'événement si event_id existe
+                                            elseif (!empty($sponsorship->event_id)) {
+                                                try {
+                                                    $event = \App\Models\Event::find($sponsorship->event_id);
+                                                    if ($event) {
+                                                        $eventName = $event->title;
+                                                        $eventDate = $event->date;
+                                                    }
+                                                } catch (Exception $e) {
+                                                    // En cas d'erreur, garder le nom par défaut
+                                                }
+                                            }
+                                        @endphp
+                                        <div class="fw-bold">{{ $eventName }}</div>
                                         <small class="text-muted">
-                                            {{ $sponsorship->event ? \Carbon\Carbon::parse($sponsorship->event->date)->format('d/m/Y à H:i') : 'Date non spécifiée' }}
+                                            @if($eventDate)
+                                                {{ \Carbon\Carbon::parse($eventDate)->format('d/m/Y à H:i') }}
+                                            @else
+                                                Date non spécifiée
+                                            @endif
                                         </small>
                                     </td>
                                     <td>

@@ -173,6 +173,41 @@
     </div>
 </div>
 
+<!-- Recommander pour vous -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="campaign-card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-brain fa-2x text-primary me-3"></i>
+                    <div>
+                        <h5 class="mb-0">Recommander pour vous</h5>
+                        <small class="text-muted">Événements personnalisés pour votre profil</small>
+                    </div>
+                </div>
+                <div class="btn-group">
+                    <button class="btn btn-outline-primary btn-sm" onclick="refreshAIRecommendations()">
+                        <i class="fas fa-sync-alt"></i> Actualiser
+                    </button>
+                    <a href="{{ route('sponsor.ai.recommendations') }}" class="btn btn-primary btn-sm">
+                        <i class="fas fa-eye"></i> Voir Tout
+                    </a>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="aiRecommendationsContainer">
+                    <div class="text-center py-4">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Chargement...</span>
+                        </div>
+                        <p class="mt-2 text-muted">L'IA analyse votre profil pour des recommandations personnalisées...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Mes Sponsoring Acceptés -->
 @if(isset($sponsorships) && $sponsorships->where('status', 'approved')->count() > 0)
 <div class="row mb-4">
@@ -255,4 +290,176 @@
         </div>
     </div>
 </div>
+
+@push('scripts')
+<script>
+// Charger les recommandations IA au chargement de la page
+document.addEventListener('DOMContentLoaded', function() {
+    loadAIRecommendations();
+});
+
+// Charger les recommandations IA pour le dashboard
+async function loadAIRecommendations() {
+    try {
+        const token = localStorage.getItem('jwt_token');
+        const response = await fetch('/api/sponsor/ai/recommendations/events?limit=3', {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Authorization': 'Bearer ' + token,
+            }
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            if (data.success && data.recommendations.length > 0) {
+                displayAIRecommendations(data.recommendations);
+            } else {
+                displayNoRecommendations();
+            }
+        } else {
+            displayNoRecommendations();
+        }
+    } catch (error) {
+        console.error('Erreur lors du chargement des recommandations IA:', error);
+        displayNoRecommendations();
+    }
+}
+
+// Afficher les recommandations IA
+function displayAIRecommendations(recommendations) {
+    const container = document.getElementById('aiRecommendationsContainer');
+    
+    let html = '<div class="row">';
+    
+    recommendations.forEach((rec, index) => {
+        const event = rec.event;
+        const score = rec.score;
+        const estimatedROI = rec.estimated_roi;
+        
+        // Déterminer la classe CSS basée sur le score
+        let scoreClass = 'success';
+        let scoreText = 'Excellent';
+        if (score < 60) {
+            scoreClass = 'warning';
+            scoreText = 'Bon';
+        }
+        if (score < 40) {
+            scoreClass = 'danger';
+            scoreText = 'Faible';
+        }
+        
+        html += `
+            <div class="col-md-4 mb-3">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <h6 class="card-title mb-0">${event.title}</h6>
+                            <span class="badge bg-${scoreClass}">${score.toFixed(1)}%</span>
+                        </div>
+                        
+                        <div class="mb-2">
+                            <small class="text-muted">
+                                <i class="fas fa-map-marker-alt"></i> ${event.location || 'Lieu non spécifié'}
+                            </small>
+                            <br>
+                            <small class="text-muted">
+                                <i class="fas fa-calendar"></i> 
+                                ${event.date ? new Date(event.date).toLocaleDateString('fr-FR') : 'Date non spécifiée'}
+                            </small>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between mb-1">
+                                <small>ROI Estimé:</small>
+                                <strong class="text-success">${estimatedROI.toFixed(1)}%</strong>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <small>Packages:</small>
+                                <span class="badge bg-info">${event.packages ? event.packages.length : 0}</span>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <h6 class="small mb-1">Pourquoi cette recommandation:</h6>
+                            <ul class="list-unstyled small mb-0">
+                                ${rec.reasons.slice(0, 2).map(reason => `<li><i class="fas fa-check text-success"></i> ${reason}</li>`).join('')}
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-transparent">
+                        <div class="d-grid gap-2">
+                            <button class="btn btn-primary btn-sm" onclick="proposeSponsorshipForEvent(${event.id})">
+                                <i class="fas fa-paper-plane"></i> Proposer Sponsorship
+                            </button>
+                            <button class="btn btn-outline-info btn-sm" onclick="showEventDetails(${event.id})">
+                                <i class="fas fa-info-circle"></i> Détails
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+    
+    html += '</div>';
+    
+    // Ajouter un lien vers la page complète des recommandations
+    html += `
+        <div class="text-center mt-3">
+            <a href="{{ route('sponsor.ai.recommendations') }}" class="btn btn-outline-primary">
+                <i class="fas fa-brain"></i> Voir toutes les recommandations IA
+            </a>
+        </div>
+    `;
+    
+    container.innerHTML = html;
+}
+
+// Afficher message quand aucune recommandation
+function displayNoRecommendations() {
+    const container = document.getElementById('aiRecommendationsContainer');
+    container.innerHTML = `
+        <div class="text-center py-4">
+            <i class="fas fa-search fa-3x text-muted mb-3"></i>
+            <h5 class="text-muted">Aucune recommandation disponible</h5>
+            <p class="text-muted">Complétez votre profil pour recevoir des recommandations personnalisées</p>
+            <div class="d-flex justify-content-center gap-2">
+                <a href="{{ route('sponsor.profile') }}" class="btn btn-primary">
+                    <i class="fas fa-user-edit"></i> Compléter le Profil
+                </a>
+                <button class="btn btn-outline-primary" onclick="loadAIRecommendations()">
+                    <i class="fas fa-sync-alt"></i> Réessayer
+                </button>
+            </div>
+        </div>
+    `;
+}
+
+// Actualiser les recommandations IA
+function refreshAIRecommendations() {
+    const container = document.getElementById('aiRecommendationsContainer');
+    container.innerHTML = `
+        <div class="text-center py-4">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Actualisation...</span>
+            </div>
+            <p class="mt-2 text-muted">Actualisation des recommandations...</p>
+        </div>
+    `;
+    loadAIRecommendations();
+}
+
+// Proposer un sponsorship pour un événement
+function proposeSponsorshipForEvent(eventId) {
+    window.location.href = `/sponsor/campaigns/${eventId}`;
+}
+
+// Afficher les détails d'un événement
+function showEventDetails(eventId) {
+    window.location.href = `/events/${eventId}`;
+}
+</script>
+@endpush
+
 @endsection

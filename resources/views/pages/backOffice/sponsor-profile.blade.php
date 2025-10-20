@@ -2,487 +2,506 @@
 
 @section('title', 'Mon Profil - Echofy Sponsor')
 
+@push('styles')
+<style>
+    .profile-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 2rem 0;
+        margin-bottom: 2rem;
+        border-radius: 15px;
+    }
+
+    .profile-card {
+        background: white;
+        border-radius: 15px;
+        padding: 2rem;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        margin-bottom: 2rem;
+    }
+
+    .profile-image-container {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .profile-image {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 5px solid #f8f9fa;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+
+    .profile-image-placeholder {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto;
+        color: white;
+        font-size: 3rem;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: #2c3e50;
+        margin-bottom: 0.5rem;
+    }
+
+    .form-control {
+        border: 2px solid #e9ecef;
+        border-radius: 10px;
+        padding: 0.75rem 1rem;
+        transition: all 0.3s ease;
+    }
+
+    .form-control:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        border-radius: 10px;
+        padding: 0.75rem 2rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    }
+
+    .budget-info {
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        color: white;
+        padding: 1rem;
+        border-radius: 10px;
+        margin-bottom: 1rem;
+    }
+
+    .sector-info {
+        background: linear-gradient(135deg, #17a2b8 0%, #6f42c1 100%);
+        color: white;
+        padding: 1rem;
+        border-radius: 10px;
+        margin-bottom: 1rem;
+    }
+
+    .alert {
+        border-radius: 10px;
+        border: none;
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .stat-card {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        text-align: center;
+    }
+
+    .stat-value {
+        font-size: 2rem;
+        font-weight: bold;
+        color: #667eea;
+    }
+
+    .stat-label {
+        color: #6c757d;
+        font-size: 0.9rem;
+    }
+</style>
+@endpush
+
 @section('content')
-<!-- Profile Content -->
-<div class="row">
-    <div class="col-md-4">
-        <div class="card">
-            <div class="card-body text-center">
-                <div class="profile-avatar mb-3">
-                    @if($user->profile_image)
-                        <img src="{{ asset('storage/' . $user->profile_image) }}" alt="{{ $user->name }}" class="rounded-circle" style="width: 120px; height: 120px; object-fit: cover;">
-                    @else
-                        <div class="rounded-circle bg-primary d-flex align-items-center justify-content-center mx-auto" style="width: 120px; height: 120px;">
-                            <i class="fas fa-user fa-3x text-white"></i>
+<div class="container-fluid">
+    <!-- En-tête du profil -->
+    <div class="profile-header">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h1 class="mb-0">
+                        <i class="fas fa-user-circle me-3"></i>
+                        Mon Profil Sponsor
+                    </h1>
+                    <p class="mb-0 mt-2 opacity-75">
+                        Gérez vos informations personnelles et vos préférences de sponsoring
+                    </p>
+                </div>
+                <div class="col-md-4 text-end">
+                    @if($user->budget)
+                        <div class="budget-info">
+                            <i class="fas fa-euro-sign me-2"></i>
+                            <strong>Budget: {{ number_format($user->budget, 0, ',', ' ') }}€</strong>
                         </div>
                     @endif
-                </div>
-                <h4>{{ $user->name }}</h4>
-                <span class="badge badge-primary badge-lg">Sponsor</span>
-                <p class="text-muted mt-2">{{ $user->email }}</p>
-                
-                <!-- Upload Image Button -->
-                <button class="btn btn-outline-primary btn-sm mt-2" onclick="document.getElementById('profile_image').click()">
-                    <i class="fas fa-camera"></i> Changer la photo
-                </button>
-                <small class="text-muted d-block mt-1">JPG, PNG, GIF jusqu'à 2MB</small>
-                @if($user->profile_image)
-                    <small class="text-success d-block mt-1">
-                        <i class="fas fa-check-circle"></i> Photo actuelle
-                    </small>
-                @endif
-            </div>
-        </div>
-        
-        <!-- Statistics Card -->
-        <div class="card mt-3">
-            <div class="card-header">
-                <h6 class="card-title mb-0">
-                    <i class="fas fa-chart-bar text-primary"></i> Mes Statistiques
-                </h6>
-            </div>
-            <div class="card-body">
-                <div class="row text-center">
-                    <div class="col-6">
-                        <h5 class="text-primary mb-1">0</h5>
-                        <small class="text-muted">Sponsorships</small>
-                    </div>
-                    <div class="col-6">
-                        <h5 class="text-success mb-1">0 TND</h5>
-                        <small class="text-muted">Investi</small>
-                    </div>
+                    @if($user->sector)
+                        <div class="sector-info">
+                            <i class="fas fa-industry me-2"></i>
+                            <strong>Secteur: {{ ucfirst($user->sector) }}</strong>
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>
     </div>
-    
-    <div class="col-md-8">
-        <!-- Profile Information Form -->
-        <div class="card">
-            <div class="card-header">
-                <h5 class="card-title mb-0">
-                    <i class="fas fa-user-edit text-primary"></i> Informations du Profil
-                </h5>
-            </div>
-            <div class="card-body">
-                <form id="profileForm" enctype="multipart/form-data">
-                    @csrf
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group mb-3">
-                                <label class="form-label"><strong>Nom complet</strong></label>
-                                <input type="text" name="name" class="form-control" value="{{ $user->name }}" placeholder="Votre nom complet">
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group mb-3">
-                                <label class="form-label"><strong>Email</strong></label>
-                                <input type="email" name="email" class="form-control" value="{{ $user->email }}" placeholder="votre@email.com">
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group mb-3">
-                                <label class="form-label"><strong>Téléphone</strong></label>
-                                <input type="text" name="phone" class="form-control" value="{{ $user->phone }}" placeholder="+216 XX XXX XXX">
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group mb-3">
-                                <label class="form-label"><strong>Ville</strong></label>
-                                <input type="text" name="city" class="form-control" value="{{ $user->city }}" placeholder="Tunis, Sfax, Sousse...">
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="form-group mb-3">
-                        <label class="form-label"><strong>Adresse</strong></label>
-                        <textarea name="address" class="form-control" rows="2" placeholder="Votre adresse complète">{{ $user->address }}</textarea>
-                    </div>
-                    
-                    <div class="form-group mb-3">
-                        <label class="form-label"><strong>Bio</strong></label>
-                        <textarea name="bio" class="form-control" rows="3" placeholder="Parlez-nous de votre entreprise, vos valeurs, votre mission...">{{ $user->bio }}</textarea>
-                    </div>
-                    
-                    <!-- Champ caché pour l'image -->
-                    <input type="file" id="profile_image" name="profile_image" accept="image/*" style="display: none;">
-                    
-                    <div class="mt-4">
-                        <button type="submit" class="btn btn-primary">
-                            <i class="fas fa-save"></i> Sauvegarder les modifications
-                        </button>
-                        <a href="{{ route('sponsor.dashboard') }}" class="btn btn-outline-secondary">
-                            <i class="fas fa-arrow-left"></i> Retour au Dashboard
-                        </a>
-                    </div>
-                </form>
-            </div>
+
+    <!-- Statistiques rapides -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-value">{{ $user->sponsorshipsTemp()->count() }}</div>
+            <div class="stat-label">Sponsorships</div>
         </div>
-        
-        <!-- Change Password Form -->
-        <div class="card mt-4">
-            <div class="card-header">
-                <h5 class="card-title mb-0">
-                    <i class="fas fa-lock text-warning"></i> Changer le mot de passe
-                </h5>
-            </div>
-            <div class="card-body">
-                <form id="passwordForm">
-                    @csrf
-                    <div class="form-group mb-3">
-                        <label class="form-label"><strong>Mot de passe actuel *</strong></label>
-                        <input type="password" name="current_password" class="form-control" required>
+        <div class="stat-card">
+            <div class="stat-value">{{ $user->sponsorshipsTemp()->where('status', 'approved')->count() }}</div>
+            <div class="stat-label">Approuvés</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">{{ number_format($user->sponsorshipsTemp()->sum('amount'), 0, ',', ' ') }}€</div>
+            <div class="stat-label">Investi Total</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">{{ $user->sponsorshipsTemp()->where('status', 'completed')->count() }}</div>
+            <div class="stat-label">Terminés</div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Informations personnelles -->
+        <div class="col-lg-8">
+            <div class="profile-card">
+                <h3 class="mb-4">
+                    <i class="fas fa-user me-2"></i>
+                    Informations Personnelles
+                </h3>
+
+                <!-- Image de profil -->
+                <div class="profile-image-container">
+                    @if($user->profile_image)
+                        <img src="{{ asset('storage/' . $user->profile_image) }}" 
+                             alt="{{ $user->name }}" 
+                             class="profile-image">
+                    @else
+                        <div class="profile-image-placeholder">
+                            <i class="fas fa-user"></i>
+                        </div>
+                    @endif
+                    <div class="mt-3">
+                        <input type="file" id="profile_image" name="profile_image" 
+                               class="form-control" accept="image/*">
                     </div>
-                    
+                </div>
+
+                <form id="profileForm">
+                    @csrf
                     <div class="row">
                         <div class="col-md-6">
-                            <div class="form-group mb-3">
-                                <label class="form-label"><strong>Nouveau mot de passe *</strong></label>
-                                <input type="password" name="password" class="form-control" required minlength="8">
+                            <div class="form-group">
+                                <label for="name" class="form-label">Nom complet *</label>
+                                <input type="text" class="form-control" id="name" name="name" 
+                                       value="{{ $user->name }}" required>
                             </div>
                         </div>
                         <div class="col-md-6">
-                            <div class="form-group mb-3">
-                                <label class="form-label"><strong>Confirmer le mot de passe *</strong></label>
-                                <input type="password" name="password_confirmation" class="form-control" required minlength="8">
+                            <div class="form-group">
+                                <label for="email" class="form-label">Email *</label>
+                                <input type="email" class="form-control" id="email" name="email" 
+                                       value="{{ $user->email }}" required>
                             </div>
                         </div>
                     </div>
-                    
-                    <div class="mt-3">
-                        <button type="submit" class="btn btn-warning">
-                            <i class="fas fa-key"></i> Changer le mot de passe
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="company_name" class="form-label">Nom de l'entreprise</label>
+                                <input type="text" class="form-control" id="company_name" name="company_name" 
+                                       value="{{ $user->company_name }}">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="phone" class="form-label">Téléphone</label>
+                                <input type="text" class="form-control" id="phone" name="phone" 
+                                       value="{{ $user->phone }}">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="city" class="form-label">Ville</label>
+                                <input type="text" class="form-control" id="city" name="city" 
+                                       value="{{ $user->city }}">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="address" class="form-label">Adresse</label>
+                                <input type="text" class="form-control" id="address" name="address" 
+                                       value="{{ $user->address }}">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="bio" class="form-label">Biographie</label>
+                        <textarea class="form-control" id="bio" name="bio" rows="4" 
+                                  placeholder="Décrivez votre entreprise et vos objectifs de sponsoring...">{{ $user->bio }}</textarea>
+                    </div>
+
+                    <div class="text-end">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-2"></i>
+                            Sauvegarder les modifications
                         </button>
                     </div>
                 </form>
             </div>
         </div>
 
-        <!-- Danger Zone -->
-        <div class="card shadow mt-4 border-danger">
-            <div class="card-header bg-danger text-white py-3">
-                <h5 class="card-title mb-0">
-                    <i class="fas fa-exclamation-triangle"></i> Zone de Danger
-                </h5>
+        <!-- Préférences de sponsoring -->
+        <div class="col-lg-4">
+            <div class="profile-card">
+                <h3 class="mb-4">
+                    <i class="fas fa-cogs me-2"></i>
+                    Préférences de Sponsoring
+                </h3>
+
+                <form id="sponsoringForm">
+                    @csrf
+                    <div class="form-group">
+                        <label for="budget" class="form-label">Budget annuel (€)</label>
+                        <input type="number" class="form-control" id="budget" name="budget" 
+                               value="{{ $user->budget }}" min="0" step="100" 
+                               placeholder="Ex: 50000">
+                        <small class="form-text text-muted">
+                            Votre budget annuel pour le sponsoring d'événements
+                        </small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="sector" class="form-label">Secteur d'activité</label>
+                        <select class="form-control" id="sector" name="sector">
+                            <option value="">Sélectionnez un secteur</option>
+                            <option value="technology" {{ $user->sector == 'technology' ? 'selected' : '' }}>Technologie</option>
+                            <option value="healthcare" {{ $user->sector == 'healthcare' ? 'selected' : '' }}>Santé</option>
+                            <option value="finance" {{ $user->sector == 'finance' ? 'selected' : '' }}>Finance</option>
+                            <option value="education" {{ $user->sector == 'education' ? 'selected' : '' }}>Éducation</option>
+                            <option value="environment" {{ $user->sector == 'environment' ? 'selected' : '' }}>Environnement</option>
+                            <option value="entertainment" {{ $user->sector == 'entertainment' ? 'selected' : '' }}>Divertissement</option>
+                            <option value="sports" {{ $user->sector == 'sports' ? 'selected' : '' }}>Sports</option>
+                            <option value="food" {{ $user->sector == 'food' ? 'selected' : '' }}>Alimentation</option>
+                            <option value="fashion" {{ $user->sector == 'fashion' ? 'selected' : '' }}>Mode</option>
+                            <option value="automotive" {{ $user->sector == 'automotive' ? 'selected' : '' }}>Automobile</option>
+                        </select>
+                        <small class="form-text text-muted">
+                            Votre secteur d'activité pour des recommandations personnalisées
+                        </small>
+                    </div>
+
+                    <div class="text-end">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-2"></i>
+                            Sauvegarder
+                        </button>
+                    </div>
+                </form>
             </div>
-            <div class="card-body">
-                <div class="alert alert-warning">
-                    <i class="fas fa-warning"></i>
-                    <strong>Attention !</strong> La suppression de votre profil est irréversible.
-                    <ul class="mb-0 mt-2">
-                        <li>Toutes vos données personnelles seront supprimées</li>
-                        <li>Tous vos sponsorships seront annulés</li>
-                        <li>Votre image de profil sera supprimée</li>
-                        <li>Vous ne pourrez plus accéder à votre compte</li>
-                    </ul>
-                </div>
-                
-                <button type="button" class="btn btn-danger" onclick="confirmDeleteProfile()">
-                    <i class="fas fa-trash-alt"></i> Supprimer mon Profil
-                </button>
+
+            <!-- Changement de mot de passe -->
+            <div class="profile-card">
+                <h3 class="mb-4">
+                    <i class="fas fa-lock me-2"></i>
+                    Sécurité
+                </h3>
+
+                <form id="passwordForm">
+                    @csrf
+                    <div class="form-group">
+                        <label for="current_password" class="form-label">Mot de passe actuel</label>
+                        <input type="password" class="form-control" id="current_password" name="current_password" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password" class="form-label">Nouveau mot de passe</label>
+                        <input type="password" class="form-control" id="password" name="password" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password_confirmation" class="form-label">Confirmer le mot de passe</label>
+                        <input type="password" class="form-control" id="password_confirmation" name="password_confirmation" required>
+                    </div>
+
+                    <div class="text-end">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-key me-2"></i>
+                            Changer le mot de passe
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
 </div>
 
+<!-- Alertes -->
+<div id="alertContainer"></div>
+@endsection
+
 @push('scripts')
 <script>
-// Appliquer le style gris aux champs remplis au chargement de la page
 document.addEventListener('DOMContentLoaded', function() {
-    const inputs = document.querySelectorAll('.form-control');
-    inputs.forEach(input => {
-        if (input.value && input.value.trim() !== '') {
-            input.style.backgroundColor = '#f8f9fa';
-            input.style.borderColor = '#dee2e6';
+    const token = localStorage.getItem('jwt_token');
+    
+    // Gestion du formulaire de profil
+    document.getElementById('profileForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const formData = new FormData();
+        formData.append('name', document.getElementById('name').value);
+        formData.append('email', document.getElementById('email').value);
+        formData.append('company_name', document.getElementById('company_name').value);
+        formData.append('phone', document.getElementById('phone').value);
+        formData.append('city', document.getElementById('city').value);
+        formData.append('address', document.getElementById('address').value);
+        formData.append('bio', document.getElementById('bio').value);
+        
+        const profileImage = document.getElementById('profile_image').files[0];
+        if (profileImage) {
+            formData.append('profile_image', profileImage);
         }
         
-        // Appliquer le style quand l'utilisateur tape
-        input.addEventListener('input', function() {
-            if (this.value && this.value.trim() !== '') {
-                this.style.backgroundColor = '#f8f9fa';
-                this.style.borderColor = '#dee2e6';
+        try {
+            const response = await fetch('/api/sponsor/profile', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Authorization': 'Bearer ' + token,
+                },
+                body: formData
+            });
+            
+            const data = await response.json();
+            
+            if (response.ok) {
+                showAlert('Profil mis à jour avec succès !', 'success');
+                // Rafraîchir la page après 2 secondes
+                setTimeout(() => {
+                    location.reload();
+                }, 2000);
             } else {
-                this.style.backgroundColor = '';
-                this.style.borderColor = '';
+                showAlert(data.error || 'Erreur lors de la mise à jour.', 'danger');
             }
-        });
-        
-        // Appliquer le style quand l'utilisateur clique (focus)
-        input.addEventListener('focus', function() {
-            this.style.backgroundColor = 'white';
-            this.style.borderColor = '#28a745';
-        });
-        
-        // Remettre le style gris quand l'utilisateur quitte le champ
-        input.addEventListener('blur', function() {
-            if (this.value && this.value.trim() !== '') {
-                this.style.backgroundColor = '#f8f9fa';
-                this.style.borderColor = '#dee2e6';
-            } else {
-                this.style.backgroundColor = '';
-                this.style.borderColor = '';
-            }
-        });
+        } catch (error) {
+            console.error('Erreur:', error);
+            showAlert('Erreur réseau ou serveur.', 'danger');
+        }
     });
-});
-
-// Image preview functionality
-document.getElementById('profile_image').addEventListener('change', function(e) {
-    const file = e.target.files[0];
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            const img = document.querySelector('.profile-avatar img');
-            if (img) {
-                img.src = e.target.result;
-            }
-        };
-        reader.readAsDataURL(file);
-    }
-});
-
-// Profile Form Submission
-document.getElementById('profileForm').addEventListener('submit', async function(e) {
-    e.preventDefault();
     
-    const formData = new FormData(this);
-    const submitBtn = this.querySelector('button[type="submit"]');
-    const originalText = submitBtn.innerHTML;
-    
-    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sauvegarde...';
-    submitBtn.disabled = true;
-    
-    try {
-        // Préparer les données à envoyer (seulement les champs modifiés)
-        const dataToSend = new FormData();
-        const csrfToken = document.querySelector('input[name="_token"]').value;
-        dataToSend.append('_token', csrfToken);
-        dataToSend.append('_method', 'PUT');
+    // Gestion du formulaire de sponsoring
+    document.getElementById('sponsoringForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
         
-        // Ajouter seulement les champs qui ont été modifiés
-        const nameField = formData.get('name');
-        const emailField = formData.get('email');
-        const phoneField = formData.get('phone');
-        const addressField = formData.get('address');
-        const cityField = formData.get('city');
-        const bioField = formData.get('bio');
-        const imageField = formData.get('profile_image');
+        const formData = new FormData();
+        formData.append('budget', document.getElementById('budget').value);
+        formData.append('sector', document.getElementById('sector').value);
         
-        if (nameField && nameField.trim() !== '') dataToSend.append('name', nameField);
-        if (emailField && emailField.trim() !== '') dataToSend.append('email', emailField);
-        if (phoneField) dataToSend.append('phone', phoneField);
-        if (addressField) dataToSend.append('address', addressField);
-        if (cityField) dataToSend.append('city', cityField);
-        if (bioField) dataToSend.append('bio', bioField);
-        if (imageField && imageField.size > 0) dataToSend.append('profile_image', imageField);
-
-        const response = await fetch('{{ route("sponsor.profile.update") }}', {
-            method: 'POST',
-            headers: {
-                'X-CSRF-TOKEN': csrfToken,
-                'Accept': 'application/json',
-            },
-            body: dataToSend
-        });
-        
-        const data = await response.json();
-        
-        if (response.ok && data.success) {
-            showAlert('success', data.message);
+        try {
+            const response = await fetch('/api/sponsor/profile', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Authorization': 'Bearer ' + token,
+                },
+                body: formData
+            });
             
-            // Mettre à jour l'image dans le header si une nouvelle image a été uploadée
-            const imageField = formData.get('profile_image');
-            if (imageField && imageField.size > 0) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const headerImage = document.querySelector('.sponsor-header .profile-image');
-                    if (headerImage && headerImage.tagName === 'IMG') {
-                        headerImage.src = e.target.result;
-                    }
-                };
-                reader.readAsDataURL(imageField);
-            }
+            const data = await response.json();
             
-            setTimeout(() => {
-                window.location.reload();
-            }, 1500);
-        } else {
-            if (data.errors) {
-                let errorMessage = 'Erreurs de validation :\n';
-                for (const field in data.errors) {
-                    errorMessage += `• ${data.errors[field][0]}\n`;
-                }
-                showAlert('error', errorMessage);
+            if (response.ok) {
+                showAlert('Préférences de sponsoring mises à jour !', 'success');
+                setTimeout(() => {
+                    location.reload();
+                }, 2000);
             } else {
-                showAlert('error', data.error || 'Erreur lors de la mise à jour');
+                showAlert(data.error || 'Erreur lors de la mise à jour.', 'danger');
             }
+        } catch (error) {
+            console.error('Erreur:', error);
+            showAlert('Erreur réseau ou serveur.', 'danger');
         }
-    } catch (error) {
-        console.error('Erreur:', error);
-        showAlert('error', 'Erreur de connexion');
-    } finally {
-        submitBtn.innerHTML = originalText;
-        submitBtn.disabled = false;
-    }
-});
-
-// Password Form Submission
-document.getElementById('passwordForm').addEventListener('submit', async function(e) {
-    e.preventDefault();
+    });
     
-    const formData = new FormData(this);
-    const submitBtn = this.querySelector('button[type="submit"]');
-    const originalText = submitBtn.innerHTML;
-    
-    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Changement...';
-    submitBtn.disabled = true;
-    
-    try {
-        const response = await fetch('{{ route("sponsor.profile.password") }}', {
-            method: 'PUT',
-            headers: {
-                'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value,
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(Object.fromEntries(formData))
-        });
+    // Gestion du formulaire de mot de passe
+    document.getElementById('passwordForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
         
-        const data = await response.json();
+        const formData = new FormData();
+        formData.append('current_password', document.getElementById('current_password').value);
+        formData.append('password', document.getElementById('password').value);
+        formData.append('password_confirmation', document.getElementById('password_confirmation').value);
         
-        if (response.ok && data.success) {
-            showAlert('success', data.message);
-            this.reset();
-        } else {
-            showAlert('error', data.error || 'Erreur lors du changement de mot de passe');
-        }
-    } catch (error) {
-        showAlert('error', 'Erreur de connexion');
-    } finally {
-        submitBtn.innerHTML = originalText;
-        submitBtn.disabled = false;
-    }
-});
-
-// Image Upload Preview
-document.getElementById('profile_image').addEventListener('change', function(e) {
-    const file = e.target.files[0];
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            const avatar = document.querySelector('.profile-avatar img');
-            if (avatar) {
-                avatar.src = e.target.result;
+        try {
+            const response = await fetch('/api/sponsor/profile/password', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Authorization': 'Bearer ' + token,
+                },
+                body: formData
+            });
+            
+            const data = await response.json();
+            
+            if (response.ok) {
+                showAlert('Mot de passe mis à jour avec succès !', 'success');
+                document.getElementById('passwordForm').reset();
             } else {
-                // Create img element if it doesn't exist
-                const avatarDiv = document.querySelector('.profile-avatar');
-                avatarDiv.innerHTML = `<img src="${e.target.result}" alt="Profile" class="rounded-circle" style="width: 120px; height: 120px; object-fit: cover;">`;
+                showAlert(data.error || 'Erreur lors de la mise à jour.', 'danger');
             }
-        };
-        reader.readAsDataURL(file);
-    }
-});
-
-// Alert Function
-function showAlert(type, message) {
-    const alertDiv = document.createElement('div');
-    alertDiv.className = `alert alert-${type === 'success' ? 'success' : 'danger'} alert-dismissible fade show`;
-    alertDiv.innerHTML = `
-        ${message}
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    `;
+        } catch (error) {
+            console.error('Erreur:', error);
+            showAlert('Erreur réseau ou serveur.', 'danger');
+        }
+    });
     
-    // Insert at the top of the content
-    const content = document.querySelector('.sponsor-dashboard .container');
-    content.insertBefore(alertDiv, content.firstChild);
-    
-    // Auto remove after 5 seconds
-    setTimeout(() => {
-        if (alertDiv.parentNode) {
+    function showAlert(message, type) {
+        const alertContainer = document.getElementById('alertContainer');
+        const alertDiv = document.createElement('div');
+        alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+        alertDiv.innerHTML = `
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        `;
+        alertContainer.appendChild(alertDiv);
+        
+        // Supprimer l'alerte après 5 secondes
+        setTimeout(() => {
             alertDiv.remove();
-        }
-    }, 5000);
-}
-
-// Fonction pour confirmer la suppression du profil
-function confirmDeleteProfile() {
-    const confirmMessage = `
-        ⚠️ ATTENTION - SUPPRESSION DÉFINITIVE ⚠️
-        
-        Êtes-vous ABSOLUMENT SÛR de vouloir supprimer votre profil ?
-        
-        Cette action supprimera :
-        • Votre compte utilisateur
-        • Tous vos sponsorships
-        • Votre image de profil
-        • Toutes vos données personnelles
-        
-        Cette action est IRRÉVERSIBLE !
-        
-        Tapez "SUPPRIMER" pour confirmer :
-    `;
-    
-    const userInput = prompt(confirmMessage);
-    
-    if (userInput === "SUPPRIMER") {
-        // Double confirmation
-        const finalConfirm = confirm(`
-            DERNIÈRE CONFIRMATION
-            
-            Vous êtes sur le point de supprimer définitivement votre profil.
-            
-            Êtes-vous vraiment sûr ?
-        `);
-        
-        if (finalConfirm) {
-            deleteProfile();
-        }
-    } else if (userInput !== null) {
-        alert("Suppression annulée. Vous devez taper exactement 'SUPPRIMER' pour confirmer.");
+        }, 5000);
     }
-}
-
-// Fonction pour supprimer le profil
-async function deleteProfile() {
-    const deleteBtn = document.querySelector('button[onclick="confirmDeleteProfile()"]');
-    const originalText = deleteBtn.innerHTML;
-    
-    deleteBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Suppression...';
-    deleteBtn.disabled = true;
-    
-    try {
-        const response = await fetch('{{ route("sponsor.profile.delete") }}', {
-            method: 'DELETE',
-            headers: {
-                'Accept': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-            }
-        });
-        
-        const data = await response.json();
-        
-        if (response.ok && data.success) {
-            showAlert('success', data.message);
-            
-            // Redirection après 2 secondes
-            setTimeout(() => {
-                window.location.href = data.redirect;
-            }, 2000);
-        } else {
-            showAlert('error', data.error || 'Erreur lors de la suppression du profil');
-            deleteBtn.innerHTML = originalText;
-            deleteBtn.disabled = false;
-        }
-    } catch (error) {
-        console.error('Erreur:', error);
-        showAlert('error', 'Erreur de connexion lors de la suppression');
-        deleteBtn.innerHTML = originalText;
-        deleteBtn.disabled = false;
-    }
-}
+});
 </script>
 @endpush
-@endsection

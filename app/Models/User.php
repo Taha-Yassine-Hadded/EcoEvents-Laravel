@@ -32,6 +32,8 @@ class User extends Authenticatable implements JWTSubject
         'role',
         'bio',
         'profile_image',
+        'budget',
+        'sector',
     ];
 
     /**
@@ -194,5 +196,21 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->belongsToMany(Campaign::class, 'campaign_likes', 'user_id', 'campaign_id')
                     ->withTimestamps();
+    }
+
+    /**
+     * Relation avec les sponsorships temporaires
+     */
+    public function sponsorshipsTemp(): HasMany
+    {
+        return $this->hasMany(SponsorshipTemp::class, 'user_id');
+    }
+
+    /**
+     * Relation avec les stories du sponsor
+     */
+    public function sponsorStories(): HasMany
+    {
+        return $this->hasMany(SponsorStory::class, 'sponsor_id');
     }
 }

@@ -14,6 +14,13 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'jwt.optional' => \App\Http\Middleware\OptionalJWT::class,
         ]);
+        
+        // Exclure les routes API du CSRF
+        $middleware->validateCsrfTokens(except: [
+            'api/sponsor/notifications/*',
+            'api/sponsor/feedback/*',
+            'api/sponsor/*',
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

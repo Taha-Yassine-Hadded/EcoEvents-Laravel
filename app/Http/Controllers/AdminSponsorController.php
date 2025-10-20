@@ -276,8 +276,19 @@ class AdminSponsorController extends Controller
                 ], 422);
             }
             
-            // Mettre à jour le statut
-            $sponsorship->update(['status' => 'approved']);
+            // Mettre à jour le statut et les détails de l'événement
+            $event = $sponsorship->event;
+            $updateData = ['status' => 'approved'];
+            
+            // Mettre à jour les détails de l'événement si pas déjà sauvegardés
+            if (!$sponsorship->event_title && $event) {
+                $updateData['event_title'] = $event->title;
+                $updateData['event_description'] = $event->description;
+                $updateData['event_date'] = $event->date;
+                $updateData['event_location'] = $event->location;
+            }
+            
+            $sponsorship->update($updateData);
 
             // Générer le contrat PDF
             $contractData = $this->generateContractData($sponsorship);
@@ -355,8 +366,8 @@ class AdminSponsorController extends Controller
             'sponsor_name' => $sponsorship->user->name,
             'sponsor_company' => $sponsorship->user->company_name ?? 'Entreprise non spécifiée',
             'sponsor_email' => $sponsorship->user->email,
-            'event_title' => $sponsorship->event->title ?? 'Événement non spécifié',
-            'event_date' => $sponsorship->event->date ?? now(),
+            'event_title' => $sponsorship->event_title ?? 'Événement non spécifié',
+            'event_date' => $sponsorship->event_date ?? now(),
             'package_name' => $sponsorship->package_name,
             'amount' => $sponsorship->amount,
             'notes' => $sponsorship->notes,

@@ -123,8 +123,42 @@
                                 </td>
                                 <td>
                                     <div>
-                                        <h6 class="mb-0">{{ $sponsorship->event->title ?? 'Événement supprimé' }}</h6>
-                                        <small class="text-muted">{{ \Carbon\Carbon::parse($sponsorship->event->date ?? now())->format('d/m/Y') }}</small>
+                                        @php
+                                            // Logique améliorée pour l'affichage du nom de l'événement
+                                            $eventName = 'Événement non spécifié';
+                                            $eventDate = null;
+                                            
+                                            // Priorité 1: Relation event chargée
+                                            if ($sponsorship->event && !empty($sponsorship->event->title)) {
+                                                $eventName = $sponsorship->event->title;
+                                                $eventDate = $sponsorship->event->date;
+                                            }
+                                            // Priorité 2: Champ event_title dans la table
+                                            elseif (!empty($sponsorship->event_title)) {
+                                                $eventName = $sponsorship->event_title;
+                                                $eventDate = $sponsorship->event_date;
+                                            }
+                                            // Priorité 3: Essayer de charger l'événement si event_id existe
+                                            elseif (!empty($sponsorship->event_id)) {
+                                                try {
+                                                    $event = \App\Models\Event::find($sponsorship->event_id);
+                                                    if ($event) {
+                                                        $eventName = $event->title;
+                                                        $eventDate = $event->date;
+                                                    }
+                                                } catch (Exception $e) {
+                                                    // En cas d'erreur, garder le nom par défaut
+                                                }
+                                            }
+                                        @endphp
+                                        <h6 class="mb-0 text-primary">{{ $eventName }}</h6>
+                                        <small class="text-muted">
+                                            @if($eventDate)
+                                                {{ \Carbon\Carbon::parse($eventDate)->format('d/m/Y') }}
+                                            @else
+                                                Date non spécifiée
+                                            @endif
+                                        </small>
                                     </div>
                                 </td>
                                 <td>

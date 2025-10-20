@@ -7,7 +7,7 @@
 <div class="content-header">
     <h1 class="page-title">
         <i class="fas fa-calendar-alt text-primary"></i>
-        {{ $campaign->title }}
+        {{ $event->title }}
     </h1>
     <nav class="breadcrumb-nav">
         <ol class="breadcrumb">
@@ -32,13 +32,13 @@
                     <div class="col-md-6">
                         <div class="info-item mb-3">
                             <strong><i class="fas fa-calendar text-success"></i> Date de début :</strong>
-                            <span class="ms-2">{{ \Carbon\Carbon::parse($campaign->start_date)->format('d/m/Y') }}</span>
+                            <span class="ms-2">{{ \Carbon\Carbon::parse($event->date)->format('d/m/Y') }}</span>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="info-item mb-3">
                             <strong><i class="fas fa-calendar text-danger"></i> Date de fin :</strong>
-                            <span class="ms-2">{{ \Carbon\Carbon::parse($campaign->end_date)->format('d/m/Y') }}</span>
+                            <span class="ms-2">{{ \Carbon\Carbon::parse($event->date)->format('d/m/Y') }}</span>
                         </div>
                     </div>
                 </div>
@@ -47,34 +47,34 @@
                     <div class="col-md-6">
                         <div class="info-item mb-3">
                             <strong><i class="fas fa-tag text-info"></i> Catégorie :</strong>
-                            <span class="ms-2">{{ $campaign->category ?? 'Non spécifiée' }}</span>
+                            <span class="ms-2">{{ $event->category->name ?? 'Non spécifiée' }}</span>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="info-item mb-3">
                             <strong><i class="fas fa-eye text-warning"></i> Vues :</strong>
-                            <span class="ms-2">{{ $campaign->views_count ?? 0 }}</span>
+                            <span class="ms-2">{{ $event->views_count ?? 0 }}</span>
                         </div>
                     </div>
                 </div>
                 
                 <div class="info-item mb-3">
                     <strong><i class="fas fa-share text-primary"></i> Partages :</strong>
-                    <span class="ms-2">{{ $campaign->shares_count ?? 0 }}</span>
+                    <span class="ms-2">{{ $event->shares_count ?? 0 }}</span>
                 </div>
                 
                 <div class="info-item mb-4">
                     <strong><i class="fas fa-align-left text-secondary"></i> Description :</strong>
                     <div class="mt-2 p-3 bg-light rounded">
-                        {{ $campaign->description }}
+                        {{ $event->description }}
                     </div>
                 </div>
                 
-                @if($campaign->content)
+                @if($event->content)
                 <div class="info-item">
                     <strong><i class="fas fa-file-text text-info"></i> Contenu :</strong>
                     <div class="mt-2 p-3 bg-light rounded">
-                        {{ $campaign->content }}
+                        {{ $event->content }}
                     </div>
                 </div>
                 @endif
@@ -157,7 +157,7 @@
             <form id="sponsorshipForm">
                 @csrf
                 <div class="modal-body">
-                    <input type="hidden" name="campaign_id" value="{{ $campaign->id }}">
+                    <input type="hidden" name="event_id" value="{{ $event->id }}">
                     <input type="hidden" name="package_id" id="package_id">
                     
                     <div class="mb-3">

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contrat de Sponsoring - {{ $sponsorship->event->title ?? 'Événement' }}</title>
+    <title>Contrat de Sponsoring - {{ $sponsorship->event_title ?? ($sponsorship->event->title ?? 'Événement') }}</title>
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -131,7 +131,7 @@
             </div>
             <div class="info-box">
                 <div class="info-label">Durée du Contrat:</div>
-                <div>Du {{ \Carbon\Carbon::now()->format('d/m/Y') }} au {{ \Carbon\Carbon::parse($sponsorship->event->date ?? now())->format('d/m/Y') }}</div>
+                <div>Du {{ \Carbon\Carbon::now()->format('d/m/Y') }} au {{ \Carbon\Carbon::parse($sponsorship->event_date ?? ($sponsorship->event->date ?? now()))->format('d/m/Y') }}</div>
             </div>
         </div>
     </div>
@@ -163,19 +163,19 @@
         <div class="info-grid">
             <div class="info-box">
                 <div class="info-label">Titre de l'Événement:</div>
-                <div><strong>{{ $sponsorship->event->title ?? 'Événement non spécifié' }}</strong></div>
+                <div><strong>{{ $sponsorship->event_title ?? ($sponsorship->event->title ?? 'Événement non spécifié') }}</strong></div>
             </div>
             <div class="info-box">
                 <div class="info-label">Date de l'Événement:</div>
-                <div>{{ \Carbon\Carbon::parse($sponsorship->event->date ?? now())->format('d/m/Y à H:i') }}</div>
+                <div>{{ \Carbon\Carbon::parse($sponsorship->event_date ?? ($sponsorship->event->date ?? now()))->format('d/m/Y à H:i') }}</div>
             </div>
             <div class="info-box">
                 <div class="info-label">Lieu:</div>
-                <div>{{ $sponsorship->event->location ?? 'Lieu non spécifié' }}</div>
+                <div>{{ $sponsorship->event_location ?? ($sponsorship->event->location ?? 'Lieu non spécifié') }}</div>
             </div>
             <div class="info-box">
                 <div class="info-label">Description:</div>
-                <div>{{ $sponsorship->event->description ?? 'Aucune description disponible' }}</div>
+                <div>{{ $sponsorship->event_description ?? ($sponsorship->event->description ?? 'Aucune description disponible') }}</div>
             </div>
         </div>
     </div>

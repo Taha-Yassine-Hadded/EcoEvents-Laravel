@@ -11,6 +11,7 @@ use App\Models\Event;
 use App\Models\User;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Hash;
+use App\Services\NotificationService;
 
 class SponsorManagementController extends Controller
 {
@@ -332,16 +333,18 @@ class SponsorManagementController extends Controller
         }
 
         try {
-            // Récupérer toutes les campagnes (pas de filtre par date pour les tests)
-            $campaigns = EchofyCampaign::orderBy('created_at', 'desc')
+            // Récupérer tous les événements disponibles pour le sponsoring
+            $events = Event::with(['category', 'organizer'])
+                ->where('status', '!=', 'cancelled')
+                ->orderBy('date', 'asc')
                 ->paginate(12);
         } catch (\Exception $e) {
             \Illuminate\Support\Facades\Log::error('SponsorManagementController: Erreur showCampaigns', ['error' => $e->getMessage()]);
             // Créer une pagination vide en cas d'erreur
-            $campaigns = new \Illuminate\Pagination\LengthAwarePaginator([], 0, 12);
+            $events = new \Illuminate\Pagination\LengthAwarePaginator([], 0, 12);
         }
 
-        return view('pages.backOffice.sponsor-campaigns', compact('user', 'campaigns'));
+        return view('pages.backOffice.sponsor-campaigns', compact('user', 'events'));
     }
 
     /**
@@ -367,51 +370,12 @@ class SponsorManagementController extends Controller
             // Table n'existe pas encore
         }
         
-        // Créer des packages de test directement
-        $packages = collect([
-            (object) [
-                'id' => 1,
-                'name' => 'Bronze',
-                'price' => 500,
-                'description' => 'Package Bronze - Parfait pour les petites entreprises',
-                'benefits' => [
-                    'Logo sur les supports de communication',
-                    'Mention dans les réseaux sociaux',
-                    'Stand de 2m²'
-                ],
-                'is_active' => true
-            ],
-            (object) [
-                'id' => 2,
-                'name' => 'Silver',
-                'price' => 1000,
-                'description' => 'Package Silver - Idéal pour les entreprises moyennes',
-                'benefits' => [
-                    'Logo sur les supports de communication',
-                    'Mention dans les réseaux sociaux',
-                    'Stand de 4m²',
-                    'Intervention de 5 minutes',
-                    'Distribution de flyers'
-                ],
-                'is_active' => true
-            ],
-            (object) [
-                'id' => 3,
-                'name' => 'Gold',
-                'price' => 2000,
-                'description' => 'Package Gold - Pour les grandes entreprises',
-                'benefits' => [
-                    'Logo sur les supports de communication',
-                    'Mention dans les réseaux sociaux',
-                    'Stand de 6m²',
-                    'Intervention de 10 minutes',
-                    'Distribution de flyers',
-                    'Bannières publicitaires',
-                    'Interview média'
-                ],
-                'is_active' => true
-            ]
-        ]);
+        // Récupérer les packages actifs de l'événement depuis la base de données
+        $packages = \App\Models\Package::where('event_id', $event->id)
+            ->where('is_active', true)
+            ->orderBy('sort_order')
+            ->orderBy('price')
+            ->get();
 
         return view('pages.backOffice.sponsor-campaign-details', compact('user', 'event', 'packages', 'existingSponsorship'));
     }
@@ -517,10 +481,21 @@ class SponsorManagementController extends Controller
                 }
                 
                 return response()->json([
+                    'success' => false,
                     'error' => "Vous avez déjà proposé un sponsorship pour cet événement (statut: {$statusMessage}). Vous ne pouvez proposer qu'un seul package par événement."
                 ], 422);
             }
 
+            // Récupérer les détails de l'événement pour les sauvegarder
+            $event = Event::find($validated['event_id']);
+            
+            if (!$event) {
+                return response()->json([
+                    'success' => false,
+                    'error' => 'Événement non trouvé. Veuillez réessayer.'
+                ], 404);
+            }
+            
             // Sauvegarder le sponsorship dans la table temporaire
             $sponsorship = SponsorshipTemp::create([
                 'user_id' => $user->id,
@@ -530,7 +505,25 @@ class SponsorManagementController extends Controller
                 'amount' => $validated['amount'],
                 'status' => 'pending',
                 'notes' => $validated['notes'],
+                'event_title' => $event->title,
+                'event_description' => $event->description ?? 'Aucune description disponible',
+                'event_date' => $event->date ?? null,
+                'event_location' => $event->location ?? 'Lieu non spécifié',
             ]);
+
+            // Envoyer une notification de confirmation
+            $notificationService = app(NotificationService::class);
+            $notificationService->sendNotification(
+                $user,
+                'sponsorship_created',
+                [
+                    'user_name' => $user->name,
+                    'event_title' => $event->title,
+                    'package_name' => $sponsorship->package_name,
+                    'amount' => $sponsorship->amount
+                ],
+                ['email', 'in_app']
+            );
 
             return response()->json([
                 'success' => true,
@@ -669,16 +662,11 @@ class SponsorManagementController extends Controller
     }
 
     /**
-     * Obtenir le nom du package par son ID
+     * Obtenir le nom du package par son ID depuis la base de données
      */
     private function getPackageName($packageId)
     {
-        $packages = [
-            1 => 'Bronze',
-            2 => 'Silver', 
-            3 => 'Gold'
-        ];
-        
-        return $packages[$packageId] ?? 'Package Inconnu';
+        $package = \App\Models\Package::find($packageId);
+        return $package ? $package->name : 'Package Inconnu';
     }
 }

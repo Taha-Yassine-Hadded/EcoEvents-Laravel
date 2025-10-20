@@ -16,7 +16,7 @@
 
 <!-- Statistics Cards Row -->
 <div class="row mb-4">
-    <div class="col-xl-3 col-md-6 mb-4">
+    <div class="col-xl-2 col-md-6 mb-4">
         <div class="card border-left-primary shadow h-100 py-2">
             <div class="card-body">
                 <div class="row no-gutters align-items-center">
@@ -34,7 +34,7 @@
         </div>
     </div>
 
-    <div class="col-xl-3 col-md-6 mb-4">
+    <div class="col-xl-2 col-md-6 mb-4">
         <div class="card border-left-success shadow h-100 py-2">
             <div class="card-body">
                 <div class="row no-gutters align-items-center">
@@ -52,7 +52,7 @@
         </div>
     </div>
 
-    <div class="col-xl-3 col-md-6 mb-4">
+    <div class="col-xl-2 col-md-6 mb-4">
         <div class="card border-left-info shadow h-100 py-2">
             <div class="card-body">
                 <div class="row no-gutters align-items-center">
@@ -68,7 +68,7 @@
         </div>
     </div>
 
-    <div class="col-xl-3 col-md-6 mb-4">
+    <div class="col-xl-2 col-md-6 mb-4">
         <div class="card border-left-warning shadow h-100 py-2">
             <div class="card-body">
                 <div class="row no-gutters align-items-center">
@@ -80,6 +80,97 @@
                     </div>
                     <div class="col-auto">
                         <i class="fas fa-users fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-2 col-md-6 mb-4">
+        <div class="card border-left-secondary shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1">
+                            Contrats Générés
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $stats['contracts']['total_contracts'] ?? 0 }}</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-file-contract fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Actions Rapides -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card shadow">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">
+                    <i class="fas fa-tachometer-alt"></i> Actions Rapides
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-lg-3 col-md-6 mb-3">
+                        <div class="text-center">
+                            <div class="mb-3">
+                                <i class="fas fa-file-contract fa-3x text-success"></i>
+                            </div>
+                            <h5 class="text-success">Gestion des Contrats</h5>
+                            <p class="text-muted">Consultez et téléchargez tous les contrats de sponsoring</p>
+                            <a href="{{ route('admin.contracts.index') }}" class="btn btn-success btn-lg">
+                                <i class="fas fa-file-contract"></i> Voir les Contrats
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <div class="col-lg-3 col-md-6 mb-3">
+                        <div class="text-center">
+                            <div class="mb-3">
+                                <i class="fas fa-handshake fa-3x text-warning"></i>
+                            </div>
+                            <h5 class="text-warning">Propositions en Attente</h5>
+                            <p class="text-muted">Examinez les nouvelles propositions de sponsoring</p>
+                            <a href="{{ route('admin.sponsors.pending-sponsorships') }}" class="btn btn-warning btn-lg">
+                                <i class="fas fa-handshake"></i> 
+                                @if(($stats['sponsoring']['pending_sponsorships'] ?? 0) > 0)
+                                    {{ $stats['sponsoring']['pending_sponsorships'] }} En Attente
+                                @else
+                                    Voir les Propositions
+                                @endif
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <div class="col-lg-3 col-md-6 mb-3">
+                        <div class="text-center">
+                            <div class="mb-3">
+                                <i class="fas fa-users fa-3x text-primary"></i>
+                            </div>
+                            <h5 class="text-primary">Gestion des Sponsors</h5>
+                            <p class="text-muted">Gérez les sponsors et leurs informations</p>
+                            <a href="{{ route('admin.sponsors.index') }}" class="btn btn-primary btn-lg">
+                                <i class="fas fa-users"></i> Gérer les Sponsors
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <div class="col-lg-3 col-md-6 mb-3">
+                        <div class="text-center">
+                            <div class="mb-3">
+                                <i class="fas fa-calendar-alt fa-3x text-info"></i>
+                            </div>
+                            <h5 class="text-info">Gestion des Événements</h5>
+                            <p class="text-muted">Créez et gérez les événements</p>
+                            <a href="{{ route('admin.events.index') }}" class="btn btn-info btn-lg">
+                                <i class="fas fa-calendar-alt"></i> Gérer les Événements
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -102,6 +193,9 @@
                     </a>
                     <a href="{{ route('admin.sponsors.index') }}" class="btn btn-primary btn-sm">
                         <i class="fas fa-users"></i> Gestion Sponsors
+                    </a>
+                    <a href="{{ route('admin.contracts.index') }}" class="btn btn-success btn-sm">
+                        <i class="fas fa-file-contract"></i> Gestion Contrats
                     </a>
                 </div>
             </div>
@@ -164,6 +258,9 @@
                                 </p>
                                 <a href="{{ route('admin.sponsors.index') }}" class="btn btn-success btn-sm">
                                     <i class="fas fa-users"></i> Gérer les Sponsors
+                                </a>
+                                <a href="{{ route('admin.contracts.index') }}" class="btn btn-info btn-sm ms-2">
+                                    <i class="fas fa-file-contract"></i> Voir les Contrats
                                 </a>
                             </div>
                         </div>

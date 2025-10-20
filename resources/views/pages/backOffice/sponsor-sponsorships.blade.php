@@ -33,7 +33,31 @@
                     <div class="card-header py-3 d-flex justify-content-between align-items-center">
                         <h6 class="card-title mb-0">
                             <i class="fas fa-calendar-alt text-primary"></i>
-                            {{ $sponsorship->event->title ?? 'Événement supprimé' }}
+                            @php
+                                // Logique améliorée pour l'affichage du nom de l'événement
+                                $eventName = 'Événement non spécifié';
+                                
+                                // Priorité 1: Relation event chargée
+                                if ($sponsorship->event && !empty($sponsorship->event->title)) {
+                                    $eventName = $sponsorship->event->title;
+                                }
+                                // Priorité 2: Champ event_title dans la table
+                                elseif (!empty($sponsorship->event_title)) {
+                                    $eventName = $sponsorship->event_title;
+                                }
+                                // Priorité 3: Essayer de charger l'événement si event_id existe
+                                elseif (!empty($sponsorship->event_id)) {
+                                    try {
+                                        $event = \App\Models\Event::find($sponsorship->event_id);
+                                        if ($event) {
+                                            $eventName = $event->title;
+                                        }
+                                    } catch (Exception $e) {
+                                        // En cas d'erreur, garder le nom par défaut
+                                    }
+                                }
+                            @endphp
+                            {{ $eventName }}
                         </h6>
                         <span class="badge badge-{{ 
                             $sponsorship->status === 'approved' ? 'success' : 
@@ -84,7 +108,7 @@
                         <div class="event-preview mb-3">
                             <strong><i class="fas fa-info-circle text-primary"></i> Événement :</strong>
                             <div class="mt-1 p-2 bg-light rounded small">
-                                {{ Str::limit($sponsorship->event->description ?? 'Aucune description disponible', 100) }}
+                                {{ Str::limit($sponsorship->event_description ?? ($sponsorship->event->description ?? 'Aucune description disponible'), 100) }}
                             </div>
                         </div>
                     </div>

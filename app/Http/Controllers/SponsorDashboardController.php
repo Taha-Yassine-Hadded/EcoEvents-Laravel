@@ -115,18 +115,31 @@ class SponsorDashboardController extends Controller
                 'message' => 'nullable|string|max:1000'
             ]);
 
-            // Récupérer le package pour obtenir le nom
+            // Récupérer le package et l'événement pour obtenir les détails
             $package = Package::find($request->package_id);
+            $event = Event::find($request->event_id);
+
+            if (!$event) {
+                return response()->json([
+                    'success' => false,
+                    'error' => 'Événement non trouvé.'
+                ], 404);
+            }
 
             // Créer la proposition de sponsoring avec SponsorshipTemp
             $sponsorship = \App\Models\SponsorshipTemp::create([
                 'user_id' => $user->id,
-                'campaign_id' => $request->event_id, // Utiliser event_id comme campaign_id
+                'event_id' => $request->event_id, // Utiliser event_id correctement
+                'campaign_id' => $request->event_id, // Garder pour compatibilité
                 'package_id' => $request->package_id,
                 'package_name' => $package->name,
                 'amount' => $request->amount,
                 'status' => 'pending',
-                'notes' => $request->message
+                'notes' => $request->message,
+                'event_title' => $event->title,
+                'event_description' => $event->description ?? 'Aucune description disponible',
+                'event_date' => $event->date ?? null,
+                'event_location' => $event->location ?? 'Lieu non spécifié',
             ]);
 
             return response()->json([

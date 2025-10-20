@@ -236,6 +236,9 @@
                                             <button class="action-btn btn-edit" onclick="editEvent({{ $event->id }})" title="Modifier">
                                                 <i class="fas fa-edit"></i>
                                             </button>
+                                            <button class="action-btn btn-packages" onclick="managePackages({{ $event->id }})" title="Gérer les packages">
+                                                <i class="fas fa-box"></i>
+                                            </button>
                                             <button class="action-btn btn-delete" onclick="confirmDelete({{ $event->id }})" title="Supprimer">
                                                 <i class="fas fa-trash"></i>
                                             </button>
@@ -525,6 +528,16 @@
                 color: white;
             }
 
+            .btn-packages {
+                background: rgba(255, 193, 7, 0.1);
+                color: #ffc107;
+            }
+
+            .btn-packages:hover {
+                background: #ffc107;
+                color: white;
+            }
+
             .btn-delete {
                 background: rgba(220, 53, 69, 0.1);
                 color: #dc3545;
@@ -751,6 +764,11 @@
             function editEvent(id) {
                 console.log('Édition de l\'événement ID:', id);
                 window.location.href = `/admin/events/${id}/edit`;
+            }
+
+            function managePackages(id) {
+                console.log('Gestion des packages pour l\'événement ID:', id);
+                window.location.href = `/admin/packages?event_id=${id}`;
             }
 
             function confirmDelete(id) {
@@ -1010,6 +1028,9 @@
                                     </button>
                                     <button class="action-btn btn-edit" onclick="editEvent(${event.id})" title="Modifier">
                                         <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="action-btn btn-packages" onclick="managePackages(${event.id})" title="Gérer les packages">
+                                        <i class="fas fa-box"></i>
                                     </button>
                                     <button class="action-btn btn-delete" onclick="confirmDelete(${event.id})" title="Supprimer">
                                         <i class="fas fa-trash"></i>

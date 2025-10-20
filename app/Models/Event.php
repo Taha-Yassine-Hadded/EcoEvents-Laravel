@@ -55,4 +55,28 @@ class Event extends Model
     {
         return $this->hasMany(Registration::class);
     }
+
+    /**
+     * Event has many packages.
+     */
+    public function packages()
+    {
+        return $this->hasMany(Package::class)->ordered();
+    }
+
+    /**
+     * Event has many active packages.
+     */
+    public function activePackages()
+    {
+        return $this->hasMany(Package::class)->active()->ordered();
+    }
+
+    /**
+     * Event has many sponsorships temp.
+     */
+    public function sponsorshipsTemp()
+    {
+        return $this->hasMany(SponsorshipTemp::class);
+    }
 }

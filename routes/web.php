@@ -8,6 +8,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\SponsorDashboardController;
 use App\Http\Controllers\SponsorProfileController;
+use Illuminate\Http\Request;
 use App\Http\Controllers\SponsorManagementController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\CategoryController;
@@ -15,6 +16,7 @@ use App\Http\Controllers\RegistrationController;
 use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ContractController;
+use App\Http\Controllers\AdminPackageController;
 use App\Http\Middleware\VerifyJWT;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
@@ -111,6 +113,15 @@ Route::get('/dashboard', [DashboardController::class, 'index'])
 Route::get('/sponsor-dashboard', [SponsorDashboardController::class, 'index'])
     ->middleware([\App\Http\Middleware\VerifyJWT::class, \App\Http\Middleware\RoleGuard::class . ':sponsor'])
     ->name('sponsor.dashboard');
+
+// ==================== SPONSOR ANALYTICS ====================
+Route::get('/sponsor/analytics', [\App\Http\Controllers\SponsorAnalyticsController::class, 'dashboard'])
+    ->middleware([\App\Http\Middleware\VerifyJWT::class, \App\Http\Middleware\RoleGuard::class . ':sponsor'])
+    ->name('sponsor.analytics');
+
+Route::get('/sponsor/analytics/chart-data', [\App\Http\Controllers\SponsorAnalyticsController::class, 'getChartData'])
+    ->middleware([\App\Http\Middleware\VerifyJWT::class, \App\Http\Middleware\RoleGuard::class . ':sponsor'])
+    ->name('sponsor.analytics.chart');
 
 // ==================== PROFILE MANAGEMENT ====================
 Route::get('/sponsor/profile', [SponsorManagementController::class, 'showProfile'])
@@ -269,10 +280,16 @@ Route::prefix('admin/sponsors')->middleware([\App\Http\Middleware\VerifyJWT::cla
     Route::delete('/{id}', [\App\Http\Controllers\AdminSponsorController::class, 'destroy'])->name('admin.sponsors.destroy');
 });
 
-// Admin Contracts shortcut (read-only list of approved sponsorships with contracts)
-Route::get('/admin/contracts', [\App\Http\Controllers\AdminSponsorController::class, 'approvedSponsorships'])
-    ->middleware([\App\Http\Middleware\VerifyJWT::class, \App\Http\Middleware\RoleGuard::class . ':admin'])
-    ->name('admin.contracts.index');
+// Admin Contracts Management
+Route::prefix('admin/contracts')->middleware([\App\Http\Middleware\VerifyJWT::class, \App\Http\Middleware\RoleGuard::class . ':admin'])->group(function () {
+    Route::get('/', [\App\Http\Controllers\AdminContractController::class, 'index'])->name('admin.contracts.index');
+    Route::get('/{id}', [\App\Http\Controllers\AdminContractController::class, 'show'])->name('admin.contracts.show');
+    Route::get('/{id}/download', [\App\Http\Controllers\AdminContractController::class, 'download'])->name('admin.contracts.download');
+    Route::get('/{id}/view', [\App\Http\Controllers\AdminContractController::class, 'view'])->name('admin.contracts.view');
+    Route::post('/{id}/regenerate', [\App\Http\Controllers\AdminContractController::class, 'regenerate'])->name('admin.contracts.regenerate');
+    Route::delete('/{id}/delete', [\App\Http\Controllers\AdminContractController::class, 'delete'])->name('admin.contracts.delete');
+    Route::get('/export/all', [\App\Http\Controllers\AdminContractController::class, 'exportAll'])->name('admin.contracts.export');
+});
 
 // Routes pour les contrats PDF
 Route::prefix('contracts')->middleware([\App\Http\Middleware\VerifyJWT::class])->group(function () {
@@ -514,6 +531,17 @@ Route::prefix('admin')->middleware([\App\Http\Middleware\VerifyJWT::class, \App\
     Route::get('/categories/{category}/edit', [CategoryController::class, 'edit'])->name('categories.edit');
     Route::put('/categories/{category}', [CategoryController::class, 'update'])->name('categories.update');
     Route::delete('/categories/{category}', [CategoryController::class, 'destroy'])->name('categories.destroy');
+
+    // Packages
+    Route::get('/packages', [AdminPackageController::class, 'index'])->name('packages.index');
+    Route::get('/packages/create', [AdminPackageController::class, 'create'])->name('packages.create');
+    Route::post('/packages', [AdminPackageController::class, 'store'])->name('packages.store');
+    Route::get('/packages/{package}', [AdminPackageController::class, 'show'])->name('packages.show');
+    Route::get('/packages/{package}/edit', [AdminPackageController::class, 'edit'])->name('packages.edit');
+    Route::put('/packages/{package}', [AdminPackageController::class, 'update'])->name('packages.update');
+    Route::delete('/packages/{package}', [AdminPackageController::class, 'destroy'])->name('packages.destroy');
+    Route::post('/packages/{package}/toggle-status', [AdminPackageController::class, 'toggleStatus'])->name('packages.toggle-status');
+    Route::post('/packages/{package}/duplicate', [AdminPackageController::class, 'duplicate'])->name('packages.duplicate');
 });
 
 Route::get('/api/categories', function() {
@@ -564,3 +592,204 @@ Route::get('/api/events/{event}', function($eventId) {
 Route::post('/sponsor/sponsorships', [SponsorDashboardController::class, 'createSponsorship'])
     ->middleware([\App\Http\Middleware\VerifyJWT::class, \App\Http\Middleware\RoleGuard::class . ':sponsor'])
     ->name('sponsor.sponsorships.create');
+
+// ==================== APIs IA pour Recommandations de Sponsoring ====================
+
+// APIs de recommandations IA
+Route::prefix('api/sponsor/ai')->middleware([\App\Http\Middleware\VerifyJWT::class, \App\Http\Middleware\RoleGuard::class . ':sponsor'])->group(function () {
+    
+    // Recommandations d'événements
+    Route::get('/recommendations/events', [\App\Http\Controllers\AISponsorshipController::class, 'recommendEvents'])
+        ->name('api.sponsor.ai.recommendations.events');
+    
+    // Recommandations de packages pour un événement
+    Route::get('/recommendations/packages/{event_id}', [\App\Http\Controllers\AISponsorshipController::class, 'recommendPackages'])
+        ->name('api.sponsor.ai.recommendations.packages');
+    
+    // Recommandations de budget pour un événement
+    Route::get('/recommendations/budget/{event_id}', [\App\Http\Controllers\AISponsorshipController::class, 'recommendBudget'])
+        ->name('api.sponsor.ai.recommendations.budget');
+    
+    // Recommandations de timing pour proposer un sponsorship
+    Route::get('/recommendations/timing/{event_id}', [\App\Http\Controllers\AISponsorshipController::class, 'recommendTiming'])
+        ->name('api.sponsor.ai.recommendations.timing');
+    
+    // Insights sur le profil du sponsor
+    Route::get('/insights/profile', [\App\Http\Controllers\AISponsorshipController::class, 'getSponsorInsights'])
+        ->name('api.sponsor.ai.insights.profile');
+});
+
+// ==================== APIs pour Système de Commentaires & Feedback ====================
+
+// APIs de feedback et commentaires
+Route::prefix('api/sponsor/feedback')->middleware([\App\Http\Middleware\VerifyJWT::class, \App\Http\Middleware\RoleGuard::class . ':sponsor'])->group(function () {
+    
+    // Routes spécifiques (doivent être avant les routes avec paramètres)
+    Route::get('/types', [\App\Http\Controllers\SponsorshipFeedbackController::class, 'getFeedbackTypes'])
+        ->name('api.sponsor.feedback.types');
+    
+    Route::get('/most-helpful', [\App\Http\Controllers\SponsorshipFeedbackController::class, 'getMostHelpful'])
+        ->name('api.sponsor.feedback.most.helpful');
+    
+    Route::get('/search', [\App\Http\Controllers\SponsorshipFeedbackController::class, 'search'])
+        ->name('api.sponsor.feedback.search');
+    
+    Route::get('/events', [\App\Http\Controllers\SponsorshipFeedbackController::class, 'getEvents'])
+        ->name('api.sponsor.feedback.events');
+    
+    Route::get('/sponsorships', [\App\Http\Controllers\SponsorshipFeedbackController::class, 'getUserSponsorships'])
+        ->name('api.sponsor.feedback.sponsorships');
+    
+    Route::get('/event/{eventId}/stats', [\App\Http\Controllers\SponsorshipFeedbackController::class, 'getEventStats'])
+        ->name('api.sponsor.feedback.event.stats');
+});
+
+// APIs pour les notifications sponsor
+Route::prefix('api/sponsor/notifications')->middleware([\App\Http\Middleware\VerifyJWT::class, \App\Http\Middleware\RoleGuard::class . ':sponsor'])->group(function () {
+    
+    Route::get('/', [\App\Http\Controllers\SponsorNotificationController::class, 'index'])
+        ->name('api.sponsor.notifications.index');
+    
+    Route::get('/unread', [\App\Http\Controllers\SponsorNotificationController::class, 'unread'])
+        ->name('api.sponsor.notifications.unread');
+    
+    Route::post('/{id}/read', [\App\Http\Controllers\SponsorNotificationController::class, 'markAsRead'])
+        ->name('api.sponsor.notifications.read');
+    
+    Route::post('/mark-all-read', [\App\Http\Controllers\SponsorNotificationController::class, 'markAllAsRead'])
+        ->name('api.sponsor.notifications.mark-all-read');
+    
+    Route::get('/preferences', [\App\Http\Controllers\SponsorNotificationController::class, 'getPreferences'])
+        ->name('api.sponsor.notifications.preferences');
+    
+    Route::put('/preferences', [\App\Http\Controllers\SponsorNotificationController::class, 'updatePreferences'])
+        ->name('api.sponsor.notifications.update-preferences');
+    
+    Route::delete('/{id}', [\App\Http\Controllers\SponsorNotificationController::class, 'destroy'])
+        ->name('api.sponsor.notifications.destroy');
+});
+
+// Retour aux routes feedback
+Route::prefix('api/sponsor/feedback')->middleware([\App\Http\Middleware\VerifyJWT::class, \App\Http\Middleware\RoleGuard::class . ':sponsor'])->group(function () {
+    
+    // CRUD des feedbacks
+    Route::get('/', [\App\Http\Controllers\SponsorshipFeedbackController::class, 'index'])
+        ->name('api.sponsor.feedback.index');
+    
+    Route::post('/', [\App\Http\Controllers\SponsorshipFeedbackController::class, 'store'])
+        ->name('api.sponsor.feedback.store');
+    
+    Route::get('/{id}', [\App\Http\Controllers\SponsorshipFeedbackController::class, 'show'])
+        ->name('api.sponsor.feedback.show');
+    
+    Route::put('/{id}', [\App\Http\Controllers\SponsorshipFeedbackController::class, 'update'])
+        ->name('api.sponsor.feedback.update');
+    
+    Route::delete('/{id}', [\App\Http\Controllers\SponsorshipFeedbackController::class, 'destroy'])
+        ->name('api.sponsor.feedback.destroy');
+    
+    // Actions sur les feedbacks
+    Route::post('/{id}/like', [\App\Http\Controllers\SponsorshipFeedbackController::class, 'toggleLike'])
+        ->name('api.sponsor.feedback.like');
+});
+
+// Route pour la page des recommandations IA
+Route::get('/sponsor/ai-recommendations', [\App\Http\Controllers\AISponsorshipController::class, 'showRecommendationsPage'])
+    ->middleware([\App\Http\Middleware\VerifyJWT::class, \App\Http\Middleware\RoleGuard::class . ':sponsor'])
+    ->name('sponsor.ai.recommendations');
+
+// ==================== ROUTES SPONSOR STORIES ====================
+
+// Routes pour la gestion des stories des sponsors
+Route::prefix('sponsor/stories')->middleware([\App\Http\Middleware\VerifyJWT::class, \App\Http\Middleware\RoleGuard::class . ':sponsor'])->group(function () {
+    
+    // Pages principales
+    Route::get('/', [\App\Http\Controllers\SponsorStoryController::class, 'index'])
+        ->name('sponsor.stories.index');
+    
+    Route::get('/my-stories', [\App\Http\Controllers\SponsorStoryController::class, 'myStories'])
+        ->name('sponsor.stories.my-stories');
+    
+    Route::get('/create', [\App\Http\Controllers\SponsorStoryController::class, 'create'])
+        ->name('sponsor.stories.create');
+    
+    Route::get('/{id}', [\App\Http\Controllers\SponsorStoryController::class, 'show'])
+        ->name('sponsor.stories.show');
+    
+    Route::get('/{id}/edit', [\App\Http\Controllers\SponsorStoryController::class, 'edit'])
+        ->name('sponsor.stories.edit');
+    
+    // Actions CRUD
+    Route::post('/', [\App\Http\Controllers\SponsorStoryController::class, 'store'])
+        ->name('sponsor.stories.store');
+    
+    Route::put('/{id}', [\App\Http\Controllers\SponsorStoryController::class, 'update'])
+        ->name('sponsor.stories.update');
+    
+    Route::delete('/{id}', [\App\Http\Controllers\SponsorStoryController::class, 'destroy'])
+        ->name('sponsor.stories.destroy');
+    
+    // Actions spéciales
+    Route::post('/{id}/feature', [\App\Http\Controllers\SponsorStoryController::class, 'markAsFeatured'])
+        ->name('sponsor.stories.feature');
+    
+    Route::post('/{id}/unfeature', [\App\Http\Controllers\SponsorStoryController::class, 'unmarkAsFeatured'])
+        ->name('sponsor.stories.unfeature');
+    
+    Route::post('/{id}/extend', [\App\Http\Controllers\SponsorStoryController::class, 'extend'])
+        ->name('sponsor.stories.extend');
+    
+    Route::post('/{id}/like', [\App\Http\Controllers\SponsorStoryController::class, 'like'])
+        ->name('sponsor.stories.like');
+    
+    // API endpoints
+    Route::prefix('api')->group(function () {
+        Route::get('/', [\App\Http\Controllers\SponsorStoryController::class, 'apiIndex'])
+            ->name('api.sponsor.stories.index');
+        
+        Route::get('/stats', [\App\Http\Controllers\SponsorStoryController::class, 'apiStats'])
+            ->name('api.sponsor.stories.stats');
+    });
+});
+
+// Routes publiques pour voir les stories (sans authentification)
+Route::prefix('stories')->group(function () {
+    Route::get('/', [\App\Http\Controllers\SponsorStoryController::class, 'index'])
+        ->name('stories.public.index');
+    
+    Route::get('/{id}', [\App\Http\Controllers\SponsorStoryController::class, 'show'])
+        ->name('stories.public.show');
+    
+    Route::post('/{id}/like', [\App\Http\Controllers\SponsorStoryController::class, 'like'])
+        ->name('stories.public.like');
+});
+
+// Routes admin pour la gestion des stories
+Route::prefix('admin/stories')->middleware([\App\Http\Middleware\VerifyJWT::class, \App\Http\Middleware\RoleGuard::class . ':admin'])->group(function () {
+    
+    Route::get('/', [\App\Http\Controllers\SponsorStoryController::class, 'adminIndex'])
+        ->name('admin.stories.index');
+    
+    Route::post('/cleanup-expired', [\App\Http\Controllers\SponsorStoryController::class, 'adminCleanupExpired'])
+        ->name('admin.stories.cleanup-expired');
+});
+
+// Route pour la page de feedback
+Route::get('/sponsor/feedback', [\App\Http\Controllers\SponsorshipFeedbackController::class, 'showFeedbackPage'])
+    ->middleware([\App\Http\Middleware\VerifyJWT::class, \App\Http\Middleware\RoleGuard::class . ':sponsor'])
+    ->name('sponsor.feedback');
+
+// Routes pour le profil sponsor
+Route::get('/sponsor/profile', [\App\Http\Controllers\SponsorProfileController::class, 'show'])
+    ->middleware([\App\Http\Middleware\VerifyJWT::class, \App\Http\Middleware\RoleGuard::class . ':sponsor'])
+    ->name('sponsor.profile');
+
+// API Routes pour le profil sponsor
+Route::prefix('api/sponsor')->middleware([\App\Http\Middleware\VerifyJWT::class, \App\Http\Middleware\RoleGuard::class . ':sponsor'])->group(function () {
+    Route::post('/profile', [\App\Http\Controllers\SponsorProfileController::class, 'update']);
+    Route::post('/profile/password', [\App\Http\Controllers\SponsorProfileController::class, 'updatePassword']);
+});
+
+Route::get('/sponsor/notifications', [\App\Http\Controllers\SponsorNotificationController::class, 'showNotificationsPage'])
+    ->middleware([\App\Http\Middleware\VerifyJWT::class, \App\Http\Middleware\RoleGuard::class . ':sponsor'])
+    ->name('sponsor.notifications');
