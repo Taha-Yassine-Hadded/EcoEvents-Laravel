@@ -39,4 +39,8 @@ return [
         'url' => env('CLASSIFICATION_API_URL', 'http://localhost:8001'),
     ],
 
+    'openrouter' => [
+        'api_key' => env('OPENROUTER_API_KEY'),
+    ],
+
 ];

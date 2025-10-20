@@ -604,18 +604,18 @@ class EventController extends Controller
         }
     }
 
-   public function generateDescription(Request $request)
+ public function generateDescription(Request $request)
 {
     $request->validate([
         'title' => 'required|string|max:255',
         'category' => 'required|string|max:100',
     ]);
 
-    // Verify API key exists
-    $apiKey = env('OPENROUTER_API_KEY');
+    // Use config() instead of env() - this is the correct way
+    $apiKey = config('services.openrouter.api_key');
     
     if (empty($apiKey)) {
-        Log::error('OPENROUTER_API_KEY is not set in environment');
+        Log::error('OPENROUTER_API_KEY is not set in configuration');
         return response()->json([
             'description' => '', 
             'error' => 'Configuration error: API key not found'
@@ -628,7 +628,7 @@ class EventController extends Controller
 
     try {
         Log::info('Calling OpenRouter API', [
-            'model' => 'tngtech/deepseek-r1t2-chimera',
+            'model' => 'deepseek/deepseek-chat-v3-0324:free',
             'prompt_length' => strlen($prompt),
             'has_api_key' => !empty($apiKey)
         ]);
@@ -637,11 +637,11 @@ class EventController extends Controller
             'headers' => [
                 'Authorization' => "Bearer {$apiKey}",
                 'Content-Type' => 'application/json',
-                'HTTP-Referer' => config('app.url', 'http://localhost'), // Optional
-                'X-Title' => config('app.name', 'EcoEvents'), // Optional
+                'HTTP-Referer' => config('app.url', 'http://localhost'),
+                'X-Title' => config('app.name', 'EcoEvents'),
             ],
             'json' => [
-                'model' => 'tngtech/deepseek-r1t2-chimera',
+                'model' => 'deepseek/deepseek-chat-v3-0324:free',
                 'messages' => [
                     ['role' => 'user', 'content' => $prompt]
                 ],
